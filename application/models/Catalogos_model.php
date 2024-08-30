@@ -29,6 +29,14 @@ class Catalogos_model extends CI_Model{
         return $query->result();
     }
 
+    public function cat_placas_asignadas(){
+        $this->db->select('*');
+        $this->db->from('placas');
+        $this->db->where('placas.asignado IS null AND placas.eliminado LIKE "0%"');
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function cat_tipos(){
         $color = $this->db->get_where('tipo', array('eliminado' => 0));
         return $color->result();
@@ -97,6 +105,21 @@ class Catalogos_model extends CI_Model{
         
     }
 
+    public function agregar_catalogo_emplacado($catalogo, $datos, $unique = FALSE){
+        if($unique){
+            //$dup = $this->db->get_where('marcas', array('nom_marca' => 'Nissan2'));
+            $dup = $this->db->get_where($catalogo, array($unique => $datos[$unique]));
+            if($dup->num_rows() > 0){
+                return 0;
+            }
+        }
+        
+        $this->db->insert($catalogo, $datos);
+
+        return $this->db->insert_id();
+        
+    }
+
     /* public function agregar_catalogo($catalogo, $datos, $unique = FALSE) {
         // Verifica si se debe hacer la validación de unicidad
         if ($unique) {
@@ -128,6 +151,17 @@ class Catalogos_model extends CI_Model{
         return 1; // Retorna 1 para indicar éxito
     } */
     
+    public function actualizar_un_parametro($id, $tabla, $emp_id){
+        if($emp_id == null || $emp_id == ""){
+            $this->db->where('id', $id);
+            $this->db->update($tabla, array('asignado' => null));
+        }
+        else{
+            $this->db->where('id', $id);
+            $this->db->update($tabla, array('asignado' => $emp_id));
+        }
+        
+    }
     
     public function eliminar_catalogo($id, $tabla){
         $this->db->where('id', $id);
@@ -146,6 +180,11 @@ class Catalogos_model extends CI_Model{
     }
 
     public function actualizar($tabla, $datos, $id){
+        $this->db->where('id', $id);
+        $this->db->update($tabla, $datos);
+    }
+
+    public function actualizar_emplacado($tabla, $datos, $id){
         $this->db->where('id', $id);
         $this->db->update($tabla, $datos);
     }
@@ -194,6 +233,23 @@ class Catalogos_model extends CI_Model{
     public function get_by_id($tabla, $id){
         $query = $this->db->get_where($tabla, $id);
         return $query->row();
+    }
+
+    public function get_by_id_emplacado($tabla, $id){
+        $this->db->select('e.id, e.vehiculos_id, e.placas_id, e.fecha_registro, e.actual, e.fecha_inicio, e.fecha_termino, e.eliminado, p.placa');
+        $this->db->from('emplacado e');
+        $this->db->join('placas p', 'p.id = e.placas_id', 'inner');
+        $this->db->where('e.id', $id);
+        $query = $this->db->get();
+        return $query->row();
+    }
+
+    public function cat_placas_asignadas_excepto($id){
+        $this->db->select('*');
+        $this->db->from('placas');
+        $this->db->where('placas.asignado IS NULL AND placas.eliminado LIKE "0%" OR placas.id = '.$id);
+        $query = $this->db->get();
+        return $query->result();
     }
 
 }

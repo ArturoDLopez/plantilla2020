@@ -117,7 +117,7 @@ class Dashboard extends CI_Controller{
 
         $vehiculos = array('vehiculos' => $this->Catalogos_model->cat_vehiculos());
         $data->vehiculos = $vehiculos;
-        $placas = array('placas' => $this->Catalogos_model->cat_placas());
+        $placas = array('placas' => $this->Catalogos_model->cat_placas_asignadas());
         $data->placas = $placas;
         $emplacado = array('emplacado' => $this->Catalogos_model->cat_emplacado());
         $data->emplacado = $emplacado;
@@ -269,6 +269,7 @@ class Dashboard extends CI_Controller{
     }
 
     public function agregar_emplacado(){
+        $id = $this->input->post('placa');
         $datos = array(
             'vehiculos_id' => $this->input->post('num_serie'),
             'placas_id' => $this->input->post('placa'),
@@ -278,7 +279,8 @@ class Dashboard extends CI_Controller{
             'fecha_registro' => date('Y-m-d H:i:s'),
             'eliminado' => 0
         );
-        $this->Catalogos_model->agregar_catalogo('emplacado', $datos);
+        $emplacado_id = $this->Catalogos_model->agregar_catalogo_emplacado('emplacado', $datos);
+        $this->Catalogos_model->actualizar_un_parametro($id, 'placas', $emplacado_id);
         echo json_encode($this->Catalogos_model->cat_emplacado());
     }
 
@@ -316,8 +318,8 @@ class Dashboard extends CI_Controller{
 
     public function consultar_emplacado(){
         $tabla = 'emplacado';
-        $id = array('id' => $this->input->post('id'));
-        echo json_encode($this->Catalogos_model->get_by_id($tabla, $id));
+        $id = $this->input->post('id');
+        echo json_encode($this->Catalogos_model->get_by_id_emplacado($tabla, $id));
     }
 
     public function consultar_auto(){
@@ -370,6 +372,15 @@ class Dashboard extends CI_Controller{
         echo (json_encode($this->Catalogos_model->cat_placas()));
     }
 
+    public function cargar_placas_sin_asignar(){
+        echo json_encode($this->Catalogos_model->cat_placas_asignadas());
+    }
+
+    public function cargar_placas_sin_asignar_excepto(){
+        $id = $this->input->post('id');
+        echo json_encode($this->Catalogos_model->cat_placas_asignadas_excepto($id));
+    }
+
     public function cargar_emplacado(){
         echo (json_encode($this->Catalogos_model->cat_emplacado()));
     }
@@ -392,6 +403,8 @@ class Dashboard extends CI_Controller{
 
     public function editar_emplacado(){
         $id = $this->input->post('id');
+        $placas_id = $this->input->post('placa');
+        $anterior_id = $this->input->post('anterior_id');
         $datos = array(
             'vehiculos_id' => $this->input->post('num_serie'),
             'placas_id' => $this->input->post('placa'),
@@ -399,7 +412,9 @@ class Dashboard extends CI_Controller{
             'fecha_inicio' => $this->input->post('fecha_i'),
             'fecha_termino' => $this->input->post('fecha_t'),
         );
-        $this->Catalogos_model->actualizar('emplacado', $datos, $id);
+        $this->Catalogos_model->actualizar_emplacado('emplacado', $datos, $id);
+        $this->Catalogos_model->actualizar_un_parametro($anterior_id, 'placas', null);
+        $this->Catalogos_model->actualizar_un_parametro($placas_id, 'placas', $id);
         echo json_encode($this->Catalogos_model->cat_emplacado());
     }
 

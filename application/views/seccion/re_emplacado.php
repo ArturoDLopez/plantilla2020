@@ -29,7 +29,7 @@
 </div>
 
 <div class="modal" data-backdrop="static" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="modalFormLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalFormLabel">Agregar emplacado</h5>
@@ -42,9 +42,6 @@
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
                     <select class="form-control" id="num_serie" name="num_serie">
-                        <option value="0">
-                            Seleccione una opcion...
-                        </option>
                         <?php
                             foreach($vehiculos['vehiculos'] as $vehiculo){
                                 echo 
@@ -60,7 +57,6 @@
                 <div class="form-group col-md-4">
                     <label for="placa">Placas</label>
                     <select name="placa" id="placa" class="form-control">
-                        <option value="0">Seleccione un dueño</option>
                         <?php
                             foreach($placas['placas'] as $du){
                                 echo '
@@ -168,8 +164,30 @@
     traer_datos('cargar_emplacado', columns, tabla);
 
     function llamar(){
+        $.ajax({
+            url: 'cargar_placas_sin_asignar',
+            method: 'POST',
+            success: function(datos){
+                json = JSON.parse(datos);
+                if(json.length > 0){
+                    let opciones = '';
+
+                    json.forEach(element => {
+                            console.log('placa: ', element.placa);
+                            opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
+                        });
+                    document.getElementById('placa').innerHTML = opciones
+                    
+                    console.log(opciones);
+                }
+                
+            }
+        });
+        
         llamar_modal(modal_id, arreglo_campos);
     }
+
+    let anterior_id;
 
     function rellenar(id){
         $.ajax({
@@ -182,17 +200,44 @@
                 let fecha_inicio = new Date(datos.fecha_inicio);
                 fecha_inicio = fecha_inicio.toISOString().split('T')[0];
 
-                 let fecha_termino_completa = datos.fecha_termino;
+                let fecha_termino_completa = datos.fecha_termino;
                 console.log("datos.fecha_termino: ", fecha_termino_completa);
                 let fecha_termino = datos.fecha_termino == null || datos.fecha_termino == "0000-00-00 00:00:00" || datos.fecha_termino == "" ?  "" : new Date(datos.fecha_termino);
                 console.log('Fehca de termino: ', fecha_termino);
                 fecha_termino = fecha_termino == "" ? "" : fecha_termino.toISOString().split('T')[0];
 
+                anterior_id = datos.placas_id;
+
+                $.ajax({
+                    url: 'cargar_placas_sin_asignar_excepto',
+                    method: 'POST',
+                    data: {'id': datos.placas_id},
+                    success: function(data){
+                        json = JSON.parse(data);
+                        if(json.length > 0){
+                            let opciones = '';
+
+                            json.forEach(element => {
+                                console.log('placa: ', element.placa, datos.placas_id);
+                                opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
+                                //document.getElementById('placa').value = datos.placas_id;
+                            });
+
+                            document.getElementById('placa').innerHTML = opciones
+                            document.getElementById('placa').value = datos.placas_id;
+                            console.log(opciones);
+                            
+                        }
+                        
+                    }
+                });
+
                 llamar_modal(modal_id, arreglo_campos);
+                console.log('Datos placas: ', datos.placas_id);
                 document.getElementById('modalFormLabel').innerHTML = 'Actualizar Emplacado';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 document.getElementById('num_serie').value = datos.vehiculos_id;
-                document.getElementById('placa').value = datos.placas_id;
+                //document.getElementById('placa').value = datos.placas_id;
                 document.getElementById('actual').value = datos.actual; 
                 document.getElementById('fecha_i').value = fecha_inicio;
                 document.getElementById('fecha_t').value = fecha_termino;
@@ -217,6 +262,7 @@
         else{
             datos = {
                 'id': variable,
+                'anterior_id' : anterior_id,
                 'num_serie' : document.getElementById('num_serie').value,
                 'placa' : document.getElementById('placa').value,
                 'actual' : document.getElementById('actual').value,
