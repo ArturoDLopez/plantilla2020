@@ -1,0 +1,12 @@
+/**
+ * Plantilla Ventanilla
+ */
+
+@import '_ventanilla/mixins';
+@import '_ventanilla/variables';
+
+@import '_ventanilla/rewrite-base';
+@import '_ventanilla/header';
+@import '_ventanilla/index';
+@import '_ventanilla/titulo';
+@import '_ventanilla/footer';

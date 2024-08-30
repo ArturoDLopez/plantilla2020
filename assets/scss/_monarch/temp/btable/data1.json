@@ -1,0 +1,100 @@
+[{
+	"idusuario": "9",
+	"nombre": "<button class='btn btn-success'>PPPPP</button>",
+	"apellido_paterno": "kjh",
+	"apellido_materno": "kjh",
+	"curp": "FRTT960214HGASWQ11",
+	"rfc": "FRTT960214LK2",
+	"correo": "gfdgs@gfdgfdg.com",
+	"contrasena": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+	"fecha_creacion": "2018-04-02",
+	"activo": "1"
+}, {
+	"idusuario": "8",
+	"nombre": "D",
+	"apellido_paterno": "Torres",
+	"apellido_materno": "Torres",
+	"curp": "HSGT890822HKLYNR00",
+	"rfc": "HSGT890822JHY",
+	"correo": "daniel@gamail.com",
+	"contrasena": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}, {
+	"idusuario": "7",
+	"nombre": "G",
+	"apellido_paterno": "CHAGOLLA",
+	"apellido_materno": "SANDOVAL",
+	"curp": "CASG940724HGTHNR00",
+	"rfc": "FRTG950826KKD",
+	"correo": "gerardo@gmail.com",
+	"contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}, {
+	"idusuario": "6",
+	"nombre": "J",
+	"apellido_paterno": "Banda",
+	"apellido_materno": "Ch\u00e1vez",
+	"curp": "BACJ931031HGTNHN09",
+	"rfc": "BACJ931031NI1",
+	"correo": "manuel@gmal.com",
+	"contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+	"fecha_creacion": "2018-01-29",
+	"activo": "1"
+}, {
+	"idusuario": "5",
+	"nombre": "Ana",
+	"apellido_paterno": "L\u00f3pez",
+	"apellido_materno": "Sim\u00f3n",
+	"curp": "FRTT960214HGASWQ00",
+	"rfc": "FRTT960214LK4",
+	"correo": "ana@gmail.com",
+	"contrasena": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}, {
+	"idusuario": "4",
+	"nombre": "Daniel",
+	"apellido_paterno": "Torres",
+	"apellido_materno": "Torres",
+	"curp": "HSGT890822HKLYNR00",
+	"rfc": "HSGT890822JHY",
+	"correo": "daniel@gamail.com",
+	"contrasena": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}, {
+	"idusuario": "3",
+	"nombre": "GERARDO",
+	"apellido_paterno": "CHAGOLLA",
+	"apellido_materno": "SANDOVAL",
+	"curp": "CASG940724HGTHNR00",
+	"rfc": "FRTG950826KKD",
+	"correo": "gerardo@gmail.com",
+	"contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}, {
+	"idusuario": "2",
+	"nombre": "Juan",
+	"apellido_paterno": "Banda",
+	"apellido_materno": "Ch\u00e1vez",
+	"curp": "BACJ931031HGTNHN09",
+	"rfc": "BACJ931031NI1",
+	"correo": "manuel@gmal.com",
+	"contrasena": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+	"fecha_creacion": "2018-01-29",
+	"activo": "1"
+}, {
+	"idusuario": "1",
+	"nombre": "A",
+	"apellido_paterno": "L\u00f3pez",
+	"apellido_materno": "Sim\u00f3n",
+	"curp": "FRTT960214HGASWQ00",
+	"rfc": "FRTT960214LK4",
+	"correo": "ana@gmail.com",
+	"contrasena": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+	"fecha_creacion": "2018-03-14",
+	"activo": "1"
+}]

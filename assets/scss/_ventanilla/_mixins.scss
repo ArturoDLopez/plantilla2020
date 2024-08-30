@@ -1,0 +1,28 @@
+// Background Cover
+@mixin background-cover {
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+// Box shadow
+@mixin box-shadow($x, $y, $blur, $color) {
+	-webkit-box-shadow: $x $y $blur $color;
+	-moz-box-shadow: $x $y $blur $color;
+	-ms-box-shadow: $x $y $blur $color;
+	box-shadow: $x $y $blur $color; 
+}
+
+// Text shadow
+@mixin text-shadow($x, $y, $blur, $color) {
+	-webkit-text-shadow: $x $y $blur $color;
+	-moz-text-shadow: $x $y $blur $color;
+	-ms-text-shadow: $x $y $blur $color;
+	text-shadow: $x $y $blur $color; 
+}
+
+// Transition
+@mixin transition($time) {
+	transition: $time;
+}

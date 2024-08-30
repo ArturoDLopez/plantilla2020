@@ -1,0 +1,45 @@
+footer.footer {
+    background-color: #242424 !important;
+    h4 {
+        color: white;
+        font-weight: bold;
+        letter-spacing: 1px;
+        margin-top: 10px;
+    }
+    .b-image {
+        text-align: center;
+    }
+    .divider {
+        background-color: #525252;
+        margin: 15px 0;
+    }
+    .b-ubicacion {
+        p {
+            color: $light_gray;
+            text-align: center;
+            margin-top: 15px;
+            i {
+                margin-right: 4px;
+            }
+        }
+        @media (max-width: 992px) {
+            margin-top: 50px;
+        }
+    }
+    .b-sistema {
+        text-align: center;
+        border-top: 1px solid #525252;
+        padding: 20px;
+        margin: 10px;
+        p {
+            color: $light_gray;
+            margin-top: 10px;
+        }
+    }
+    .footer-copyright {
+        background-color: #2E2E2E;
+        line-height: 45px;
+        border-top: 1px solid #525252;
+        color: white;
+    }
+}
