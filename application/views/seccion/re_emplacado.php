@@ -155,7 +155,7 @@
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
                 <i class="glyph-icon icon-edit"></i>
             </button>
-            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_emplacado', columns, tabla)">
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar_local(${row.id}, 'eliminar_emplacado', columns, tabla)">
                 <i class="glyph-icon icon-trash"></i>
             </button>
         `;
@@ -271,6 +271,47 @@
             }
         }
         registrar('agregar_emplacado', 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
+    }
+
+    function eliminar_local(row, url, columnas, tabla){
+        console.log('Row', row);
+        Swal.fire({
+            title: 'Eliminar',
+            text: '¿Seguro que quieres eliminar este registro?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+        }).then((result) => {
+            if(result.value){
+
+                $.ajax({
+                    url: 'consultar_emplacado',
+                    method: 'POST',
+                    data: {'id': row},
+                    success: function(datos){
+                        datos = JSON.parse(datos);
+                        console.log("Donde: ", datos)
+                            $.ajax({
+                                url: url,
+                                method: 'POST',
+                                data: {'id': row, 'anterior_id' : datos.placas_id,},
+                                success: function(data){
+                                    data = JSON.parse(data);
+                                    console.log('Datos al eliminar: ', data);
+                                    if(data.length > 0){
+                                        llamar_tabla(tabla, data, columnas);
+                                        return;
+                                    }
+                                }
+                            })
+                        
+                    }
+                });
+
+                
+            }
+        })
     }
 
     function cancelar_local(){

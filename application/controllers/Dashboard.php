@@ -477,7 +477,9 @@ class Dashboard extends CI_Controller{
 
     public function eliminar_emplacado(){
         $id = $this->input->post('id');
+        $anterior_id = $this->input->post('anterior_id');
         $this->Catalogos_model->eliminado_logico($id, 'emplacado');
+        $this->Catalogos_model->actualizar_un_parametro($anterior_id, 'placas', null);
         echo $this->cargar_emplacado();
     }
 
