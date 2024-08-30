@@ -484,11 +484,13 @@ class Dashboard extends CI_Controller{
 
     public function eliminar_auto(){
         $id = $this->input->post('id');
-        echo $this->Catalogos_model->eliminado_logico($id, 'vehiculos');
+        $this->Catalogos_model->eliminado_logico($id, 'vehiculos');
+        echo $this->cargar_autos();
     }
 
     public function eliminar_robo(){
-        echo $this->Catalogos_model->eliminado_logico($this->input->post('id'), 'robos');
+        $this->Catalogos_model->eliminado_logico($this->input->post('id'), 'robos');
+        echo $this->cargar_robos();
     }
 
     //-------------- Llamado ---------------------------

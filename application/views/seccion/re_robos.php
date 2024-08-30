@@ -1,136 +1,101 @@
-<style>
-    #ve_container{
-        margin-top: 2vh;
-    }
-
-    #frm_container{
-        margin-top: 2vh;
-    }
-</style>
-
-
-
-
 <div class="container m-5" id="ve_container">
     <h1>
         Agregar reporte de robo
     </h1>
-    <form  id="frm_container" method="POST">
-        <div class="row pt-4">
+</div>
 
-            
-            <div class="form-group col-md-4">
-                <label for="num_serie">Numero de serie</label>
-                <select class="form-control" id="num_serie" name="num_serie" onchange="buscar_datos()">
-                    <option value="0">
-                        Seleccione una opcion...
-                    </option>
-                    <?php
-                        foreach($vehiculos['vehiculos'] as $vehiculo){
-                            echo 
-                            '
-                                <option value="'.$vehiculo->id.'">
-                                    '.$vehiculo->num_serie.'
-                                </option>
-                            ';
-                        }
-                    ?>
-                </select>
-            </div>
-
-            <div class="form-group col-md-4">
-                    <label for="placa">Placa</label>
-                    <input type="text" disabled class="form-control" id="inp_placa" name="placas_id">
-            </div>
-
-            <div class="form-group col-md-4">
-                    <label for="placa">Dueño</label>
-                    <input type="text" disabled class="form-control" id="inp_dueno" name="duenos_id">
-            </div>
-            
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label for="descripcion">Descripcion</label>
-                <textarea class="form-control" name="descripcion" id="descripcion"></textarea>
-            </div>
-            <div class="form-group col-md-6">
-                <label for="fecha_r">Fecha del robo</label>
-                <input type="date" name="fecha_r" id="fecha_r" class="form-control">
-            </div>
-
-            
-
-        </div>
+<div class="container ve_container">
+    <div class="row mb-1">
+        <button onclick="llamar()" class="btn btn-success justify-content-center m-2 p-2">
+            Registrar nuevo reporte
+        </button>
+    </div>
+    
+    <div class="row">
         
-        <div class="row">
-            <div class="col-md-1">
-                <button type="button" id="btn_duenos" onclick="enviar_datos()" class="btn btn-success">Registrar</button>
+        <table id="tableV">
+
+        </table>
+    </div>
+</div>
+
+<div class="modal" data-backdrop="static" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="modalFormLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header"  style="background-color: #1C314F;">
+        <h5 class="modal-title" id="modalFormLabel">Agregar reporte de robo</h5>
+      </div>
+      <div class="modal-body">
+        <form  id="frm_container" method="POST">
+            <div class="row pt-4">
+                
+                <div class="form-group col-md-4">
+                    <label for="num_serie">Numero de serie</label>
+                    <select class="form-control" id="num_serie" name="num_serie" onchange="buscar_datos()">
+                        <option value="0">
+                            Seleccione una opcion...
+                        </option>
+                        <?php
+                            foreach($vehiculos['vehiculos'] as $vehiculo){
+                                echo 
+                                '
+                                    <option value="'.$vehiculo->id.'">
+                                        '.$vehiculo->num_serie.'
+                                    </option>
+                                ';
+                            }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-4">
+                        <label for="placa">Placa</label>
+                        <input type="text" disabled class="form-control" id="inp_placa" name="placas_id">
+                </div>
+
+                <div class="form-group col-md-4">
+                        <label for="placa">Dueño</label>
+                        <input type="text" disabled class="form-control" id="inp_dueno" name="duenos_id">
+                </div>
+                
             </div>
-            
-            <div class="col-md-1" id="btn_cancel">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="descripcion">Descripcion</label>
+                    <textarea class="form-control" name="descripcion" id="descripcion"></textarea>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="fecha_r">Fecha del robo</label>
+                    <input type="date" name="fecha_r" id="fecha_r" class="form-control">
+                </div>
 
             </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="col-md-1">
+            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
         </div>
-    </form>
-</div>
-<div class="container ve_container">
-    <!-- <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Numero de serie</th>
-                <th>Placas</th>
-                <th>Dueño</th>
-                <th>Descripcion</th>
-                <th>Fecha del Robo</th>
-                <th>Fecha de registro</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            $count = 1;
-                foreach($robos['robos'] as $placa){
-                    echo '
-                        <tr>
-                            <td>
-                                '.$count++.'
-                            </td>
-                            <td>
-                                '.$placa->num_serie.'
-                            </td>
-                            <td>
-                                '.$placa->placa.'
-                            </td>
-                            <td>
-                                '.$placa->nombre. ' ' . $placa->apellido_p . '
-                            </td>
-                            <td>
-                                '.$placa->descripcion.'
-                            </td>
-                            <td>
-                                '.$placa->fecha.'
-                            </td>
-                            <td>
-                                '.$placa->fecha_registro.'
-                            </td>
-                        </tr>
-                    ';
-                }
-            ?>
-        </tbody>
-    </table> -->
-</div>
-<div class="container ve_container">
-    <table id="tablaB" class="table"></table>
+                        
+        <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
 
+      </div>
+    </div>
+  </div>
 </div>
+
+<script src="../assets/js/modal.js">
+    
+</script>
 
 <script>
 
+    let modal_id = "modalForm";
+    let tabla = $("#tableV");
+    let arreglo_campos = ['num_serie', 'inp_placa', 'inp_dueno', 'descripcion', 'fecha_r'];
+    let variable;
     let global;
-    let datos_table;
-    let tabla = $('#tablaB');
+    let datosTabla = 0;
     const columns = [{
                         field: 'id',
                         title: '#'
@@ -162,63 +127,22 @@
 
     ];
 
+    traer_datos('cargar_robos', columns, tabla);
+
     function acciones(value, row, index){
         return `
-        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(`+row.id+`)">
-                    <i class="glyph-icon icon-edit"></i>
-        </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
-                    <i class="glyph-icon icon-trash"></i>
-        </button>
-        `
+            <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
+                <i class="glyph-icon icon-edit"></i>
+            </button>
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_robo', columns, tabla)">
+                <i class="glyph-icon icon-trash"></i>
+            </button>
+        `;
     }
 
-    function eliminar(value, row){
-        console.log('Row', row);
-        Swal.fire({
-            title: 'Eliminar',
-            text: 'Seguro que quieres eliminar este robo?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if(result.value){
-                $.ajax({
-                    url: 'eliminar_robo',
-                    method: 'POST',
-                    data: {'id': row},
-                    success: function(data){
-                        console.log('success: ', data)
-                        console.log('datos tabla length: ',datos_table.length);
-                        if(data > 0){
-                            for(var i = 0; i<datos_table.length; i++){
-                                console.log('datos: ', datos_table[i]);
-                                if(datos_table[i].id == row){
-                                    datos_table.splice(i, 1);
-                                }
-                            }
-                            tabla.bootstrapTable('removeAll');
-                            tabla.bootstrapTable('append', datos_table);
-                            return;
-                        }
-                    }
-
-                })
-            }
-        })
-        //tabla.bootstrapTable('removeAll')
+    function llamar(){
+        llamar_modal(modal_id, arreglo_campos);
     }
-
-    function fomrmaterEliminar(value, row, index) {
-        return '<button class="remove btn btn-danger" type="button" onclick="eliminar('+value+','+row.id+')">Eliminar</button>'
-    }
-
-    function fomrmaterActualizar(value, row, index) {
-        return '<button class="remove btn btn-warning" type="button" onclick="rellenar('+value+','+row.id+')">Actualizar</button>'
-    }
-
-    let variable;
 
     function rellenar(id){
         $.ajax({
@@ -228,7 +152,8 @@
             success: function(datos){
                 datos = JSON.parse(datos);
                 console.log(datos);
-                document.getElementById('btn_cancel').innerHTML = `<button type="button"  onclick="cancelar()" class="btn btn-danger">Cancelar</button>`;
+                llamar_modal(modal_id, arreglo_campos);
+                document.getElementById('modalFormLabel').innerHTML = 'Actualizar robo';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 document.getElementById('num_serie').value = datos.vehiculos_id;
                 document.getElementById('inp_placa').value = datos.placas_id;
@@ -241,25 +166,7 @@
         })
     }
    
-    imprimir()
-
-    function imprimir()
-    {
-        
-        $.ajax({
-            url: 'cargar_robos',
-            type: 'POST',
-            success: function(data){
-                console.log('Datos: ', data);
-                datos_table = JSON.parse(data);
-                llamar_tabla(datos_table);
-            }
-        });
-    };
-
-
     function buscar_datos() {
-        
         var combo = document.getElementById("num_serie");
         var sel = combo.options[combo.selectedIndex].text;
         //let url = "<?php echo base_url('dashboard/buscar_datos');?>";
@@ -286,30 +193,26 @@
         })
     }
 
-    function cancelar(){
-        document.getElementById('btn_cancel').innerHTML = ``;
-        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-        limpiar();
-    }
-
-    function enviar_datos(){
+    function registrar_local(){
+        let elemento = document.getElementById('btn_duenos');
+        let datos = [];
         let num_serie = document.getElementById('num_serie').value;
         let placas_id = global.placa_id;
         let duenos_id = global.dueno_id;
         let descripcion = document.getElementById('descripcion').value;
         let fecha = document.getElementById('fecha_r').value;
-        let url = 'agregar_robo';
-        let json =
-        {
-            'num_serie' : num_serie,
-            'placas_id' : placas_id,
-            'duenos_id' : duenos_id,
-            'descripcion' : descripcion,
-            'fecha_r' : fecha
+        if(elemento.innerHTML == 'Registrar'){
+            document.getElementById('modalFormLabel').innerHTML = 'Registrar Emplacado';
+            datos = {
+                'num_serie' : num_serie,
+                'placas_id' : placas_id,
+                'duenos_id' : duenos_id,
+                'descripcion' : descripcion,
+                'fecha_r' : fecha
+            }
         }
-        if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-            url = 'editar_robo';
-            json = {
+        else{
+            datos = {
                 'id': variable,
                 'num_serie' : num_serie,
                 'placas_id' : placas_id,
@@ -317,44 +220,12 @@
                 'descripcion' : descripcion,
                 'fecha_r' : fecha
             }
-            document.getElementById('btn_cancel').innerHTML = ``;
         }
-        console.log('json: ', json);
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: json,
-            success: function(datos){
-                console.log('Datos: ', datos);
-                datos_table = JSON.parse(datos);
-                llamar_tabla(datos_table);
-                document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-                    document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                }
-                limpiar();
-                
-            
-            }
-        })
+        registrar('agregar_robo', 'editar_robo', datos, elemento, columns, arreglo_campos, tabla);
     }
 
-    function limpiar(){
-        document.getElementById('num_serie').value = "";
-        document.getElementById('inp_placa').value = "";
-        document.getElementById('inp_dueno').value = ""; 
-        document.getElementById('descripcion').value = "";
-        document.getElementById('fecha_r').value = "";
+    function cancelar_local(){
+        cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
-    
-    function llamar_tabla(datos){
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            pagination : true,
-            search : true,
-            columns: columns,
-            data: datos
-        });
-    }
-        
+ 
 </script>

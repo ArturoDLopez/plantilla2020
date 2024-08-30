@@ -1,54 +1,77 @@
 
-<div class="container m-5" id="ve_container">
+<div class="container m-5 text-center" id="ve_container">
     <h1>
         Agregar Dueños
     </h1>
-    <form action="" method="post" id='frm_duenos'>
-        <div class="row">
-
-            <div class="form-group col-sm-4">
-                <label for="nombre" class="">Nombre</label>
-                <input type="text" class="form-control" required id="nombre" name="nombre" placeholder="Ingresa tu nombre">
-            </div>
-
-            <div class="form-group col-sm-4">
-                <label for="ap" class="">Apellido paterno</label>
-                <input type="text" class="form-control" required id="ap" name="ap" placeholder="Ingresa tu apellido paterno">
-            </div>
-
-            <div class="form-group col-sm-4">
-                <label for="am" class="">Apellido materno</label>
-                <input type="text" class="form-control" required id="am" name="am" placeholder="Ingresa tu apellido materno">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-1">
-                <button type="button" id="btn_duenos" onclick="registrar()" class="btn btn-success">Registrar</button>
-            </div>
-            
-            <div class="col-md-1" id="btn_cancel">
-
-            </div>
-        </div>
-        
-    </form>
+</div>
 
     <!-- Tabla de todos los duenos -->
-    <div class="container"  id="cls_container">
+<div class="container"  id="cls_container">
 
-        <div class="container ve_container">
-    
-        <table id="tableV">
-
-        </table>
-    </div>
-
+    <div class="container ve_container">
+        <div class="row mb-1">
+            <button onclick="llamar()" class="btn btn-success justify-content-center m-2 p-2">
+                Registrar nuevo dueño
+            </button>
+        </div>
+        
+        <div class="row">
+            <table id="tableV">
+            </table>
+        </div>
     </div>
 </div>
 
+<div class="modal" data-backdrop="static" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="modalFormLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalFormLabel">Agregar dueños</h5>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" id='frm_duenos'>
+            <div class="row">
+
+                <div class="form-group col-sm-4">
+                    <label for="nombre" class="">Nombre</label>
+                    <input type="text" class="form-control" required id="nombre" name="nombre" placeholder="Ingresa tu nombre">
+                </div>
+
+                <div class="form-group col-sm-4">
+                    <label for="ap" class="">Apellido paterno</label>
+                    <input type="text" class="form-control" required id="ap" name="ap" placeholder="Ingresa tu apellido paterno">
+                </div>
+
+                <div class="form-group col-sm-4">
+                    <label for="am" class="">Apellido materno</label>
+                    <input type="text" class="form-control" required id="am" name="am" placeholder="Ingresa tu apellido materno">
+                </div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <div class="col-md-1">
+            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
+        </div>
+                        
+        <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/js/modal.js">
+    
+</script>
+
+
 <script>
 
+    let modal_id = "modalForm";
     let tabla = $("#tableV");
+    let arreglo_campos = ['nombre', 'ap', 'am'];
+    let variable;
     let datosTabla = 0;
     let columns = [
         {
@@ -71,38 +94,20 @@
 
     function acciones(value, row, index){
         return `
-        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(`+row.id+`)">
-                    <i class="glyph-icon icon-edit"></i>
-        </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
-                    <i class="glyph-icon icon-trash"></i>
-        </button>
-        `
+            <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
+                <i class="glyph-icon icon-edit"></i>
+            </button>
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_dueno', columns, tabla)">
+                <i class="glyph-icon icon-trash"></i>
+            </button>
+        `;
     }
 
-    traer_datos();
+    traer_datos('cargar_duenos', columns, tabla);
 
-    function traer_datos(){
-        $.ajax({
-            url: 'cargar_duenos',
-            method: 'POST',
-            success: function(data){
-                console.log(data);
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-            }
-        })
+    function llamar(){
+        llamar_modal(modal_id, arreglo_campos);
     }
-
-    function fomrmaterEliminar(value, row, index) {
-        return '<button class="remove btn btn-danger" type="button" onclick="eliminar('+value+','+row.id+')">Eliminar</button>'
-    }
-    
-    function fomrmaterActualizar(value, row, index) {
-        return `<button class="remove btn btn-warning" type="button" onclick='rellenar(`+row.id+`)'>Actualizar</button>`;
-    }
-
-    let variable;
 
     function rellenar(id){
         console.log('variables: '+id);
@@ -113,7 +118,8 @@
             success: function(datos){
                 datos = JSON.parse(datos);
                 console.log(datos);
-                document.getElementById('btn_cancel').innerHTML = `<button type="button"  onclick="cancelar()" class="btn btn-danger">Cancelar</button>`;
+                llamar_modal(modal_id, arreglo_campos);
+                document.getElementById('modalFormLabel').innerHTML = 'Actualizar dueños';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 document.getElementById('nombre').value = datos.nombre;
                 document.getElementById('ap').value = datos.apellido_p;
@@ -123,79 +129,29 @@
         })
     }
 
-    function cancelar(){
-        document.getElementById('btn_cancel').innerHTML = ``;
-        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-        limpiar();
-    }
-
-
-    function registrar(){
-        console.log("Si era asi: ", variable);
-        url = 'agregar_duenos';
-        data = {'nombre':document.getElementById('nombre').value, 'ap':document.getElementById('ap').value, 'am':document.getElementById('am').value}
-        if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-            url = 'editar_dueno';
-            data = {'id': variable, 'nombre':document.getElementById('nombre').value, 'ap':document.getElementById('ap').value, 'am':document.getElementById('am').value}
-            document.getElementById('btn_cancel').innerHTML = ``;
+    function registrar_local(){
+        let elemento = document.getElementById('btn_duenos');
+        let datos = [];
+        if(elemento.innerHTML == 'Registrar'){
+            document.getElementById('modalFormLabel').innerHTML = 'registrar dueño';
+            datos = {
+                'nombre' : document.getElementById('nombre').value,
+                'ap' : document.getElementById('ap').value,
+                'am' : document.getElementById('am').value,
+            }
         }
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: data,
-            success: function(data){
-                console.log(data);
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-                document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-                    document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                }
-                limpiar();
+        else{
+            datos = {
+                'id': variable,
+                'nombre' : document.getElementById('nombre').value,
+                'ap' : document.getElementById('ap').value,
+                'am' : document.getElementById('am').value,
             }
-        })
+        }
+        registrar('agregar_duenos', 'editar_dueno', datos, elemento, columns, arreglo_campos, tabla);
     }
 
-    function limpiar(){
-        document.getElementById('nombre').value = "";
-        document.getElementById('ap').value = "";
-        document.getElementById('am').value = "";
-    }
-
-    function eliminar(value, row){
-        console.log('Row', row);
-        Swal.fire({
-            title: 'Eliminar',
-            text: 'Seguro que quieres eliminar a este dueño?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if(result.value){
-                $.ajax({
-                    url: 'eliminar_dueno',
-                    method: 'POST',
-                    data: {'id': row},
-                    success: function(data){
-                        data = JSON.parse(data);
-                        if(data.length > 0){
-                            llamar_tabla(data);
-                            return;
-                        }
-                    }
-                })
-            }
-        })
-    }
-
-    function llamar_tabla(data){
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            pagination : true,
-            search : true,
-            data: data,
-            columns: columns
-        })
+    function cancelar_local(){
+        cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
 </script>

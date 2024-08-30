@@ -23,42 +23,15 @@ function traer_datos(url, columnas, tabla){
     })
 }
 
-/* function rellenar(id){
-    $.ajax({
-        url: 'consultar_propietario',
-        method: 'POST',
-        data: {'id': id},
-        success: function(datos){
-            datos = JSON.parse(datos);
-            console.log(datos);
-            let fecha_inicio = new Date(datos.fecha_inicio);
-            fecha_inicio = fecha_inicio.toISOString().split('T')[0];
-            let fecha_termino_completa = datos.fecha_termino;
-            console.log("datos.fecha_termino: ", fecha_termino_completa);
-            let fecha_termino = datos.fecha_termino == null || datos.fecha_termino == "0000-00-00 00:00:00" ?  "" : new Date(datos.fecha_termino);
-            console.log('Fehca de termino: ', fecha_termino);
-            fecha_termino = fecha_termino != "" ? fecha_termino.toISOString().split('T')[0] : "";
-
-            llamar_modal(id);
-            document.getElementById('modalFormLabel').innerHTML = 'Editar propietario';
-            document.getElementById('btn_duenos').innerHTML = 'Actualizar';
-            document.getElementById('num_serie').value = datos.vehiculos_id;
-            document.getElementById('dueno').value = datos.duenos_id;
-            document.getElementById('actual').value = datos.actual; 
-            document.getElementById('fecha_i').value = fecha_inicio;
-            document.getElementById('fecha_t').value = fecha_termino;
-            variable = id;
-        }
-    })
-} */
-
 function cancelar(btn1, btn2, elementos){
-    btn1.innerHTML = `Cancelar`;
-    btn2.innerHTML = 'Registrar';
+    console.log("Cancelar real: ", btn1);
+    document.getElementById(btn1).innerHTML = 'Registrar';
+    document.getElementById(btn2).innerHTML = 'Cancelar';
     limpiar(elementos);
 }
 
-function registrar(url_primaria, url_secundaria, data, element, columnas, elementos){
+function registrar(url_primaria, url_secundaria, data, element, columnas, elementos, tabla){
+    console.log(url_primaria, url_secundaria, data, element, columnas, elementos, tabla);
     url = url_primaria;
     if(element.innerHTML == 'Actualizar'){
         url = url_secundaria;
@@ -69,18 +42,29 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
         data: data,
         success: function(data){
             datosTabla = JSON.parse(data);
-            llamar_tabla(tabla, datosTabla, columnas);
+            console.log('Datootot', datosTabla);
+            if(datosTabla == 0){
+                Swal.fire({
+                    title: 'Error',
+                    text: 'El dato que intentas ingresar ya existe',
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar'
+                })
+            }
+            else{
+                llamar_tabla(tabla, datosTabla, columnas);
+            }
+            
             element.innerHTML = 'Registrar';
             if(element.innerHTML == 'Actualizar'){
                 element.innerHTML = 'Registrar';
             }
             limpiar(elementos);
-            
         }
     })
 }
 
-function eliminar(row, url, columnas){
+function eliminar(row, url, columnas, tabla){
     console.log('Row', row);
     Swal.fire({
         title: 'Eliminar',
@@ -97,6 +81,7 @@ function eliminar(row, url, columnas){
                 data: {'id': row},
                 success: function(data){
                     data = JSON.parse(data);
+                    console.log('Datos al eliminar: ', data);
                     if(data.length > 0){
                         llamar_tabla(tabla, data, columnas);
                         return;

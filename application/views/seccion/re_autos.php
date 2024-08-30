@@ -102,10 +102,10 @@
       </div>
       <div class="modal-footer">
         <div class="col-md-1">
-            <button type="button" id="btn_duenos" onclick="registrar()" class="btn btn-success" data-dismiss="modal">Registrar</button>
+            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
         </div>
                         
-        <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cerrar</button>
+        <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
 
       </div>
     </div>
@@ -152,13 +152,13 @@
 
     function acciones(value, row, index){
         return `
-        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(`+row.id+`)">
-                    <i class="glyph-icon icon-edit"></i>
-        </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
-                    <i class="glyph-icon icon-trash"></i>
-        </button>
-        `
+            <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
+                <i class="glyph-icon icon-edit"></i>
+            </button>
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_auto', columns, tabla)">
+                <i class="glyph-icon icon-trash"></i>
+            </button>
+        `;
     }
 
     function llamar(){
@@ -186,344 +186,32 @@
         })
     }
 
+    function registrar_local(){
+        let elemento = document.getElementById('btn_duenos');
+        let datos = [];
+        if(elemento.innerHTML == 'Registrar'){
+            datos = {
+                'num_serie' : document.getElementById('num_serie').value,
+                'marca' : document.getElementById('marca').value,
+                'modelo' : document.getElementById('modelo').value,
+                'color' : document.getElementById('color').value,
+                'tipo' : document.getElementById('tipo').value,
+            }
+        }
+        else{
+            datos = {
+                'id': variable,
+                'num_serie' : document.getElementById('num_serie').value,
+                'marca' : document.getElementById('marca').value,
+                'modelo' : document.getElementById('modelo').value,
+                'color' : document.getElementById('color').value,
+                'tipo' : document.getElementById('tipo').value,
+            }
+        }
+        registrar('agregar_vehiculos', 'editar_auto', datos, elemento, columns, arreglo_campos, tabla);
+    }
+
     function cancelar_local(){
-        cancelar('btn_duenos', 'btn_cancel', elementos);
+        cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
-
-/*     function traer_datos(){
-        $.ajax({
-            url: 'cargar_autos',
-            method: 'POST',
-            success: function(data){
-                console.log(data);
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-            }
-        })
-    } */
-
-    /* function rellenar(id){
-        $.ajax({
-            url: 'consultar_auto',
-            method: 'POST',
-            data: {'id': id},
-            success: function(datos){
-                datos = JSON.parse(datos);
-                console.log(datos);
-                llamar_modal();
-                document.getElementById('modalFormLabel').innerHTML = 'Actualizar vehiculos';
-                document.getElementById('btn_duenos').innerHTML = 'Actualizar';
-                document.getElementById('num_serie').value = datos.num_serie;
-                document.getElementById('marca').value = datos.marcas_id;
-                document.getElementById('modelo').value = datos.modelo; 
-                document.getElementById('color').value = datos.colores_id;
-                document.getElementById('tipo').value = datos.tipo_id;
-                variable = id;
-            }
-        })
-    }
-
-    function cancelar(){
-        document.getElementById('btn_cancel').innerHTML = `Cancelar`;
-        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-        limpiar();
-    }
-    
-    function registrar(){
-        url = 'agregar_vehiculos'
-        datos = {
-            'num_serie' : document.getElementById('num_serie').value,
-            'marca' : document.getElementById('marca').value,
-            'modelo' : document.getElementById('modelo').value,
-            'color' : document.getElementById('color').value,
-            'tipo' : document.getElementById('tipo').value,
-        }
-        if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-            url = 'editar_auto';
-            datos = {
-                'id': variable,
-                'num_serie' : document.getElementById('num_serie').value,
-                'marca' : document.getElementById('marca').value,
-                'modelo' : document.getElementById('modelo').value,
-                'color' : document.getElementById('color').value,
-                'tipo' : document.getElementById('tipo').value,
-            }
-        }
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: datos,
-            success: function(data){
-                console.log('La data: ', data);
-                if(data == 0){
-                    Swal.fire({
-                            title: 'Error',
-                            text: 'El dato que intentas ingresar ya existe',
-                            icon: 'warning',
-                            confirmButtonText: 'Aceptar'
-                        })
-                }
-                else{
-                    console.log(data);
-                    datosTabla = JSON.parse(data);
-                    llamar_tabla(datosTabla);
-                    document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                    if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-                        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                    }
-                    limpiar();
-                }
-            }
-        })
-    }
-
-    function eliminar(value, row){
-        console.log('Row', row);
-        Swal.fire({
-            title: 'Eliminar',
-            text: 'Seguro que quieres eliminar este auto?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if(result.value){
-                $.ajax({
-                    url: 'eliminar_auto',
-                    method: 'POST',
-                    data: {'id': row},
-                    success: function(data){
-                        console.log('success: ', data)
-                        console.log('datos tabla length: ',datosTabla.length);
-                        if(data > 0){
-                            for(var i = 0; i<datosTabla.length; i++){
-                                console.log('datos: ', datosTabla[i]);
-                                if(datosTabla[i].id == row){
-                                    datosTabla.splice(i, 1);
-                                }
-                            }
-                            tabla.bootstrapTable('removeAll');
-                            tabla.bootstrapTable('append', datosTabla);
-                            return;
-                        }
-                    }
-
-                })
-            }
-        })
-    } */
-
-    /* function limpiar(){
-        document.getElementById('num_serie').value = "";
-        document.getElementById('marca').value = "";
-        document.getElementById('modelo').value = "";
-        document.getElementById('color').value = "";
-        document.getElementById('tipo').value = "";
-    } */
-/* 
-    function editar_titulo(){
-        document.getElementById('modalFormLabel').innerHTML = 'Registrar vehiculos';
-        llamar_modal();
-    }
- */
-    
-    
-
 </script>
-
-<!-- 
-<script>
-
-    let tabla = $("#tableV");
-    let variable;
-    let datosTabla = 0;
-    let columns = [
-        {
-            field: 'num_serie', title: 'Numero de serie'
-        },
-        {
-            field: 'nom_marca', title: 'Marca'
-        },
-        {
-            field: 'modelo', title: 'modelo'
-        },
-        {
-            field: 'nom_tipo', title: 'Tipo'
-        },
-        {
-            field: 'nom_color', title: 'Color'
-        },
-        {
-            field: 'fecha_registro', title: 'Fecha de registro'
-        },
-        {
-            field: 'id', title: 'Acciones', formatter: acciones, align: 'center'
-        }
-
-    ];
-    traer_datos();
-
-    function acciones(value, row, index){
-        return `
-        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(`+row.id+`)">
-                    <i class="glyph-icon icon-edit"></i>
-        </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
-                    <i class="glyph-icon icon-trash"></i>
-        </button>
-        `
-    }
-
-    function traer_datos(){
-        $.ajax({
-            url: 'cargar_autos',
-            method: 'POST',
-            success: function(data){
-                console.log(data);
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-            }
-        })
-    }
-
-    function rellenar(id){
-        $.ajax({
-            url: 'consultar_auto',
-            method: 'POST',
-            data: {'id': id},
-            success: function(datos){
-                datos = JSON.parse(datos);
-                console.log(datos);
-                llamar_modal();
-                document.getElementById('modalFormLabel').innerHTML = 'Actualizar vehiculos';
-                document.getElementById('btn_duenos').innerHTML = 'Actualizar';
-                document.getElementById('num_serie').value = datos.num_serie;
-                document.getElementById('marca').value = datos.marcas_id;
-                document.getElementById('modelo').value = datos.modelo; 
-                document.getElementById('color').value = datos.colores_id;
-                document.getElementById('tipo').value = datos.tipo_id;
-                variable = id;
-            }
-        })
-    }
-
-    function cancelar(){
-        document.getElementById('btn_cancel').innerHTML = `Cancelar`;
-        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-        limpiar();
-    }
-    
-    function registrar(){
-        url = 'agregar_vehiculos'
-        datos = {
-            'num_serie' : document.getElementById('num_serie').value,
-            'marca' : document.getElementById('marca').value,
-            'modelo' : document.getElementById('modelo').value,
-            'color' : document.getElementById('color').value,
-            'tipo' : document.getElementById('tipo').value,
-        }
-        if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-            url = 'editar_auto';
-            datos = {
-                'id': variable,
-                'num_serie' : document.getElementById('num_serie').value,
-                'marca' : document.getElementById('marca').value,
-                'modelo' : document.getElementById('modelo').value,
-                'color' : document.getElementById('color').value,
-                'tipo' : document.getElementById('tipo').value,
-            }
-        }
-
-        $.ajax({
-            url: url,
-            method: 'POST',
-            data: datos,
-            success: function(data){
-                console.log('La data: ', data);
-                if(data == 0){
-                    Swal.fire({
-                            title: 'Error',
-                            text: 'El dato que intentas ingresar ya existe',
-                            icon: 'warning',
-                            confirmButtonText: 'Aceptar'
-                        })
-                }
-                else{
-                    console.log(data);
-                    datosTabla = JSON.parse(data);
-                    llamar_tabla(datosTabla);
-                    document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                    if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-                        document.getElementById('btn_duenos').innerHTML = 'Registrar';
-                    }
-                    limpiar();
-                }
-            }
-        })
-    }
-
-    function eliminar(value, row){
-        console.log('Row', row);
-        Swal.fire({
-            title: 'Eliminar',
-            text: 'Seguro que quieres eliminar este auto?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar',
-        }).then((result) => {
-            if(result.value){
-                $.ajax({
-                    url: 'eliminar_auto',
-                    method: 'POST',
-                    data: {'id': row},
-                    success: function(data){
-                        console.log('success: ', data)
-                        console.log('datos tabla length: ',datosTabla.length);
-                        if(data > 0){
-                            for(var i = 0; i<datosTabla.length; i++){
-                                console.log('datos: ', datosTabla[i]);
-                                if(datosTabla[i].id == row){
-                                    datosTabla.splice(i, 1);
-                                }
-                            }
-                            tabla.bootstrapTable('removeAll');
-                            tabla.bootstrapTable('append', datosTabla);
-                            return;
-                        }
-                    }
-
-                })
-            }
-        })
-    }
-
-    function limpiar(){
-        document.getElementById('num_serie').value = "";
-        document.getElementById('marca').value = "";
-        document.getElementById('modelo').value = "";
-        document.getElementById('color').value = "";
-        document.getElementById('tipo').value = "";
-    }
-
-    function editar_titulo(){
-        document.getElementById('modalFormLabel').innerHTML = 'Registrar vehiculos';
-        llamar_modal();
-    }
-
-    function llamar_modal(){
-        console.log("Llamar modal");
-        limpiar();
-        $("#modalForm").modal('show');
-    }
-
-    function llamar_tabla(data){
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            pagination : true,
-            data: data,
-            columns: columns
-        })
-    }
-</script> -->
