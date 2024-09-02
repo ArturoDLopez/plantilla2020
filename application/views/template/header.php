@@ -115,7 +115,7 @@
 							<a href="<?= base_url(); ?>catalogos/tipos"><span>Tipos</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_autos"><span>Autos</span></a>
+							<a href="<?= base_url(); ?>secciones/vehiculos"><span>Autos</span></a>
 						</li>
 						<li>
 							<a href="<?= base_url(); ?>dashboard/registrar_duenos"><span>Dueños</span></a>

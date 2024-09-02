@@ -65,7 +65,7 @@
                 <div class="form-group col-md-6">
                     <label for="color">Color</label>
                     <select class="form-control" name="color" id="color">
-                        <option value="0">Selecciona una opcion</option>
+                        <!-- <option value="0">Selecciona una opcion</option>
                         <?php
                             foreach($colores['colores'] as $color):
                         ?>
@@ -74,7 +74,7 @@
                             </option>
                         <?php 
                             endforeach;
-                        ?>
+                        ?> -->
                     </select>
                 </div>
                 <div class="form-group col-md-6">
@@ -118,6 +118,7 @@
 
 <script>
 
+    let base_url = "<?= base_url()?>secciones/vehiculos";
     let modal_id = "modalForm";
     let tabla = $("#tableV");
     let arreglo_campos = ['num_serie', 'marca', 'modelo', 'color', 'tipo'];
@@ -148,7 +149,7 @@
 
     ];
     
-    traer_datos('cargar_autos', columns, tabla);
+    traer_datos(base_url + '/cargar_vehiculos', columns, tabla);
 
     function acciones(value, row, index){
         return `
@@ -162,6 +163,52 @@
     }
 
     function llamar(){
+        let marcas, colores, tipos, opcionesM;
+        $.ajax({
+            url: base_url + '/cargar_marcas',
+            method: 'POST',
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones = '';
+                    json.forEach(element => {
+                            opciones += `<option value="`+element.id+`">`+element.nom_marca+`</option>`
+                        });
+                    document.getElementById('marca').innerHTML = opciones
+                }
+            }
+        });
+
+        $.ajax({
+            url: base_url + '/cargar_colores',
+            method: 'POST',
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones = '';
+                    json.forEach(element => {
+                            opciones += `<option value="`+element.id+`">`+element.nom_color+`</option>`
+                        });
+                    document.getElementById('color').innerHTML = opciones
+                }
+            }
+        });
+        $.ajax({
+            url: base_url + '/cargar_tipos',
+            method: 'POST',
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones = '';
+                    json.forEach(element => {
+                            opciones += `<option value="`+element.id+`">`+element.nom_tipo+`</option>`
+                        });
+                    document.getElementById('tipo').innerHTML = opciones
+                }
+                
+            }
+        });
+
         llamar_modal(modal_id, arreglo_campos);
     }
 
@@ -208,7 +255,7 @@
                 'tipo' : document.getElementById('tipo').value,
             }
         }
-        registrar('agregar_vehiculos', 'editar_auto', datos, elemento, columns, arreglo_campos, tabla);
+        registrar(base_url+'/agregar_vehiculos', 'editar_auto', datos, elemento, columns, arreglo_campos, tabla);
     }
 
     function cancelar_local(){

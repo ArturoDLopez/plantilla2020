@@ -16,7 +16,7 @@ function traer_datos(url, columnas, tabla){
         url: url,
         method: 'POST',
         success: function(data){
-            console.log('traer datos:',data);
+            //console.log('traer datos:',data);
             datosTabla = JSON.parse(data);
             llamar_tabla(tabla, datosTabla, columnas);
         }
