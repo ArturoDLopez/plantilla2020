@@ -110,6 +110,9 @@
 					<ul class="submenu">
 						<li>
 							<a href="<?= base_url(); ?>dashboard/registro_catalogos"><span>Marcas/Colores/Tipos</span></a>
+							<a href="<?= base_url(); ?>catalogos/marcas"><span>Marcas</span></a>
+							<a href="<?= base_url(); ?>catalogos/colores"><span>Colores</span></a>
+							<a href="<?= base_url(); ?>catalogos/tipos"><span>Tipos</span></a>
 						</li>
 						<li>
 							<a href="<?= base_url(); ?>dashboard/registrar_autos"><span>Autos</span></a>
