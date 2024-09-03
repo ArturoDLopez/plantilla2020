@@ -16,7 +16,7 @@
         </div>
         
         <div class="row">
-            <table id="tableV">
+            <table id="tableV" data-url="<?= base_url()?>secciones/duenos/cargar_duenos" >
             </table>
         </div>
     </div>
@@ -31,6 +31,11 @@
       <div class="modal-body">
         <form action="" method="post" id='frm_duenos'>
             <div class="row">
+
+                <div class="form-group col-sm-4">
+                    <label for="curp" class="">Curp</label>
+                    <input type="text" class="form-control" required id="curp" name="curp" placeholder="Ingresa tu curp">
+                </div>
 
                 <div class="form-group col-sm-4">
                     <label for="nombre" class="">Nombre</label>
@@ -68,12 +73,17 @@
 
 <script>
 
+    let base_url = "<?= base_url()?>secciones/duenos/";
+    let elemento = document.getElementById('btn_duenos');
     let modal_id = "modalForm";
     let tabla = $("#tableV");
-    let arreglo_campos = ['nombre', 'ap', 'am'];
+    let arreglo_campos = ['curp', 'nombre', 'ap', 'am'];
     let variable;
     let datosTabla = 0;
     let columns = [
+        {
+            field: 'curp', title: 'Curp'
+        },
         {
             field: 'nombre', title: 'Nombre'
         },
@@ -97,13 +107,13 @@
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
                 <i class="glyph-icon icon-edit"></i>
             </button>
-            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_dueno', columns, tabla)">
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, '${base_url}eliminar_dueno', columns, tabla)">
                 <i class="glyph-icon icon-trash"></i>
             </button>
         `;
     }
 
-    traer_datos('cargar_duenos', columns, tabla);
+    traer_datos(base_url + 'cargar_duenos', columns, tabla);
 
     function llamar(){
         llamar_modal(modal_id, arreglo_campos);
@@ -112,15 +122,15 @@
     function rellenar(id){
         console.log('variables: '+id);
         $.ajax({
-            url: 'consultar_dueno',
+            url: base_url + 'consultar_dueno',
             method: 'POST',
             data: {'id': id},
             success: function(datos){
                 datos = JSON.parse(datos);
-                console.log(datos);
                 llamar_modal(modal_id, arreglo_campos);
                 document.getElementById('modalFormLabel').innerHTML = 'Actualizar dueños';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
+                document.getElementById('curp').value = datos.curp;
                 document.getElementById('nombre').value = datos.nombre;
                 document.getElementById('ap').value = datos.apellido_p;
                 document.getElementById('am').value = datos.apellido_m;
@@ -130,25 +140,20 @@
     }
 
     function registrar_local(){
-        let elemento = document.getElementById('btn_duenos');
-        let datos = [];
+        datos = {
+                'curp' : document.getElementById('curp').value,
+                'nombre' : document.getElementById('nombre').value,
+                'ap' : document.getElementById('ap').value,
+                'am' : document.getElementById('am').value,
+            }
         if(elemento.innerHTML == 'Registrar'){
             document.getElementById('modalFormLabel').innerHTML = 'registrar dueño';
-            datos = {
-                'nombre' : document.getElementById('nombre').value,
-                'ap' : document.getElementById('ap').value,
-                'am' : document.getElementById('am').value,
-            }
         }
         else{
-            datos = {
-                'id': variable,
-                'nombre' : document.getElementById('nombre').value,
-                'ap' : document.getElementById('ap').value,
-                'am' : document.getElementById('am').value,
-            }
+            datos.id = variable;
         }
-        registrar('agregar_duenos', 'editar_dueno', datos, elemento, columns, arreglo_campos, tabla);
+
+        registrar(base_url + 'agregar_dueno', base_url + 'editar_dueno', datos, elemento, columns, arreglo_campos, tabla);
     }
 
     function cancelar_local(){

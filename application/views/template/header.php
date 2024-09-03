@@ -109,7 +109,6 @@
 					</a>
 					<ul class="submenu">
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registro_catalogos"><span>Marcas/Colores/Tipos</span></a>
 							<a href="<?= base_url(); ?>catalogos/marcas"><span>Marcas</span></a>
 							<a href="<?= base_url(); ?>catalogos/colores"><span>Colores</span></a>
 							<a href="<?= base_url(); ?>catalogos/tipos"><span>Tipos</span></a>
@@ -118,19 +117,19 @@
 							<a href="<?= base_url(); ?>secciones/vehiculos"><span>Autos</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_duenos"><span>Dueños</span></a>
+							<a href="<?= base_url(); ?>secciones/duenos"><span>Dueños</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_placas"><span>Placas</span></a>
+							<a href="<?= base_url(); ?>secciones/placas"><span>Placas</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_propietarios"><span>Propietarios</span></a>
+							<a href="<?= base_url(); ?>secciones/propietarios"><span>Propietarios</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_emplacado"><span>Emplacado</span></a>
+							<a href="<?= base_url(); ?>secciones/emplacado"><span>Emplacado</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/registrar_robos"><span>Robos</span></a>
+							<a href="<?= base_url(); ?>dashboard/robos"><span>Robos</span></a>
 						</li>
 						<li>
 							<a href="#"><span>Usuarios</span></a>

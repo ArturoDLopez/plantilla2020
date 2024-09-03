@@ -46,7 +46,7 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
                 element.innerHTML = 'Registrar';
             }
             limpiar(elementos);
-            if(datosTabla == 0){
+            if(data != 1){
                 Swal.fire({
                     title: 'Error',
                     text: 'El dato que intentas ingresar ya existe',
@@ -54,10 +54,23 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
                     confirmButtonText: 'Aceptar'
                 })
             }
-            else{
-                llamar_tabla(tabla, data, columnas);
-                //tabla_refresh(tabla);
-                //return 1;
+            if(data == 1){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "success",
+                    title: "Agregado correctamente"
+                });
+                    tabla.bootstrapTable('refresh');
             }
             
             
