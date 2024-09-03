@@ -19,11 +19,14 @@ class Vehiculos_model extends CI_Model{
         return $query->result();
     }
 
-    public function agregar($campo, $datos){
+    public function agregar($datos, $campo){
         $row = $this->db->get_where('vehiculos', array('eliminado' => 0, 'num_serie' => $campo));
         if($row->num_rows() == 0){
-            $id = $this->db->insert('vehiculos', $datos);
-            return 1;
+            $this->db->insert('vehiculos', $datos);
+            if($this->db->insert_id() > 0){
+                return 1;
+            }
+            return 0;
         }
         else{
             return 0;
@@ -33,6 +36,34 @@ class Vehiculos_model extends CI_Model{
     public function traer_catalogos($tabla){
         $query = $this->db->get_where($tabla, array('eliminado' => 0));
         return $query->result();
+    }
+
+    public function eliminado_logico($id, $tabla){
+        $this->db->where('id', $id);
+        $this->db->update($tabla, array('eliminado' => 1));
+		if ($this->db->affected_rows() == 1){
+            return 1;
+        }
+        else{
+            return 0;
+        }
+    }
+
+    public function get_by_id($tabla, $id){
+        $query = $this->db->get_where($tabla, $id);
+        return $query->row();
+    }
+
+    public function actualizar($tabla, $datos, $id){
+        $this->db->where('id', $id);
+        $this->db->update($tabla, $datos);
+        return $this->db->last_query();
+        if ($this->db->affected_rows() == 1){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 
 }

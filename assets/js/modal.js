@@ -41,8 +41,11 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
         method: 'POST',
         data: data,
         success: function(data){
-            datosTabla = JSON.parse(data);
-            console.log('Datootot', datosTabla);
+            element.innerHTML = 'Registrar';
+            if(element.innerHTML == 'Actualizar'){
+                element.innerHTML = 'Registrar';
+            }
+            limpiar(elementos);
             if(datosTabla == 0){
                 Swal.fire({
                     title: 'Error',
@@ -52,14 +55,12 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
                 })
             }
             else{
-                llamar_tabla(tabla, datosTabla, columnas);
+                llamar_tabla(tabla, data, columnas);
+                //tabla_refresh(tabla);
+                //return 1;
             }
             
-            element.innerHTML = 'Registrar';
-            if(element.innerHTML == 'Actualizar'){
-                element.innerHTML = 'Registrar';
-            }
-            limpiar(elementos);
+            
         }
     })
 }
@@ -80,12 +81,15 @@ function eliminar(row, url, columnas, tabla){
                 method: 'POST',
                 data: {'id': row},
                 success: function(data){
-                    data = JSON.parse(data);
+                    if(data == 1){
+                        tabla.bootstrapTable('refresh');
+                    }
+                    /* data = JSON.parse(data);
                     console.log('Datos al eliminar: ', data);
                     if(data.length > 0){
                         llamar_tabla(tabla, data, columnas);
                         return;
-                    }
+                    } */
                 }
             })
         }
@@ -107,6 +111,10 @@ function llamar_modal(id, e){
     limpiar(e);
     $("#"+id).modal('show');  
 }
+
+function tabla_refresh(tabla){
+    tabla.bootstrapTable('refresh');
+}   
 
 function llamar_tabla(tabla, data, columns){
     tabla.bootstrapTable('destroy');

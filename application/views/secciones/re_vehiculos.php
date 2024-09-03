@@ -15,7 +15,7 @@
         
         <div class="row">
             
-            <table id="tableV">
+            <table id="tableV" data-url="<?= base_url()?>secciones/vehiculos/cargar_vehiculos">
 
             </table>
         </div>
@@ -40,19 +40,7 @@
                 <div class="form-group col-md-4">
                     <label for="marca">Marca</label>
                     <select class="form-control" id="marca" name="marca">
-                        <option value="0">
-                            Seleccione una opcion...
-                        </option>
-                        <?php
-                            foreach($marcas['marcas'] as $marca){
-                                echo 
-                                '
-                                    <option value="'.$marca->id.'">
-                                        '.$marca->nom_marca.'
-                                    </option>
-                                ';
-                            }
-                        ?>
+                        
                     </select>
                 </div>
                 <div class="form-group col-md-4">
@@ -80,19 +68,7 @@
                 <div class="form-group col-md-6">
                     <label for="marca">Tipo</label>
                     <select class="form-control" id="tipo" name="tipo">
-                        <option value="0">
-                            Seleccione una opcion...
-                        </option>
-                        <?php
-                            foreach($tipos['tipos'] as $tipo){
-                                echo 
-                                '
-                                    <option value="'.$tipo->id.'">
-                                        '.$tipo->nom_tipo.'
-                                    </option>
-                                ';
-                            }
-                        ?>
+                        
                     </select>
                 </div>
             </div>
@@ -124,6 +100,7 @@
     let arreglo_campos = ['num_serie', 'marca', 'modelo', 'color', 'tipo'];
     let variable;
     let datosTabla = 0;
+    let elemento = document.getElementById('btn_duenos');
     let columns = [
         {
             field: 'num_serie', title: 'Numero de serie'
@@ -149,14 +126,14 @@
 
     ];
     
-    traer_datos(base_url + '/cargar_vehiculos', columns, tabla);
+    traer_datos_local(base_url + '/cargar_vehiculos', columns, tabla);
 
     function acciones(value, row, index){
         return `
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
                 <i class="glyph-icon icon-edit"></i>
             </button>
-            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_auto', columns, tabla)">
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, '${base_url}/eliminar_auto', columns, tabla)">
                 <i class="glyph-icon icon-trash"></i>
             </button>
         `;
@@ -214,13 +191,13 @@
 
     function rellenar(id){
         $.ajax({
-            url: 'consultar_auto',
+            url: base_url + '/consultar_auto',
             method: 'POST',
             data: {'id': id},
             success: function(datos){
                 datos = JSON.parse(datos);
                 console.log(datos);
-                llamar_modal(modal_id, arreglo_campos);
+                llamar(modal_id, arreglo_campos, id);
                 document.getElementById('modalFormLabel').innerHTML = 'Actualizar vehiculos';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 document.getElementById('num_serie').value = datos.num_serie;
@@ -234,31 +211,80 @@
     }
 
     function registrar_local(){
-        let elemento = document.getElementById('btn_duenos');
-        let datos = [];
-        if(elemento.innerHTML == 'Registrar'){
-            datos = {
+        datos = {
                 'num_serie' : document.getElementById('num_serie').value,
                 'marca' : document.getElementById('marca').value,
                 'modelo' : document.getElementById('modelo').value,
                 'color' : document.getElementById('color').value,
                 'tipo' : document.getElementById('tipo').value,
             }
+        url = base_url+'/agregar_vehiculos';
+        if(elemento.innerHTML == 'Actualizar'){
+            url = base_url+'/editar_auto'
+            datos.id = variable;
         }
-        else{
-            datos = {
-                'id': variable,
-                'num_serie' : document.getElementById('num_serie').value,
-                'marca' : document.getElementById('marca').value,
-                'modelo' : document.getElementById('modelo').value,
-                'color' : document.getElementById('color').value,
-                'tipo' : document.getElementById('tipo').value,
+        $.ajax({
+            url: url,
+            method: 'POST',
+            data: datos,
+            success: function(data){
+                elemento.innerHTML = 'Registrar';
+                if(elemento.innerHTML == 'Actualizar'){
+                    elemento.innerHTML = 'Registrar';
+                }
+                limpiar(arreglo_campos);
+                if(data == 0){
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'El dato que intentas ingresar ya existe',
+                        icon: 'warning',
+                        confirmButtonText: 'Aceptar'
+                    })
+                }
+                else{
+                    const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                    });
+                    Toast.fire({
+                    icon: "success",
+                    title: "Agregado correctamente"
+                    });
+                    tabla.bootstrapTable('refresh');
+                }
             }
-        }
-        registrar(base_url+'/agregar_vehiculos', 'editar_auto', datos, elemento, columns, arreglo_campos, tabla);
+        })
     }
 
     function cancelar_local(){
         cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
+
+    function traer_datos_local(url){
+        $.ajax({
+            url: url,
+            success: function(data){
+                datos = JSON.parse(data);
+                if(datos.length > 0){
+                    llamar_tabla(datos);
+                }
+            }
+        })
+    }
+
+    function llamar_tabla(datos){
+        tabla.bootstrapTable({
+            pagination: true,
+            columns: columns,
+            data: datos
+        })
+    }
+
 </script>

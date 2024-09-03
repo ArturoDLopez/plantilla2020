@@ -16,6 +16,11 @@ class Vehiculos extends CI_Controller{
         echo json_encode($this->Vehiculos_model->cargar());
     }
 
+    public function consultar_auto(){
+        $id = array('id' => $this->input->post('id'));
+        echo json_encode($this->Vehiculos_model->get_by_id('vehiculos', $id));
+    }
+
     public function agregar_vehiculos(){
         $nom_marca = $this->input->post('num_serie');
         $datos = array(
@@ -25,7 +30,7 @@ class Vehiculos extends CI_Controller{
             'colores_id' => $this->input->post('color'),
             'tipo_id' => $this->input->post('tipo'),
         );
-        $this->Vehiculos_model->agregar($nom_marca, $datos);
+        echo $this->Vehiculos_model->agregar($datos, $nom_marca);
     }
 
     public function cargar_marcas(){
@@ -36,5 +41,22 @@ class Vehiculos extends CI_Controller{
     }
     public function cargar_tipos(){
         echo json_encode($this->Vehiculos_model->traer_catalogos('tipo'));
+    }
+
+    public function editar_auto(){
+        $id = $this->input->post('id');
+        $datos = array(
+            'num_serie' => $this->input->post('num_serie'),
+            'marcas_id' => $this->input->post('marca'),
+            'modelo' => $this->input->post('modelo'),
+            'colores_id' => $this->input->post('color'),
+            'tipo_id' => $this->input->post('tipo'),
+        );
+        echo $this->Vehiculos_model->actualizar('vehiculos', $datos, $id);
+    }
+
+    public function eliminar_auto(){
+        $id = $this->input->post('id');
+        echo $this->Vehiculos_model->eliminado_logico($id, 'vehiculos');
     }
 }
