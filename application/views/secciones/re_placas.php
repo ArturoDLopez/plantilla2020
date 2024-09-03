@@ -15,13 +15,14 @@
 
 <div class="container ve_container">
     
-    <table id="tableV">
+    <table id="tableV" data-url="<?= base_url()?>secciones/placas/cargar_placas">
 
     </table>
 </div>
 
 <script>
 
+    let base_url = "<?= base_url()?>secciones/placas/"
     let tabla = $("#tableV");
     let datosTabla = 0;
     let columns = [
@@ -39,14 +40,15 @@
 
     function acciones(value, row, index){
         return `
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
+        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
                     <i class="glyph-icon icon-trash"></i>
         </button>
         `
     }
 
-    function eliminar(value, row){
-        console.log('Row', row);
+    traer_datos();
+
+    function eliminar(row){
         Swal.fire({
             title: 'Eliminar',
             text: 'Seguro que quieres eliminar este auto?',
@@ -57,21 +59,12 @@
         }).then((result) => {
             if(result.value){
                 $.ajax({
-                    url: 'eliminar_placas',
+                    url: base_url + 'eliminar_placa',
                     method: 'POST',
                     data: {'id': row},
                     success: function(data){
-                        console.log('success: ', data)
-                        console.log('datos tabla length: ',datosTabla.length);
                         if(data > 0){
-                            for(var i = 0; i<datosTabla.length; i++){
-                                console.log('datos: ', datosTabla[i]);
-                                if(datosTabla[i].id == row){
-                                    datosTabla.splice(i, 1);
-                                }
-                            }
-                            tabla.bootstrapTable('removeAll');
-                            tabla.bootstrapTable('append', datosTabla);
+                            tabla.bootstrapTable('refresh');
                             return;
                         }
                     }
@@ -81,18 +74,12 @@
         })
     }
 
-    function operateFormatter(value, row, index) {
-        return '<button class="remove btn btn-danger" type="button" onclick="eliminar('+value+','+row.id+')">Eliminar</button>'
-    }
-
-    traer_datos();
 
     function traer_datos(){
         $.ajax({
-            url: 'cargar_placas',
+            url: base_url + 'cargar_placas',
             method: 'POST',
             success: function(data){
-                console.log(data);
                 datosTabla = JSON.parse(data);
                 llamar_tabla(datosTabla);
             }
@@ -101,12 +88,12 @@
     
     function registrar(){
         $.ajax({
-            url: 'agregar_placas',
+            url: base_url + 'agregar_placa',
             method: 'POST',
             data: {'placa':document.getElementById('placa').value},
             success: function(data){
                 console.log(data);
-                if(data == 0){
+                if(data != 1){
                     Swal.fire({
                             title: 'Error',
                             text: 'El dato que intentas ingresar ya existe',
@@ -116,7 +103,7 @@
                 }
                 else{
                     datosTabla = JSON.parse(data);
-                    llamar_tabla(datosTabla);
+                    tabla.bootstrapTable('refresh');
                 }
             }
         })
@@ -126,7 +113,6 @@
         tabla.bootstrapTable('destroy');
         tabla.bootstrapTable({
             pagination : true,
-            search : true,
             data: data,
             columns: columns
         })
