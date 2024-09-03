@@ -22,7 +22,7 @@
     
     <div class="row">
         
-        <table id="tableV">
+        <table id="tableV" data-url="<?= base_url()?>secciones/emplacado/cargar_emplacado">
 
         </table>
     </div>
@@ -42,7 +42,7 @@
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
                     <select class="form-control" id="num_serie" name="num_serie">
-                        <?php
+                       <!--  <?php
                             foreach($vehiculos['vehiculos'] as $vehiculo){
                                 echo 
                                 '
@@ -51,19 +51,13 @@
                                     </option>
                                 ';
                             }
-                        ?>
+                        ?> -->
                     </select>
                 </div>
                 <div class="form-group col-md-4">
                     <label for="placa">Placas</label>
                     <select name="placa" id="placa" class="form-control">
-                        <?php
-                            foreach($placas['placas'] as $du){
-                                echo '
-                                    <option value="'.$du->id.'">'.$du->placa.'</option>
-                                ';
-                            }
-                        ?>
+                       
                     </select>
                 </div>
 
@@ -120,6 +114,7 @@
 
 <script>
 
+    let base_url = "<?= base_url()?>secciones/emplacado/";
     let modal_id = "modalForm";
     let tabla = $("#tableV");
     let arreglo_campos = ['num_serie', 'placa', 'actual', 'fecha_i', 'fecha_t'];
@@ -150,22 +145,24 @@
 
     ];
 
+    traer_datos(base_url + 'cargar_emplacado', columns, tabla);
+
     function acciones(value, row, index){
         return `
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
                 <i class="glyph-icon icon-edit"></i>
             </button>
-            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar_local(${row.id}, 'eliminar_emplacado', columns, tabla)">
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar_local(${row.id}, '${base_url}eliminar_emplacado', columns, tabla)">
                 <i class="glyph-icon icon-trash"></i>
             </button>
         `;
     }
 
-    traer_datos('cargar_emplacado', columns, tabla);
+    
 
     function llamar(){
         $.ajax({
-            url: 'cargar_placas_sin_asignar',
+            url: base_url + 'cargar_placas_sin_asignar',
             method: 'POST',
             success: function(datos){
                 json = JSON.parse(datos);
@@ -183,6 +180,25 @@
                 
             }
         });
+
+        $.ajax({
+            url: base_url + 'cargar_numero_serie',
+            method: 'POST',
+            success: function(datos){
+                json = JSON.parse(datos);
+                if(json.length > 0){
+                    let opciones = '';
+
+                    json.forEach(element => {
+                            opciones += `<option value="`+element.id+`">`+element.num_serie+`</option>`
+                        });
+                    document.getElementById('num_serie').innerHTML = opciones
+                    
+                    console.log(opciones);
+                }
+                
+            }
+        });
         
         llamar_modal(modal_id, arreglo_campos);
     }
@@ -191,14 +207,15 @@
 
     function rellenar(id){
         $.ajax({
-            url: 'consultar_emplacado',
+            url: base_url + 'consultar_emplacado',
             method: 'POST',
             data: {'id': id},
             success: function(datos){
                 datos = JSON.parse(datos);
-                console.log(datos);
-                let fecha_inicio = new Date(datos.fecha_inicio);
-                fecha_inicio = fecha_inicio.toISOString().split('T')[0];
+
+                let fecha_inicio_completa = datos.fecha_inicio;
+                let fecha_inicio =datos.fecha_inicio == null || datos.fecha_inicio == "0000-00-00 00:00:00" || datos.fecha_inicio == "" ?  "" : new Date(datos.fecha_inicio);
+                fecha_inicio = fecha_inicio == "" ? "" : fecha_inicio.toISOString().split('T')[0];
 
                 let fecha_termino_completa = datos.fecha_termino;
                 console.log("datos.fecha_termino: ", fecha_termino_completa);
@@ -207,9 +224,9 @@
                 fecha_termino = fecha_termino == "" ? "" : fecha_termino.toISOString().split('T')[0];
 
                 anterior_id = datos.placas_id;
-
+                console.log('placas_id: ', datos.placas_id);
                 $.ajax({
-                    url: 'cargar_placas_sin_asignar_excepto',
+                    url: base_url + 'cargar_placas_sin_asignar_excepto',
                     method: 'POST',
                     data: {'id': datos.placas_id},
                     success: function(data){
@@ -218,7 +235,6 @@
                             let opciones = '';
 
                             json.forEach(element => {
-                                console.log('placa: ', element.placa, datos.placas_id);
                                 opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
                                 //document.getElementById('placa').value = datos.placas_id;
                             });
@@ -227,6 +243,26 @@
                             document.getElementById('placa').value = datos.placas_id;
                             console.log(opciones);
                             
+                        }
+                        
+                    }
+                });
+
+                $.ajax({
+                    url: base_url + 'cargar_numero_serie',
+                    method: 'POST',
+                    success: function(data){
+                        json = JSON.parse(data);
+                        if(json.length > 0){
+                            let opciones = '';
+
+                            json.forEach(element => {
+                                    opciones += `<option value="`+element.id+`">`+element.num_serie+`</option>`
+                                });
+                            document.getElementById('num_serie').innerHTML = opciones
+                            document.getElementById('num_serie').value = datos.vehiculos_id;
+                            
+                            console.log(opciones);
                         }
                         
                     }
@@ -248,29 +284,21 @@
 
     function registrar_local(){
         let elemento = document.getElementById('btn_duenos');
-        let datos = [];
+        datos = {
+                'num_serie' : document.getElementById('num_serie').value,
+                'placa' : document.getElementById('placa').value,
+                'actual' : document.getElementById('actual').value,
+                'fecha_i' : document.getElementById('fecha_i').value,
+                'fecha_t' : document.getElementById('fecha_t').value,
+            }
         if(elemento.innerHTML == 'Registrar'){
             document.getElementById('modalFormLabel').innerHTML = 'Registrar Emplacado';
-            datos = {
-                'num_serie' : document.getElementById('num_serie').value,
-                'placa' : document.getElementById('placa').value,
-                'actual' : document.getElementById('actual').value,
-                'fecha_i' : document.getElementById('fecha_i').value,
-                'fecha_t' : document.getElementById('fecha_t').value,
-            }
         }
         else{
-            datos = {
-                'id': variable,
-                'anterior_id' : anterior_id,
-                'num_serie' : document.getElementById('num_serie').value,
-                'placa' : document.getElementById('placa').value,
-                'actual' : document.getElementById('actual').value,
-                'fecha_i' : document.getElementById('fecha_i').value,
-                'fecha_t' : document.getElementById('fecha_t').value,
-            }
+            datos.id = variable;
+            datos.anterior_id = anterior_id;
         }
-        registrar('agregar_emplacado', 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
+        registrar(base_url + 'agregar_emplacado', base_url + 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
     }
 
     function eliminar_local(row, url, columnas, tabla){
@@ -286,7 +314,7 @@
             if(result.value){
 
                 $.ajax({
-                    url: 'consultar_emplacado',
+                    url:base_url +  'consultar_emplacado',
                     method: 'POST',
                     data: {'id': row},
                     success: function(datos){
@@ -300,7 +328,7 @@
                                     data = JSON.parse(data);
                                     console.log('Datos al eliminar: ', data);
                                     if(data.length > 0){
-                                        llamar_tabla(tabla, data, columnas);
+                                        tabla.bootstrapTable('refresh');
                                         return;
                                     }
                                 }
