@@ -5,12 +5,12 @@
         </h1>
     </div>
 
-    <button onclick="llamar_modal()" class="btn btn-success" style="margin-bottom: 1vh">
+    <button onclick="traer_catalogos()" class="btn btn-success" style="margin-bottom: 1vh">
         Agregar propietarios
     </button>
 
     <div class="container ve_container">
-        <table id="tableV">
+        <table id="tableV" data-url="<?= base_url()?>secciones/Propietarios/cargar_propietarios">
 
         </table>
     </div>
@@ -31,7 +31,8 @@
             <div class="form-group col-md-4">
                 <label for="num_serie"><span class="text-danger">*</span>Numero de serie</label>
                 <select class="form-control" id="num_serie" name="num_serie">
-                    <option value="0">
+
+                    <!-- <option value="0">
                         Seleccione una opcion...
                     </option>
                     <?php
@@ -43,20 +44,21 @@
                                 </option>
                             ';
                         }
-                    ?>
+                    ?> -->
                 </select>
             </div>
             <div class="form-group col-md-4">
                 <label for="dueno"><span class="text-danger">*</span>Dueño</label>
                 <select name="dueno" id="dueno" class="form-control">
-                    <option value="0"><span class="text-danger">*</span>Seleccione un dueño</option>
+
+                    <!-- <option value="0"><span class="text-danger">*</span>Seleccione un dueño</option>
                     <?php
                         foreach($duenos['duenos'] as $du){
                             echo '
                                 <option value="'.$du->id.'">'.$du->nombre.' '.$du->apellido_p.' '.$du->apellido_m.'</option>
                             ';
                         }
-                    ?>
+                    ?> -->
                 </select>
             </div>
 
@@ -110,7 +112,8 @@
 
 <script>
 
-    traer_datos();
+    
+    let base_url = "<?= base_url()?>secciones/propietarios/";
     let tabla = $("#tableV");
     let variable;
     let datosTabla = 0;
@@ -144,6 +147,7 @@
         }
 
     ];
+    traer_datos();
 
     function acciones(value, row, index){
         return `
@@ -158,7 +162,7 @@
 
     function traer_datos(){
         $.ajax({
-            url: 'cargar_propietarios',
+            url: base_url + 'cargar_propietarios',
             method: 'POST',
             success: function(data){
                 console.log(data);
@@ -168,31 +172,70 @@
         })
     }
 
+    function traer_catalogos(vehiculos_id = null, duenos_id = null){
+        $.ajax({
+            method: "POST",
+            url: base_url + "cargar_num_serie",
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones;
+                    json.forEach(element => {
+                        opciones += '<option value="'+element.id+'">'+element.num_serie+'</option>'
+                    });
+                    document.getElementById('num_serie').innerHTML = opciones;
+                    
+                    document.getElementById('num_serie').value = vehiculos_id;
+                
+                }
+            }
+        })
+        $.ajax({
+            method: "POST",
+            url: base_url + "cargar_curp",
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones;
+                    json.forEach(element => {
+                        opciones += '<option value="'+element.id+'">'+element.curp+'</option>'
+                    });
+                    document.getElementById('dueno').innerHTML = opciones;
+                    document.getElementById('dueno').value = duenos_id;
+                }
+            }
+        })
+        llamar_modal();
+    }
+
     function rellenar(id){
         $.ajax({
-            url: 'consultar_propietario',
+            url: base_url + 'consultar_propietario',
             method: 'POST',
             data: {'id': id},
             success: function(datos){
                 datos = JSON.parse(datos);
-                console.log(datos);
-                let fecha_inicio = new Date(datos.fecha_inicio);
-                fecha_inicio = fecha_inicio.toISOString().split('T')[0];
+                console.log("Rellenar: ", datos);
+                let fecha_inicio_completa = datos.fecha_inicio;
+                let fecha_inicio =datos.fecha_inicio == null || datos.fecha_inicio == "0000-00-00 00:00:00" || datos.fecha_inicio == "" ?  "" : new Date(datos.fecha_inicio);
+                fecha_inicio = fecha_inicio == "" ? "" : fecha_inicio.toISOString().split('T')[0];
+
                 let fecha_termino_completa = datos.fecha_termino;
                 console.log("datos.fecha_termino: ", fecha_termino_completa);
-                let fecha_termino = datos.fecha_termino == null || datos.fecha_termino == "0000-00-00 00:00:00" ?  "" : new Date(datos.fecha_termino);
+                let fecha_termino = datos.fecha_termino == null || datos.fecha_termino == "0000-00-00 00:00:00" || datos.fecha_termino == "" ?  "" : new Date(datos.fecha_termino);
                 console.log('Fehca de termino: ', fecha_termino);
-                fecha_termino = fecha_termino != "" ? fecha_termino.toISOString().split('T')[0] : "";
+                fecha_termino = fecha_termino == "" ? "" : fecha_termino.toISOString().split('T')[0];
 
-                llamar_modal();
+                
+                traer_catalogos(datos.vehiculos_id, datos.duenos_id);
+                
                 document.getElementById('modalFormLabel').innerHTML = 'Editar propietario';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
-                document.getElementById('num_serie').value = datos.vehiculos_id;
-                document.getElementById('dueno').value = datos.duenos_id;
                 document.getElementById('actual').value = datos.actual; 
                 document.getElementById('fecha_i').value = fecha_inicio;
                 document.getElementById('fecha_t').value = fecha_termino;
                 variable = id;
+                
             }
         })
     }
@@ -204,11 +247,11 @@
     }
     
     function registrar(){
-        url = 'agregar_propietarios';
+        url = base_url + 'agregar_propietario';
         data = {'num_serie':document.getElementById('num_serie').value, 'dueno':document.getElementById('dueno').value, 'actual':document.getElementById('actual').value, 'fecha_i':document.getElementById('fecha_i').value, 'fecha_t':document.getElementById('fecha_t').value}
         if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
-            url = 'editar_propietario';
-            data = {'id': variable, 'num_serie':document.getElementById('num_serie').value, 'dueno':document.getElementById('dueno').value, 'actual':document.getElementById('actual').value, 'fecha_i':document.getElementById('fecha_i').value, 'fecha_t':document.getElementById('fecha_t').value}
+            url = base_url + 'editar_propietario';
+            data.id = variable;
         }
         $.ajax({
             url: url,
@@ -217,7 +260,7 @@
             success: function(data){
                 console.log(data);
                 datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
+                tabla.bootstrapTable('refresh');
                 document.getElementById('btn_duenos').innerHTML = 'Registrar';
                 if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
                     document.getElementById('btn_duenos').innerHTML = 'Registrar';
@@ -240,13 +283,13 @@
         }).then((result) => {
             if(result.value){
                 $.ajax({
-                    url: 'eliminar_propietario',
+                    url: base_url + 'eliminar_propietario',
                     method: 'POST',
                     data: {'id': row},
                     success: function(data){
                         data = JSON.parse(data);
-                        if(data.length > 0){
-                            llamar_tabla(data);
+                        if(data > 0){
+                            tabla.bootstrapTable('refresh');
                             return;
                         }
                     }
@@ -269,7 +312,7 @@
     }
 
     function llamar_modal(){
-        console.log("Llamar modal");
+        
         limpiar();
         $("#modalForm").modal('show');  
     }
