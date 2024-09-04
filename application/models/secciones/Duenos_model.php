@@ -7,12 +7,12 @@ class Duenos_model extends CI_Model{
     }
 
     public function cargar(){
-        $query = $this->db->get_where('duenos', array('eliminado' => 0));
+        $query = $this->db->get_where('duenos', array('borrado' => 0));
         return $query->result();
     }
 
     public function agregar($datos, $campo){
-        $row = $this->db->get_where('duenos', array('eliminado' => 0, 'curp' => $campo));
+        $row = $this->db->get_where('duenos', array('borrado' => 0, 'curp' => $campo));
         if($row->num_rows() == 0){
             $this->db->insert('duenos', $datos);
             if($this->db->insert_id() > 0){
@@ -26,13 +26,13 @@ class Duenos_model extends CI_Model{
     }
 
     public function traer_catalogos($tabla){
-        $query = $this->db->get_where($tabla, array('eliminado' => 0));
+        $query = $this->db->get_where($tabla, array('borrado' => 0));
         return $query->result();
     }
 
-    public function eliminado_logico($id, $tabla){
+    public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
-        $this->db->update($tabla, array('eliminado' => 1));
+        $this->db->update($tabla, array('borrado' => 1));
 		if ($this->db->affected_rows() == 1){
             return 1;
         }
@@ -47,7 +47,7 @@ class Duenos_model extends CI_Model{
     }
 
     public function actualizar($tabla, $datos, $id, $campo){
-        $row = $this->db->get_where('duenos', array('eliminado' => 0, 'curp' => $campo));
+        $row = $this->db->get_where('duenos', array('borrado' => 0, 'curp' => $campo));
         if($row->num_rows() == 0){
             $this->db->where('id', $id);
             $this->db->update($tabla, $datos);

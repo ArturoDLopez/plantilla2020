@@ -6,12 +6,12 @@ class Tipos_model extends CI_Model{
     }
 
     public function cargar(){
-        $query = $this->db->get_where('tipo', array('eliminado' => 0));
+        $query = $this->db->get_where('tipo', array('borrado' => 0));
         return $query->result();
     }
 
     public function agregar($datos, $nom_tipo){
-        $row = $this->db->get_where('tipo', array('eliminado' => 0, 'nom_tipo' => $nom_tipo));
+        $row = $this->db->get_where('tipo', array('borrado' => 0, 'nom_tipo' => $nom_tipo));
         if($row->num_rows() == 0){
             $id = $this->db->insert('tipo', $datos);
             return 1;
@@ -23,7 +23,7 @@ class Tipos_model extends CI_Model{
 
     public function eliminar($id){
         $this->db->where('id', $id);
-        $this->db->update('tipo', array('eliminado' => 1));
+        $this->db->update('tipo', array('borrado' => 1));
         return $this->db->affected_rows();
     }
 }

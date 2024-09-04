@@ -6,39 +6,39 @@ class Catalogos_model extends CI_Model{
     }
     
     public function cat_marcas(){
-        $this->db->where('eliminado', '0');
+        $this->db->where('borrado', '0');
         $this->db->select('id, nom_marca, fecha_registro');
         $query = $this->db->get('marcas');
         return $query->result();
     }
 
     public function cat_colores(){
-        $this->db->where('eliminado', '0');
+        $this->db->where('borrado', '0');
         $this->db->select('id, nom_color, fecha_registro');
         $query = $this->db->get('colores');
         return $query->result();
     }
 
     public function cat_duenos(){
-        $query = $this->db->get_where('dueños', array('eliminado' => 0));
+        $query = $this->db->get_where('dueños', array('borrado' => 0));
         return $query->result();
     }
 
     public function cat_placas(){
-        $query = $this->db->get_where('placas', array('eliminado' => 0));
+        $query = $this->db->get_where('placas', array('borrado' => 0));
         return $query->result();
     }
 
     public function cat_placas_asignadas(){
         $this->db->select('*');
         $this->db->from('placas');
-        $this->db->where('placas.asignado IS null AND placas.eliminado LIKE "0%"');
+        $this->db->where('placas.asignado IS null AND placas.borrado LIKE "0%"');
         $query = $this->db->get();
         return $query->result();
     }
 
     public function cat_tipos(){
-        $color = $this->db->get_where('tipo', array('eliminado' => 0));
+        $color = $this->db->get_where('tipo', array('borrado' => 0));
         return $color->result();
     }
 
@@ -48,7 +48,7 @@ class Catalogos_model extends CI_Model{
         $this->db->join('marcas mar','ve.marcas_id = mar.id','inner');
         $this->db->join('colores col','ve.colores_id = col.id','inner');
         $this->db->join('tipo','ve.tipo_id = tipo.id','inner');
-        $this->db->where('ve.eliminado', 0);
+        $this->db->where('ve.borrado', 0);
 
         $query = $this->db->get();
         
@@ -60,7 +60,7 @@ class Catalogos_model extends CI_Model{
         $this->db->from('propietario pro');
         $this->db->join('vehiculos ve','pro.vehiculos_id = ve.id','inner');
         $this->db->join('dueños du','pro.duenos_id = du.id','inner');
-        $this->db->where('pro.eliminado', 0);
+        $this->db->where('pro.borrado', 0);
 
         $query = $this->db->get();
         return $query->result();
@@ -71,7 +71,7 @@ class Catalogos_model extends CI_Model{
         $this->db->from('emplacado emp');
         $this->db->join('vehiculos ve', 'emp.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'emp.placas_id = pl.id', 'inner');
-        $this->db->where('emp.eliminado', 0);
+        $this->db->where('emp.borrado', 0);
         $query = $this->db->get();
         
         return $query->result();
@@ -84,7 +84,7 @@ class Catalogos_model extends CI_Model{
         $this->db->join('vehiculos ve', 'rob.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'rob.placas_id = pl.id', 'inner');
         $this->db->join('dueños du', 'rob.duenos_id = du.id', 'inner');
-        $this->db->where('rob.eliminado', 0);
+        $this->db->where('rob.borrado', 0);
         $query = $this->db->get();
 
         return $query->result();
@@ -168,9 +168,9 @@ class Catalogos_model extends CI_Model{
         $this->db->delete($tabla);
     }
 
-    public function eliminado_logico($id, $tabla){
+    public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
-        $this->db->update($tabla, array('eliminado' => 1));
+        $this->db->update($tabla, array('borrado' => 1));
 		if ($this->db->affected_rows() == 1){
             return TRUE;
         }
@@ -236,7 +236,7 @@ class Catalogos_model extends CI_Model{
     }
 
     public function get_by_id_emplacado($tabla, $id){
-        $this->db->select('e.id, e.vehiculos_id, e.placas_id, e.fecha_registro, e.actual, e.fecha_inicio, e.fecha_termino, e.eliminado, p.placa');
+        $this->db->select('e.id, e.vehiculos_id, e.placas_id, e.fecha_registro, e.actual, e.fecha_inicio, e.fecha_termino, e.borrado, p.placa');
         $this->db->from('emplacado e');
         $this->db->join('placas p', 'p.id = e.placas_id', 'inner');
         $this->db->where('e.id', $id);
@@ -247,7 +247,7 @@ class Catalogos_model extends CI_Model{
     public function cat_placas_asignadas_excepto($id){
         $this->db->select('*');
         $this->db->from('placas');
-        $this->db->where('placas.asignado IS NULL AND placas.eliminado LIKE "0%" OR placas.id = '.$id);
+        $this->db->where('placas.asignado IS NULL AND placas.borrado LIKE "0%" OR placas.id = '.$id);
         $query = $this->db->get();
         return $query->result();
     }

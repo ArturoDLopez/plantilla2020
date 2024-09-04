@@ -17,12 +17,12 @@ class Propietarios extends CI_Controller{
     }
 
     public function cargar_num_serie(){
-        $condiciones = array('eliminado' => 0);
+        $condiciones = array('borrado' => 0);
         echo json_encode($this->Propietarios_model->traer_catalogos('vehiculos', $condiciones));
     }
 
     public function cargar_curp(){
-        $condiciones = array('eliminado' => 0);
+        $condiciones = array('borrado' => 0);
         echo json_encode($this->Propietarios_model->traer_catalogos('duenos', $condiciones));
     }
 
@@ -59,6 +59,6 @@ class Propietarios extends CI_Controller{
 
     public function eliminar_propietario(){
         $id = $this->input->post('id');
-        echo $this->Propietarios_model->eliminado_logico($id, 'propietario');
+        echo $this->Propietarios_model->borrado_logico($id, 'propietario');
     }
 }

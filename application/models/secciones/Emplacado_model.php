@@ -11,7 +11,7 @@ class Emplacado_model extends CI_Model{
         $this->db->from('emplacado emp');
         $this->db->join('vehiculos ve', 'emp.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'emp.placas_id = pl.id', 'inner');
-        $this->db->where('emp.eliminado', 0);
+        $this->db->where('emp.borrado', 0);
         $query = $this->db->get();
         
         return $query->result();
@@ -47,14 +47,14 @@ class Emplacado_model extends CI_Model{
     public function cargar_placas_sin_asignar_excepto($id){
         $this->db->select('*');
         $this->db->from('placas');
-        $this->db->where('placas.asignado IS NULL AND placas.eliminado LIKE "0%" OR placas.id = '.$id);
+        $this->db->where('placas.asignado IS NULL AND placas.borrado LIKE "0%" OR placas.id = '.$id);
         $query = $this->db->get();
         return $query->result();
     }
 
-    public function eliminado_logico($id, $tabla){
+    public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
-        $this->db->update($tabla, array('eliminado' => 1));
+        $this->db->update($tabla, array('borrado' => 1));
 		if ($this->db->affected_rows() == 1){
             return 1;
         }

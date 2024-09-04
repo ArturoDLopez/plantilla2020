@@ -40,6 +40,6 @@ class Placas extends CI_Controller{
 
     public function eliminar_placa(){
         $id = $this->input->post('id');
-        echo $this->Placas_model->eliminado_logico($id, 'placas');
+        echo $this->Placas_model->borrado_logico($id, 'placas');
     }
 }

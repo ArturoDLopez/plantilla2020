@@ -36,7 +36,7 @@ class Seccion extends CI_Controller {
 			$data = array(
 				'id' => $res->id,
 				'nombre' => $res->nombre,
-				'eliminado' => $res->eliminado,
+				'borrado' => $res->borrado,
 				'roles_id' => $res->roles_id,
 				'is_logged' => TRUE,
 			);
@@ -63,7 +63,7 @@ class Seccion extends CI_Controller {
 	}
 
 	public function logout(){
-		$vars = array('id', 'eliminado', 'nombre', 'roles_id', 'is_logged');
+		$vars = array('id', 'borrado', 'nombre', 'roles_id', 'is_logged');
 		$this->session->unset_userdata($vars);
 		$this->session->sess_destroy();
 	

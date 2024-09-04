@@ -11,7 +11,7 @@ class Propietarios_model extends CI_Model{
         $this->db->from('propietario pro');
         $this->db->join('vehiculos ve','pro.vehiculos_id = ve.id','inner');
         $this->db->join('duenos du','pro.duenos_id = du.id','inner');
-        $this->db->where('pro.eliminado', 0);
+        $this->db->where('pro.borrado', 0);
 
         $query = $this->db->get();
         return $query->result();
@@ -26,13 +26,13 @@ class Propietarios_model extends CI_Model{
     }
 
     public function traer_catalogos($tabla){
-        $query = $this->db->get_where($tabla, array('eliminado' => 0));
+        $query = $this->db->get_where($tabla, array('borrado' => 0));
         return $query->result();
     }
 
-    public function eliminado_logico($id, $tabla){
+    public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
-        $this->db->update($tabla, array('eliminado' => 1));
+        $this->db->update($tabla, array('borrado' => 1));
 		if ($this->db->affected_rows() == 1){
             return 1;
         }

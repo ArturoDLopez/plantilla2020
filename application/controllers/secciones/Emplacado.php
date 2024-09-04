@@ -17,12 +17,12 @@ class Emplacado extends CI_Controller{
     }
 
     public function cargar_placas_sin_asignar(){
-        $condiciones = array('eliminado' => 0, 'asignado' => null);
+        $condiciones = array('borrado' => 0, 'asignado' => null);
         echo json_encode($this->Emplacado_model->traer_catalogos('placas', $condiciones));
     }
 
     public function cargar_numero_serie(){
-        $condiciones = array('eliminado' => 0);
+        $condiciones = array('borrado' => 0);
         echo json_encode($this->Emplacado_model->traer_catalogos('vehiculos', $condiciones));
     }
 
@@ -68,7 +68,7 @@ class Emplacado extends CI_Controller{
     public function eliminar_emplacado(){
         $id = $this->input->post('id');
         $anterior_id = $this->input->post('anterior_id');
-        echo $this->Emplacado_model->eliminado_logico($id, 'emplacado');
+        echo $this->Emplacado_model->borrado_logico($id, 'emplacado');
         $this->Emplacado_model->actualizar_placa($anterior_id, 'placas', null);
     }
 }

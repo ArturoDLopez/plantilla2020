@@ -46,6 +46,6 @@ class Duenos extends CI_Controller{
 
     public function eliminar_dueno(){
         $id = $this->input->post('id');
-        echo $this->Duenos_model->eliminado_logico($id, 'duenos');
+        echo $this->Duenos_model->borrado_logico($id, 'duenos');
     }
 }

@@ -53,7 +53,7 @@ class Marcas extends CI_Controller{
         $datos = array(
             'nom_marca' => $valor,
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
         );
         $num_row = $this->Marcas_model->buscar_registro($valor);
         if($num_row == 0){

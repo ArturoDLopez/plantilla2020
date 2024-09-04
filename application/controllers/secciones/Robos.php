@@ -17,7 +17,7 @@ class Robos extends CI_Controller{
     }
 
     public function cargar_num_serie(){
-        $condiciones = array('eliminado' => 0);
+        $condiciones = array('borrado' => 0);
         echo json_encode($this->Robos_model->traer_catalogos('vehiculos', $condiciones));
     }
 
@@ -59,6 +59,6 @@ class Robos extends CI_Controller{
 
     public function eliminar_robo(){
         $id = $this->input->post('id');
-        echo $this->Robos_model->eliminado_logico($id, 'robos');
+        echo $this->Robos_model->borrado_logico($id, 'robos');
     }
 }

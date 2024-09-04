@@ -62,7 +62,7 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="descripcion">Descripcion</label>
-                    <textarea class="form-control" name="descripcion" id="descripcion"></textarea>
+                    <textarea class="form-control" name="descripcion" id="descripcion" required></textarea>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_r">Fecha del robo</label>
@@ -70,11 +70,17 @@
                 </div>
 
             </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <button type="submit" id="btn_duenos" class="btn btn-success" >Registrar</button>
+                </div>
+            </div>
         </form>
       </div>
       <div class="modal-footer">
         <div class="col-md-1">
-            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
+            
+            <!-- <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button> -->
         </div>
                         
         <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
@@ -85,10 +91,20 @@
 </div>
 
 <script src="../assets/js/modal.js">
-    
 </script>
 
 <script>
+
+    $(document).ready(function(){  
+        $('#frm_container').parsley();
+    })
+
+    $('#frm_container').on('submit', function(e){
+            e.preventDefault();
+            registrar_local();
+    })
+
+    
 
     let base_url = "<?= base_url()?>secciones/robos/";
     let modal_id = "modalForm";
@@ -236,6 +252,7 @@
             }
         }
         registrar( base_url + 'agregar_robo',  base_url + 'editar_robo', datos, elemento, columns, arreglo_campos, tabla);
+        $('#modalForm').modal('hide')
     }
 
     function cancelar_local(){

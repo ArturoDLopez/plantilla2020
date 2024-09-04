@@ -6,12 +6,12 @@ class Colores_model extends CI_Model{
     }
 
     public function cargar(){
-        $query = $this->db->get_where('colores', array('eliminado' => 0));
+        $query = $this->db->get_where('colores', array('borrado' => 0));
         return $query->result();
     }
 
     public function agregar($datos, $nom_color){
-        $row = $this->db->get_where('colores', array('eliminado' => 0, 'nom_color' => $nom_color));
+        $row = $this->db->get_where('colores', array('borrado' => 0, 'nom_color' => $nom_color));
         if($row->num_rows() == 0){
             $id = $this->db->insert('colores', $datos);
             return 1;
@@ -23,7 +23,7 @@ class Colores_model extends CI_Model{
 
     public function eliminar($id){
         $this->db->where('id', $id);
-        $this->db->update('colores', array('eliminado' => 1));
+        $this->db->update('colores', array('borrado' => 1));
         return $this->db->affected_rows();
     }
 }

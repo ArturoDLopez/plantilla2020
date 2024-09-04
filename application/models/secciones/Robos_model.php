@@ -12,7 +12,7 @@ class Robos_model extends CI_Model{
         $this->db->join('vehiculos ve', 'rob.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'rob.placas_id = pl.id', 'inner');
         $this->db->join('duenos du', 'rob.duenos_id = du.id', 'inner');
-        $this->db->where('rob.eliminado', 0);
+        $this->db->where('rob.borrado', 0);
         $query = $this->db->get();
 
         return $query->result();
@@ -27,13 +27,13 @@ class Robos_model extends CI_Model{
     }
 
     public function traer_catalogos($tabla){
-        $query = $this->db->get_where($tabla, array('eliminado' => 0));
+        $query = $this->db->get_where($tabla, array('borrado' => 0));
         return $query->result();
     }
 
-    public function eliminado_logico($id, $tabla){
+    public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
-        $this->db->update($tabla, array('eliminado' => 1));
+        $this->db->update($tabla, array('borrado' => 1));
 		if ($this->db->affected_rows() == 1){
             return 1;
         }

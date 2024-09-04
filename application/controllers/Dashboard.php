@@ -168,7 +168,7 @@ class Dashboard extends CI_Controller{
             $datos = array(
                 $nombre => $valor,
                 'fecha_registro' => date('Y-m-d H:i:s'),
-                'eliminado' => 0
+                'borrado' => 0
             );
         }
         
@@ -220,7 +220,7 @@ class Dashboard extends CI_Controller{
             'apellido_p' => $this->input->post('ap'),
             'apellido_m' => $this->input->post('am'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
 
         );
         $this->Catalogos_model->agregar_catalogo('dueños', $datos);
@@ -232,7 +232,7 @@ class Dashboard extends CI_Controller{
         $datos = array(
             'placa' => $this->input->post('placa'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
         );
         $this->agregar('placa', FALSE, $datos, 'placas');
         //echo json_encode($this->Catalogos_model->cat_placas());
@@ -246,7 +246,7 @@ class Dashboard extends CI_Controller{
             'colores_id' => $this->input->post('color'),
             'tipo_id' => $this->input->post('tipo'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
         );
         $this->agregar('num_serie', FALSE, $datos,'vehiculos');
         //echo json_encode($this->Catalogos_model->cat_vehiculos());
@@ -261,7 +261,7 @@ class Dashboard extends CI_Controller{
             'fecha_inicio' => $this->input->post('fecha_i'),
             'fecha_termino' => $this->input->post('fecha_t'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
 
         );
         $this->Catalogos_model->agregar_catalogo('propietario', $datos);
@@ -277,7 +277,7 @@ class Dashboard extends CI_Controller{
             'fecha_inicio' => $this->input->post('fecha_i'),
             'fecha_termino' => $this->input->post('fecha_t'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
         );
         $emplacado_id = $this->Catalogos_model->agregar_catalogo_emplacado('emplacado', $datos);
         $this->Catalogos_model->actualizar_un_parametro($id, 'placas', $emplacado_id);
@@ -293,7 +293,7 @@ class Dashboard extends CI_Controller{
             'descripcion' => $this->input->post('descripcion'),
             'fecha' => $this->input->post('fecha_r'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
 
         );
 
@@ -451,7 +451,7 @@ class Dashboard extends CI_Controller{
             'colores_id' => $this->input->post('color'),
             'tipo_id' => $this->input->post('tipo'),
             'fecha_registro' => date('Y-m-d H:i:s'),
-            'eliminado' => 0
+            'borrado' => 0
 
         );
         $this->Catalogos_model->actualizar('vehiculos', $datos, $id);
@@ -461,52 +461,52 @@ class Dashboard extends CI_Controller{
     //--------------- Eliminacion ----------------------
     public function eliminar_marcas(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'marcas');
+        $this->Catalogos_model->borrado_logico($id, 'marcas');
         echo $this->cargar_marcas();
     }
     public function eliminar_colores(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'colores');
+        $this->Catalogos_model->borrado_logico($id, 'colores');
         echo $this->cargar_colores();
     }
     public function eliminar_tipos(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'tipo');
+        $this->Catalogos_model->borrado_logico($id, 'tipo');
         echo $this->cargar_tipos();
     }
 
     public function eliminar_emplacado(){
         $id = $this->input->post('id');
         $anterior_id = $this->input->post('anterior_id');
-        $this->Catalogos_model->eliminado_logico($id, 'emplacado');
+        $this->Catalogos_model->borrado_logico($id, 'emplacado');
         $this->Catalogos_model->actualizar_un_parametro($anterior_id, 'placas', null);
         echo $this->cargar_emplacado();
     }
 
     public function eliminar_propietario(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'propietario');
+        $this->Catalogos_model->borrado_logico($id, 'propietario');
         echo $this->cargar_propietarios();
     }
 
     public function eliminar_dueno(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'dueños');
+        $this->Catalogos_model->borrado_logico($id, 'dueños');
         echo $this->cargar_duenos();
     }
 
     public function eliminar_placas(){
-        echo $this->Catalogos_model->eliminado_logico($this->input->post('id'), 'placas');
+        echo $this->Catalogos_model->borrado_logico($this->input->post('id'), 'placas');
     }
 
     public function eliminar_auto(){
         $id = $this->input->post('id');
-        $this->Catalogos_model->eliminado_logico($id, 'vehiculos');
+        $this->Catalogos_model->borrado_logico($id, 'vehiculos');
         echo $this->cargar_autos();
     }
 
     public function eliminar_robo(){
-        $this->Catalogos_model->eliminado_logico($this->input->post('id'), 'robos');
+        $this->Catalogos_model->borrado_logico($this->input->post('id'), 'robos');
         echo $this->cargar_robos();
     }
 

@@ -57,6 +57,6 @@ class Vehiculos extends CI_Controller{
 
     public function eliminar_auto(){
         $id = $this->input->post('id');
-        echo $this->Vehiculos_model->eliminado_logico($id, 'vehiculos');
+        echo $this->Vehiculos_model->borrado_logico($id, 'vehiculos');
     }
 }
