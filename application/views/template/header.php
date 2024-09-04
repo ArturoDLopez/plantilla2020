@@ -129,7 +129,7 @@
 							<a href="<?= base_url(); ?>secciones/emplacado"><span>Emplacado</span></a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>dashboard/robos"><span>Robos</span></a>
+							<a href="<?= base_url(); ?>secciones/robos"><span>Robos</span></a>
 						</li>
 						<li>
 							<a href="#"><span>Usuarios</span></a>

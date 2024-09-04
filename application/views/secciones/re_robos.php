@@ -13,7 +13,7 @@
     
     <div class="row">
         
-        <table id="tableV">
+        <table id="tableV" data-url="<?= base_url()?>secciones/robos/cargar_robos">
 
         </table>
     </div>
@@ -32,7 +32,7 @@
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
                     <select class="form-control" id="num_serie" name="num_serie" onchange="buscar_datos()">
-                        <option value="0">
+                        <!-- <option value="0">
                             Seleccione una opcion...
                         </option>
                         <?php
@@ -44,7 +44,7 @@
                                     </option>
                                 ';
                             }
-                        ?>
+                        ?> -->
                     </select>
                 </div>
 
@@ -90,6 +90,7 @@
 
 <script>
 
+    let base_url = "<?= base_url()?>secciones/robos/";
     let modal_id = "modalForm";
     let tabla = $("#tableV");
     let arreglo_campos = ['num_serie', 'inp_placa', 'inp_dueno', 'descripcion', 'fecha_r'];
@@ -127,26 +128,39 @@
 
     ];
 
-    traer_datos('cargar_robos', columns, tabla);
+    traer_datos( base_url + 'cargar_robos', columns, tabla);
 
     function acciones(value, row, index){
         return `
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
                 <i class="glyph-icon icon-edit"></i>
             </button>
-            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, 'eliminar_robo', columns, tabla)">
+            <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, '${base_url}eliminar_robo', columns, tabla)">
                 <i class="glyph-icon icon-trash"></i>
             </button>
         `;
     }
 
     function llamar(){
+        $.ajax({
+            url: base_url + 'cargar_num_serie',
+            success: function (data){
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    let opciones;
+                    json.forEach(element => {
+                        opciones += '<option value="'+element.id+'">'+element.num_serie+'</option>';
+                    })
+                    document.getElementById('num_serie').innerHTML = opciones;
+                }
+            }
+        })
         llamar_modal(modal_id, arreglo_campos);
     }
 
     function rellenar(id){
         $.ajax({
-            url: 'consultar_robo',
+            url: base_url + 'consultar_robo',
             method: 'POST',
             data: {'id': id},
             success: function(datos){
@@ -175,7 +189,7 @@
         }
         //console.log("buscar_datos: ", url);
         $.ajax({
-            url: 'buscar_datos',
+            url:  base_url + 'buscar_datos',
             type: 'POST',
             data: json,
             success: function(data){
@@ -221,7 +235,7 @@
                 'fecha_r' : fecha
             }
         }
-        registrar('agregar_robo', 'editar_robo', datos, elemento, columns, arreglo_campos, tabla);
+        registrar( base_url + 'agregar_robo',  base_url + 'editar_robo', datos, elemento, columns, arreglo_campos, tabla);
     }
 
     function cancelar_local(){
