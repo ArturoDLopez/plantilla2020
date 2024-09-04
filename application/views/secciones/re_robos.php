@@ -26,12 +26,13 @@
         <h5 class="modal-title" id="modalFormLabel">Agregar reporte de robo</h5>
       </div>
       <div class="modal-body">
-        <form  id="frm_container" method="POST">
+        <form  id="frm_container" method="POST" data-parsley-validate="">
             <div class="row pt-4">
                 
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
-                    <select class="form-control" id="num_serie" name="num_serie" onchange="buscar_datos()">
+                    <select class="form-control" id="num_serie" name="num_serie" onchange="buscar_datos()" required>
+                        
                         <!-- <option value="0">
                             Seleccione una opcion...
                         </option>
@@ -50,12 +51,12 @@
 
                 <div class="form-group col-md-4">
                         <label for="placa">Placa</label>
-                        <input type="text" disabled class="form-control" id="inp_placa" name="placas_id">
+                        <input type="text" disabled class="form-control" id="inp_placa" name="placas_id" required>
                 </div>
 
                 <div class="form-group col-md-4">
                         <label for="placa">Dueño</label>
-                        <input type="text" disabled class="form-control" id="inp_dueno" name="duenos_id">
+                        <input type="text" disabled class="form-control" id="inp_dueno" name="duenos_id" required>
                 </div>
                 
             </div>
@@ -66,7 +67,7 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_r">Fecha del robo</label>
-                    <input type="date" name="fecha_r" id="fecha_r" class="form-control">
+                    <input type="date" name="fecha_r" id="fecha_r" class="form-control" required>
                 </div>
 
             </div>
@@ -93,16 +94,23 @@
 <script src="../assets/js/modal.js">
 </script>
 
-<script>
 
-    $(document).ready(function(){  
-        $('#frm_container').parsley();
-    })
+<script>
 
     $('#frm_container').on('submit', function(e){
             e.preventDefault();
-            registrar_local();
-    })
+            
+            if($('#frm_container').parsley().isValid()){
+                registrar_local();
+                $('#frm_container').parsley().reset();
+            }
+            
+            
+    });
+
+    $(document).ready(function(){  
+        $('#frm_container').parsley();
+    });
 
     
 
@@ -164,6 +172,7 @@
                 json = JSON.parse(data);
                 if(json.length > 0){
                     let opciones;
+                    opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
                     json.forEach(element => {
                         opciones += '<option value="'+element.id+'">'+element.num_serie+'</option>';
                     })
@@ -257,6 +266,7 @@
 
     function cancelar_local(){
         cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
+        $('#frm_container').parsley().reset();
     }
  
 </script>

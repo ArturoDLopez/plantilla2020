@@ -58,6 +58,8 @@
 
 	<script type="text/JavaScript" src = "https://cdn.jsdelivr.net/npm/lodash@4.17.20/lodash.min.js"></script>
 
+	<script type="text/javascript" src="<?= base_url()."assets/parsley/parsley.js"; ?>"></script>
+
 	<!-- Popper -->
 	<script type="text/javascript" src="<?= base_url(); ?>assets/vendor/bootstrap-3.3.7/js/popper.min.js"></script>
 
