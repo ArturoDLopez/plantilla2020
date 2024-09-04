@@ -26,6 +26,12 @@ class Propietarios extends CI_Controller{
         echo json_encode($this->Propietarios_model->traer_catalogos('duenos', $condiciones));
     }
 
+    public function datos_num_serie(){
+        $id = $this->input->post('vehiculos_id');
+        $condiciones = array('borrado' => 0, 'actual' => 1, 'vehiculos_id' => $id);
+        echo json_encode($this->Propietarios_model->traer_catalogos2('propietario', $condiciones));
+    }
+
     public function consultar_propietario(){
         $id = array('id' => $this->input->post('id'));
         echo json_encode($this->Propietarios_model->get_by_id('propietario', $id));

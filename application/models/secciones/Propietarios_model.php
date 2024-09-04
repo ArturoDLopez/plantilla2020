@@ -25,8 +25,13 @@ class Propietarios_model extends CI_Model{
         return 0;
     }
 
-    public function traer_catalogos($tabla){
-        $query = $this->db->get_where($tabla, array('borrado' => 0));
+    public function traer_catalogos($tabla, $condiciones){
+        $query = $this->db->get_where($tabla, $condiciones);
+        return $query->result();
+    }
+
+    public function traer_catalogos2($tabla, $condiciones){
+        $query = $this->db->get_where($tabla, $condiciones);
         return $query->result();
     }
 

@@ -30,7 +30,7 @@
             
             <div class="form-group col-md-4">
                 <label for="num_serie"><span class="text-danger">*</span>Numero de serie</label>
-                <select class="form-control" id="num_serie" name="num_serie">
+                <select class="form-control" id="num_serie" name="num_serie" onchange="datos_num_serie()">
 
                     <!-- <option value="0">
                         Seleccione una opcion...
@@ -172,6 +172,22 @@
         })
     }
 
+    function datos_num_serie(){
+        var combo = document.getElementById("num_serie");
+        var sel = combo.options[combo.selectedIndex].value;
+        console.log("Selecionado: ", sel);
+        $.ajax({
+            url: base_url + 'datos_num_serie',
+            method: 'POST',
+            data: {'vehiculos_id': sel},
+            success: function(data){
+                console.log(data);
+                /* datosTabla = JSON.parse(data);
+                llamar_tabla(datosTabla); */
+            }
+        })
+    }
+
     function traer_catalogos(vehiculos_id = null, duenos_id = null){
         $.ajax({
             method: "POST",
@@ -180,13 +196,14 @@
                 json = JSON.parse(data);
                 if(json.length > 0){
                     let opciones;
+                    opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
                     json.forEach(element => {
                         opciones += '<option value="'+element.id+'">'+element.num_serie+'</option>'
                     });
                     document.getElementById('num_serie').innerHTML = opciones;
-                    
-                    document.getElementById('num_serie').value = vehiculos_id;
-                
+                    if(vehiculos_id != null){
+                        document.getElementById('num_serie').value = vehiculos_id;
+                    }
                 }
             }
         })
@@ -197,11 +214,15 @@
                 json = JSON.parse(data);
                 if(json.length > 0){
                     let opciones;
+                    opciones = '<option value="" disabled="" selected="" hidden="">Selecciona una curp...</option>';
                     json.forEach(element => {
                         opciones += '<option value="'+element.id+'">'+element.curp+'</option>'
                     });
                     document.getElementById('dueno').innerHTML = opciones;
-                    document.getElementById('dueno').value = duenos_id;
+                    
+                    if(duenos_id != null){
+                        document.getElementById('dueno').value = duenos_id;
+                    }
                 }
             }
         })
