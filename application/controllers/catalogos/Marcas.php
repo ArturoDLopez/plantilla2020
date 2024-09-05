@@ -5,6 +5,7 @@ class Marcas extends CI_Controller{
         parent::__construct();
         //$this->load->model('Catalogos_model');
         $this->load->model('catalogos/Marcas_model');
+        $this->load->model('comunes/Comunes_model');
     }
 
     public function index(){
@@ -23,6 +24,11 @@ class Marcas extends CI_Controller{
             'nom_marca' => $this->input->post('marca')
         );
         echo $this->Marcas_model->agregar($datos, $nom_marca);
+    }
+
+    public function ver_vehiculos_marcas(){
+        $id = $this->input->post('id');
+        echo json_encode($this->Comunes_model->cargar_uso('vehiculos', 'marcas_id', $id));
     }
 
     public function eliminar_marcas(){

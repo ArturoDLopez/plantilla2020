@@ -29,6 +29,24 @@
     </div>
 </div>
 
+<div class="modal" data-backdrop="static" id="modalColores" tabindex="-1" role="dialog" aria-labelledby="modalColoresLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalColoresLabel">Vehiculos de ese color</h5>
+            </div>
+            <div class="modal-body">
+                    <table id="ver_uso" data-url="">
+
+                    </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container text-center">
     <h1 class>
         Colores
@@ -51,6 +69,7 @@
     });
 
     let tabla = $('#tabla_colores');
+    let tabla2 = $('#ver_uso');
     columnsColor = [{
                     field: 'nom_color',
                     title: 'Color'
@@ -60,6 +79,18 @@
                 }, {
                     field: 'id', title: 'Acciones', formatter: accionC, align: 'center'
                 }
+    ];
+    let columnsV = [
+        {
+            field: 'num_serie', title: 'Numero de serie'
+        },
+        {
+            field: 'modelo', title: 'modelo'
+        },
+        {
+            field: 'fecha_registro', title: 'Fecha de registro'
+        },
+
     ];
 
     $('#frm_container').on('submit', function(e){
@@ -71,11 +102,23 @@
     })
 
     function accionC(value, row, index){
-        return `
+        let boton = `
         <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
                     <i class="glyph-icon icon-trash"></i>
         </button>
         `;
+        if(row.vehiculos_id != null){
+            boton = `
+            <button class="btn btn-round btn-info" title="Ver uso del color" type="button" onclick="ver(`+row.id+`)">
+                        <i class="glyph-icon icon-eye"></i>
+            </button>
+            <button class="btn btn-round btn-danger" title="Ver uso" disabled type="button" onclick="eliminar(`+row.id+`)">
+                        <i class="glyph-icon icon-trash"></i>
+            </button>
+        `;
+        }
+
+        return boton;
     }
 
     function imprimir(columns){
@@ -90,6 +133,26 @@
             }
         });
     };
+
+    function ver(id){
+        url = '<?= base_url(); ?>catalogos/colores/ver_vehiculos_colores';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: {'id':id},
+            success: function(data){
+                json = JSON.parse(data);
+                if(json.length >= 0){
+                    $('#modalColores').modal('show');
+                    tabla2.bootstrapTable('destroy');
+                    tabla2.bootstrapTable({
+                        columns: columnsV,
+                        data: json
+                    });
+                }
+            }
+        });
+    }
 
     function agregar(){
         url = "<?= base_url(); ?>catalogos/colores/agregar_colores";

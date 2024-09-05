@@ -4,6 +4,7 @@ class Tipos extends CI_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->model('catalogos/Tipos_model');
+        $this->load->model('comunes/Comunes_model');
     }
 
     public function index(){
@@ -22,6 +23,11 @@ class Tipos extends CI_Controller{
             'nom_tipo' => $this->input->post('tipo')
         );
         echo $this->Tipos_model->agregar($datos, $nom_tipo);
+    }
+
+    public function ver_vehiculos_tipos(){
+        $id = $this->input->post('id');
+        echo json_encode($this->Comunes_model->cargar_uso('vehiculos', 'tipo_id', $id));
     }
 
     public function eliminar_tipos(){

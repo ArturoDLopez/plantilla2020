@@ -6,7 +6,13 @@ class Tipos_model extends CI_Model{
     }
 
     public function cargar(){
-        $query = $this->db->get_where('tipo', array('borrado' => 0));
+        /* $query = $this->db->get_where('tipo', array('borrado' => 0));
+        return $query->result(); */
+        $this->db->select('t.id, t.nom_tipo, t.fecha_registro, ve.id as vehiculos_id');
+        $this->db->from('tipo t');
+        $this->db->join('(SELECT * FROM vehiculos  where borrado = 0 GROUP BY tipo_id) AS ve', 't.id = ve.tipo_id', 'left');
+        $this->db->where('t.borrado', 0);
+        $query = $this->db->get();
         return $query->result();
     }
 
