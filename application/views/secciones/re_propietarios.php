@@ -26,8 +26,6 @@
 			<div class="modal-body" id="cb-datos-registro">
                 <form action="<?php base_url();?>agregar_propietarios" id="frm_container" method="POST" data-parsley-validate="">
                     <div class="row">
-
-                        
                         <div class="form-group col-md-4">
                             <label for="num_serie"><span class="text-danger">*</span>Numero de serie</label>
                             <select class="form-control" id="num_serie" name="num_serie" onchange="datos_num_serie()" required>
@@ -74,11 +72,11 @@
                     <div class="row">
                         <div class="form-group col-md-6">
                             <label for="fecha_i"><span class="text-danger">*</span>Fecha de inicio</label>
-                            <input type="date" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-today required>
+                            <input type="date" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-hoy required>
                         </div>
                         <div class="form-group col-md-6">
-                            <label for="fecha_t">Fecha de termino</label>
-                            <input type="date" name="fecha_t" id="fecha_t" class="form-control">
+                            <label id="fecha_t_l" for="fecha_t">Fecha de termino</label>
+                            <input type="date" name="fecha_t" id="fecha_t" class="form-control" data-parsley-max-hoy>
                         </div>
 
                     </div>
@@ -102,44 +100,7 @@
 </div>
 
 
-<script>
-
-$(document).ready(function(){  
-    $('#frm_container').parsley();
-
-    if (window.Parsley) {
-        window.Parsley.addValidator('maxToday', {
-            validateString: function(value) {
-                var hoy = new Date();
-                var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
-                var anio = hoy.getFullYear(); // Devuelve el año actual
-                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
-
-                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
-            },
-            messages: {
-                es: 'La fecha de inicio no puede ser posterior a hoy.'
-            }
-        });
-    } else {
-        console.log("Parsley.js no está cargado.");
-    }
-});
-
-$('#frm_container').on('submit', function(e){
-            e.preventDefault();
-            
-            if($('#frm_container').parsley().isValid()){
-                registrar();
-                $('#frm_container').parsley().reset();
-            }
-            
-            
-    });
-
-
-    
+<script> 
     let base_url = "<?= base_url()?>secciones/propietarios/";
     let tabla = $("#tableV");
     let variable;
@@ -222,27 +183,67 @@ $('#frm_container').on('submit', function(e){
         })
     }
 
-
-
-    // Llamar la validación cuando se seleccione el dueño actual
     function habilitar_fecha() {
         var actual = document.getElementById("actual").value;
         var fechaInicio = document.getElementById("fecha_i");
         var fechaTermino = document.getElementById("fecha_t");
+        var fechaLabelTermino = document.getElementById("fecha_t_l");
 
-        // Si el dueño es actual, habilitar la fecha de inicio y aplicar validación de Parsley
         if (actual == "1") {
             fechaInicio.disabled = false;
             fechaTermino.disabled = true;
-            // Revalidar el campo con Parsley
+            fechaTermino.required = false;
+            fechaLabelTermino.innerHTML = "Fecha de termino";
             $('#fecha_i').parsley().validate();
         } else {
             fechaInicio.disabled = false;
             fechaTermino.disabled = false;
+            fechaTermino.required = true;
+            fechaLabelTermino.innerHTML = "<span class='text-danger'>*</span>Fecha de termino";
             // Desactivar la validación si no es dueño actual
             $('#fecha_i').parsley().reset();
         }
     }
+
+    $(document).ready(function(){  
+        $('#frm_container').parsley();
+
+        if (window.Parsley) {
+            window.Parsley.addValidator('maxHoy', {
+                validateString: function(value) {
+                    var hoy = new Date();
+                    if($('#actual').value = 1){
+                        var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    } else {
+                        var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    }
+                    
+                    var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+                    var anio = hoy.getFullYear(); // Devuelve el año actual
+                    var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                    return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+                },
+                messages: {
+                  es: 'La fecha de inicio no puede ser posterior a hoy.'
+                }
+            });
+        } 
+        else {
+            console.log("Parsley.js no está cargado.");
+        }
+    });
+
+$('#frm_container').on('submit', function(e){
+            e.preventDefault();
+            
+            if($('#frm_container').parsley().isValid()){
+                registrar();
+                $('#frm_container').parsley().reset();
+            }
+            
+            
+    });
 
     function traer_catalogos(vehiculos_id = null, duenos_id = null){
         $.ajax({

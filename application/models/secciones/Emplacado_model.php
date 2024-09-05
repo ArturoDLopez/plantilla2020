@@ -44,6 +44,11 @@ class Emplacado_model extends CI_Model{
         return $query->result();
     }
 
+    public function traer_catalogos2($tabla, $condiciones){
+        $query = $this->db->get_where($tabla, $condiciones);
+        return $query->result();
+    }
+
     public function cargar_placas_sin_asignar_excepto($id){
         $this->db->select('*');
         $this->db->from('placas');

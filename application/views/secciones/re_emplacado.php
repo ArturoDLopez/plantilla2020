@@ -41,7 +41,7 @@
                 
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
-                    <select class="form-control" id="num_serie" name="num_serie">
+                    <select class="form-control" id="num_serie" name="num_serie" onchange="datos_num_serie()" required>
                        <!--  <?php
                             foreach($vehiculos['vehiculos'] as $vehiculo){
                                 echo 
@@ -56,14 +56,14 @@
                 </div>
                 <div class="form-group col-md-4">
                     <label for="placa">Placas</label>
-                    <select name="placa" id="placa" class="form-control">
+                    <select name="placa" id="placa" class="form-control" required>
                        
                     </select>
                 </div>
 
                 <div class="form-group col-md-4">
                             <label for="actual">Actualmente son las placas del vehiculo</label>
-                            <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()">
+                            <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()" required>
                                 <option value="0">No</option>    
                                 <option value="1">Si</option>
                             </select>
@@ -73,21 +73,20 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="fecha_i">Fecha de inicio</label>
-                    <input type="date" name="fecha_i" id="fecha_i" class="form-control">
+                    <input type="date" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-hoy required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_t">Fecha de termino</label>
-                    <input type="date" name="fecha_t" id="fecha_t" class="form-control">
+                    <input type="date" name="fecha_t" id="fecha_t" class="form-control" data-parsley-max-hoy>
                 </div>
+            </div>
 
+            <div class="row">
+                <button type="input" id="btn_duenos" class="btn btn-success">Registrar</button>
             </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <div class="col-md-1">
-            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
-        </div>
-                        
+      <div class="modal-footer">    
         <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
 
       </div>
@@ -158,9 +157,50 @@
         `;
     }
 
+    $(document).ready(function(){  
+        $('#frm_container').parsley();
+
+        if (window.Parsley) {
+            window.Parsley.addValidator('maxHoy', {
+                validateString: function(value) {
+                    var hoy = new Date();
+                    if($('#actual').value = 1){
+                        var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    } else {
+                        var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    }
+                    
+                    var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+                    var anio = hoy.getFullYear(); // Devuelve el año actual
+                    var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                    return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+                },
+                messages: {
+                  es: 'La fecha de inicio no puede ser posterior a hoy.'
+                }
+            });
+        } 
+        else {
+            console.log("Parsley.js no está cargado.");
+        }
+    });
+
+    $('#frm_container').on('submit', function(e){
+            e.preventDefault();
+            
+            if($('#frm_container').parsley().isValid()){
+                registrar_local()
+                $('#frm_container').parsley().reset();
+            }
+            
+            
+    });
+
     
 
     function llamar(){
+        $('#actual').attr('disabled', false);
         $.ajax({
             url: base_url + 'cargar_placas_sin_asignar',
             method: 'POST',
@@ -168,7 +208,7 @@
                 json = JSON.parse(datos);
                 if(json.length > 0){
                     let opciones = '';
-
+                    opciones = '<option value="" disabled="" selected="" hidden="">Selecciona unas placas..</option>';
                     json.forEach(element => {
                             console.log('placa: ', element.placa);
                             opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
@@ -188,7 +228,7 @@
                 json = JSON.parse(datos);
                 if(json.length > 0){
                     let opciones = '';
-
+                    opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
                     json.forEach(element => {
                             opciones += `<option value="`+element.id+`">`+element.num_serie+`</option>`
                         });
@@ -203,9 +243,33 @@
         llamar_modal(modal_id, arreglo_campos);
     }
 
+    function datos_num_serie(){
+        var combo = document.getElementById("num_serie");
+        var sel = combo.options[combo.selectedIndex].value;
+        console.log("Selecionado: ", sel);
+        $.ajax({
+            url: base_url + 'datos_num_serie',
+            method: 'POST',
+            data: {'vehiculos_id': sel},
+            success: function(data){
+                console.log(data);
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    $('#actual').val(0);
+                    $('#actual').attr('disabled', true);
+                }else{
+                    $('#actual').val(1);
+                    $('#actual').attr('disabled', false);
+                    $('#fecha_t').attr('disabled', true);
+                }
+            }
+        })
+    }
+
     let anterior_id;
 
     function rellenar(id){
+        $('#actual').attr('disabled', false);
         $.ajax({
             url: base_url + 'consultar_emplacado',
             method: 'POST',
@@ -284,6 +348,7 @@
 
     function registrar_local(){
         let elemento = document.getElementById('btn_duenos');
+        $('#actual').attr('disabled', false);
         datos = {
                 'num_serie' : document.getElementById('num_serie').value,
                 'placa' : document.getElementById('placa').value,

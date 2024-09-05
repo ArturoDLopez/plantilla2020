@@ -16,6 +16,12 @@ class Emplacado extends CI_Controller{
         echo json_encode($this->Emplacado_model->cargar());
     }
 
+    public function datos_num_serie(){
+        $id = $this->input->post('vehiculos_id');
+        $condiciones = array('borrado' => 0, 'actual' => 1, 'vehiculos_id' => $id);
+        echo json_encode($this->Emplacado_model->traer_catalogos2('emplacado', $condiciones));
+    }
+
     public function cargar_placas_sin_asignar(){
         $condiciones = array('borrado' => 0, 'asignado' => null);
         echo json_encode($this->Emplacado_model->traer_catalogos('placas', $condiciones));
