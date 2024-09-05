@@ -9,7 +9,7 @@
                 <input type="text" class="form-control" required id="placa" name="placa" placeholder="Ingresa la placa">
             </div>
         </div>
-        <button type="button" onclick="registrar()" class="btn btn-success">Registrar</button>
+        <button type="submit"  class="btn btn-success">Registrar</button>
     </form>
 </div>
 
@@ -21,6 +21,11 @@
 </div>
 
 <script>
+
+    $(document).ready(function(){
+        $('#frm_placas').parsley();
+        traer_datos();
+    });
 
     let base_url = "<?= base_url()?>secciones/placas/"
     let tabla = $("#tableV");
@@ -38,6 +43,14 @@
 
     ];
 
+    $('#frm_placas').on('submit', function(e){
+        e.preventDefault();
+        if($('#frm_placas').parsley().isValid()){
+            registrar();
+            $('#frm_placas').parsley().reset();
+        }
+    })
+
     function acciones(value, row, index){
         return `
         <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
@@ -45,8 +58,6 @@
         </button>
         `
     }
-
-    traer_datos();
 
     function eliminar(row){
         Swal.fire({
@@ -87,6 +98,7 @@
     }
     
     function registrar(){
+        $('#frm_placas').parsley().reset();
         $.ajax({
             url: base_url + 'agregar_placa',
             method: 'POST',
@@ -102,8 +114,9 @@
                         })
                 }
                 else{
-                    datosTabla = JSON.parse(data);
                     tabla.bootstrapTable('refresh');
+                    $('#frm_placas').parsley().reset();
+                    $('#placa').val("");
                 }
             }
         })

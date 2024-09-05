@@ -34,7 +34,7 @@
 
                 <div class="form-group col-sm-4">
                     <label for="curp" class="">Curp</label>
-                    <input type="text" class="form-control" required id="curp" name="curp" placeholder="Ingresa tu curp">
+                    <input type="text" class="form-control" required data-parsley-pattern="/^([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)$/" id="curp" name="curp" placeholder="Ingresa tu curp">
                 </div>
 
                 <div class="form-group col-sm-4">
@@ -52,12 +52,14 @@
                     <input type="text" class="form-control" required id="am" name="am" placeholder="Ingresa tu apellido materno">
                 </div>
             </div>
+            <div class="row">
+            <div class="col-md-1">
+            <button type="submit" id="btn_duenos" class="btn btn-success">Registrar</button>
+        </div>
+            </div>
         </form>
       </div>
       <div class="modal-footer">
-        <div class="col-md-1">
-            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
-        </div>
                         
         <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
 
@@ -72,6 +74,11 @@
 
 
 <script>
+
+    $(document).ready(function(){
+        $('#frm_duenos').parsley();
+        traer_datos(base_url + 'cargar_duenos', columns, tabla);
+    });
 
     let base_url = "<?= base_url()?>secciones/duenos/";
     let elemento = document.getElementById('btn_duenos');
@@ -102,6 +109,14 @@
 
     ];
 
+    $('#frm_duenos').on('submit', function(e){
+        e.preventDefault();
+        if($('#frm_duenos').parsley().isValid()){
+            registrar_local();
+            $('#frm_duenos').parsley().reset();
+        }
+    })
+
     function acciones(value, row, index){
         return `
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
@@ -112,8 +127,6 @@
             </button>
         `;
     }
-
-    traer_datos(base_url + 'cargar_duenos', columns, tabla);
 
     function llamar(){
         llamar_modal(modal_id, arreglo_campos);
@@ -140,6 +153,7 @@
     }
 
     function registrar_local(){
+        $('#frm_duenos').parsley().reset();
         datos = {
                 'curp' : document.getElementById('curp').value,
                 'nombre' : document.getElementById('nombre').value,
@@ -152,11 +166,11 @@
         else{
             datos.id = variable;
         }
-
         registrar(base_url + 'agregar_dueno', base_url + 'editar_dueno', datos, elemento, columns, arreglo_campos, tabla);
     }
 
     function cancelar_local(){
+        $('#frm_duenos').parsley().reset();
         cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
 </script>

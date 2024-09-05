@@ -34,25 +34,25 @@
 
                 <div class="form-group col-md-4">
                     <label for="num_serie">Numero de serie</label>
-                    <input type="text" class="form-control" id="num_serie" name="num_serie">
+                    <input type="text" class="form-control" id="num_serie" name="num_serie" required>
                 </div>
                 
                 <div class="form-group col-md-4">
                     <label for="marca">Marca</label>
-                    <select class="form-control" id="marca" name="marca">
+                    <select class="form-control" id="marca" name="marca" required>
                         
                     </select>
                 </div>
                 <div class="form-group col-md-4">
                     <label for="modelo">Modelo</label>
-                    <input type="text" class="form-control" id="modelo" name="modelo">
+                    <input data-parsley-type="number" data-parsley-length="[4, 4]" data-parsley-min="1900" data-parsley-min="2025" class="form-control" id="modelo" name="modelo" required>
                 </div>
                 
             </div>
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="color">Color</label>
-                    <select class="form-control" name="color" id="color">
+                    <select class="form-control" name="color" id="color" required>
                         <!-- <option value="0">Selecciona una opcion</option>
                         <?php
                             foreach($colores['colores'] as $color):
@@ -67,19 +67,19 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="marca">Tipo</label>
-                    <select class="form-control" id="tipo" name="tipo">
+                    <select class="form-control" id="tipo" name="tipo" required>
                         
                     </select>
                 </div>
             </div>
-            
-
+            <div class="row">
+                <div class="col-md-1">
+                    <button type="submit" id="btn_duenos" class="btn btn-success">Registrar</button>
+                </div>
+            </div>
         </form>
       </div>
       <div class="modal-footer">
-        <div class="col-md-1">
-            <button type="button" id="btn_duenos" onclick="registrar_local()" class="btn btn-success" data-dismiss="modal">Registrar</button>
-        </div>
                         
         <button type="button" id="btn_cancel" class="btn btn-danger" data-dismiss="modal" onclick="cancelar_local()">Cancelar</button>
 
@@ -93,6 +93,11 @@
 </script>
 
 <script>
+
+    $(document).ready(function(){
+        $('#frm_container').parsley();
+        traer_datos_local(base_url + '/cargar_vehiculos', columns, tabla);
+    });
 
     let base_url = "<?= base_url()?>secciones/vehiculos";
     let modal_id = "modalForm";
@@ -125,8 +130,14 @@
         }
 
     ];
-    
-    traer_datos_local(base_url + '/cargar_vehiculos', columns, tabla);
+
+    $('#frm_container').on('submit', function(e){
+        e.preventDefault();
+        if($('#frm_container').parsley().isValid()){
+            registrar_local();
+            $('#frm_container').parsley().reset();
+        }
+    })
 
     function acciones(value, row, index){
         return `
@@ -147,7 +158,7 @@
             success: function(data){
                 json = JSON.parse(data);
                 if(json.length > 0){
-                    let opciones = '';
+                    let opciones = '<option disabled="" selected="" hidden="">Seleccione una marca...</option>'
                     json.forEach(element => {
                             opciones += `<option value="`+element.id+`">`+element.nom_marca+`</option>`
                         });
@@ -162,7 +173,7 @@
             success: function(data){
                 json = JSON.parse(data);
                 if(json.length > 0){
-                    let opciones = '';
+                    let opciones = '<option disabled="" selected="" hidden="">Seleccione un color...</option>'
                     json.forEach(element => {
                             opciones += `<option value="`+element.id+`">`+element.nom_color+`</option>`
                         });
@@ -176,7 +187,7 @@
             success: function(data){
                 json = JSON.parse(data);
                 if(json.length > 0){
-                    let opciones = '';
+                    let opciones = '<option disabled="" selected="" hidden="">Seleccione un tipo...</option>'
                     json.forEach(element => {
                             opciones += `<option value="`+element.id+`">`+element.nom_tipo+`</option>`
                         });
@@ -211,6 +222,7 @@
     }
 
     function registrar_local(){
+        $('#frm_container').parsley().reset();
         datos = {
                 'num_serie' : document.getElementById('num_serie').value,
                 'marca' : document.getElementById('marca').value,
@@ -264,6 +276,7 @@
     }
 
     function cancelar_local(){
+        $('#frm_container').parsley().reset();
         cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     }
 

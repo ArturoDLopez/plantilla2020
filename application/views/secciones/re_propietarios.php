@@ -101,6 +101,8 @@
 
 
 <script> 
+
+
     let base_url = "<?= base_url()?>secciones/propietarios/";
     let tabla = $("#tableV");
     let variable;

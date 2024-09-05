@@ -15,7 +15,7 @@
                         </div>
                         <div class="row">
                         <div class="form-group col-sm-12 m-1">
-                                <button id="btn_submit" type='button' class="btn btn-primary m-1" onclick="agregar()" data-dismiss="modal">
+                                <button id="btn_submit" type='submit' class="btn btn-primary m-1" >
                                     Registrar
                                 </button>
                             </div>
@@ -45,28 +45,12 @@
 
 <script>
 
-    function accion(value, row, index){
-        return `
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
-                    <i class="glyph-icon icon-trash"></i>
-        </button>
-        `;
-    }
+    $(document).ready(function(){
+        $('#frm_container').parsley();
+        imprimir(columns);
+    });
 
-    function imprimir(columns)
-    {
-        url = '<?= base_url(); ?>catalogos/tipos/cargar_tipos';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            success: function(data){
-                if(data != 0){
-                    llamar_tabla(data, columns);
-                }
-            }
-        });
-    };
-
+    let tabla = $('#tabla_tipos');   
     columns = [{
                     field: 'nom_tipo',
                     title: 'Tipo'
@@ -78,7 +62,34 @@
                 }
     ];
 
-    imprimir(columns);
+    $('#frm_container').on('submit', function(e){
+        e.preventDefault();
+        if($('#frm_container').parsley().isValid()){
+            agregar();
+            $('#frm_container').parsley().reset();
+        }
+    })
+
+    function accion(value, row, index){
+        return `
+        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
+                    <i class="glyph-icon icon-trash"></i>
+        </button>
+        `;
+    }
+
+    function imprimir(columns){
+        url = '<?= base_url(); ?>catalogos/tipos/cargar_tipos';
+        $.ajax({
+            url: url,
+            type: 'POST',
+            success: function(data){
+                if(data != 0){
+                    llamar_tabla(data, columns);
+                }
+            }
+        });
+    };
 
     function agregar(){
         url = "<?= base_url(); ?>catalogos/tipos/agregar_tipos";
@@ -136,9 +147,7 @@
             })
             }
         });
-    }
-
-    let tabla = $('#tabla_tipos');    
+    } 
 
     function llamar_tabla(datos, columns){
         datos = JSON.parse(datos);
