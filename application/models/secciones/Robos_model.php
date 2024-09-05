@@ -31,6 +31,16 @@ class Robos_model extends CI_Model{
         return $query->result();
     }
 
+    public function traer_num_serie($tabla){
+        $this->db->select('ve.id, ve.num_serie');
+        $this->db->from('vehiculos ve');
+        $this->db->join('propietario p', 'p.vehiculos_id = ve.id and p.borrado = 0 and p.actual = 1', 'right');
+        $this->db->join('emplacado e', 'e.vehiculos_id = ve.id and e.borrado = 0 and p.actual = 1', 'right');
+        $this->db->where('ve.borrado', 0);
+        $query = $this->db->get();
+        return $query->result();
+    }
+
     public function borrado_logico($id, $tabla){
         $this->db->where('id', $id);
         $this->db->update($tabla, array('borrado' => 1));

@@ -18,7 +18,7 @@ class Robos extends CI_Controller{
 
     public function cargar_num_serie(){
         $condiciones = array('borrado' => 0);
-        echo json_encode($this->Robos_model->traer_catalogos('vehiculos', $condiciones));
+        echo json_encode($this->Robos_model->traer_num_serie('vehiculos', $condiciones));
     }
 
     public function consultar_robo(){
