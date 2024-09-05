@@ -24,68 +24,73 @@
 				<h4 class="modal-title" style="color: white;"  id="modalFormLabel">Agregar propietarios</h4>
 			</div>
 			<div class="modal-body" id="cb-datos-registro">
-            <form action="<?php base_url();?>agregar_propietarios" id="frm_container" method="POST">
-        <div class="row">
+                <form action="<?php base_url();?>agregar_propietarios" id="frm_container" method="POST" data-parsley-validate="">
+                    <div class="row">
 
-            
-            <div class="form-group col-md-4">
-                <label for="num_serie"><span class="text-danger">*</span>Numero de serie</label>
-                <select class="form-control" id="num_serie" name="num_serie" onchange="datos_num_serie()">
+                        
+                        <div class="form-group col-md-4">
+                            <label for="num_serie"><span class="text-danger">*</span>Numero de serie</label>
+                            <select class="form-control" id="num_serie" name="num_serie" onchange="datos_num_serie()" required>
 
-                    <!-- <option value="0">
-                        Seleccione una opcion...
-                    </option>
-                    <?php
-                        foreach($vehiculos['vehiculos'] as $vehiculo){
-                            echo 
-                            '
-                                <option value="'.$vehiculo->id.'">
-                                    '.$vehiculo->num_serie.'
+                                <!-- <option value="0">
+                                    Seleccione una opcion...
                                 </option>
-                            ';
-                        }
-                    ?> -->
-                </select>
-            </div>
-            <div class="form-group col-md-4">
-                <label for="dueno"><span class="text-danger">*</span>Dueño</label>
-                <select name="dueno" id="dueno" class="form-control">
+                                <?php
+                                    foreach($vehiculos['vehiculos'] as $vehiculo){
+                                        echo 
+                                        '
+                                            <option value="'.$vehiculo->id.'">
+                                                '.$vehiculo->num_serie.'
+                                            </option>
+                                        ';
+                                    }
+                                ?> -->
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="dueno"><span class="text-danger">*</span>Dueño</label>
+                            <select name="dueno" id="dueno" class="form-control" required>
 
-                    <!-- <option value="0"><span class="text-danger">*</span>Seleccione un dueño</option>
-                    <?php
-                        foreach($duenos['duenos'] as $du){
-                            echo '
-                                <option value="'.$du->id.'">'.$du->nombre.' '.$du->apellido_p.' '.$du->apellido_m.'</option>
-                            ';
-                        }
-                    ?> -->
-                </select>
-            </div>
+                                <!-- <option value="0"><span class="text-danger">*</span>Seleccione un dueño</option>
+                                <?php
+                                    foreach($duenos['duenos'] as $du){
+                                        echo '
+                                            <option value="'.$du->id.'">'.$du->nombre.' '.$du->apellido_p.' '.$du->apellido_m.'</option>
+                                        ';
+                                    }
+                                ?> -->
+                            </select>
+                        </div>
 
-            <div class="form-group col-md-4">
-                        <label for="actual"><span class="text-danger">*</span>Actualmente es el dueño</label>
-                        <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()">
-                            <option value="0">No</option>    
-                            <option value="1">Si</option>
-                        </select>
-            </div>
-            
-        </div>
-        <div class="row">
-            <div class="form-group col-md-6">
-                <label for="fecha_i"><span class="text-danger">*</span>Fecha de inicio</label>
-                <input type="date" name="fecha_i" id="fecha_i" class="form-control">
-            </div>
-            <div class="form-group col-md-6">
-                <label for="fecha_t">Fecha de termino</label>
-                <input type="date" name="fecha_t" id="fecha_t" class="form-control">
-            </div>
+                        <div class="form-group col-md-4">
+                                    <label for="actual"><span class="text-danger">*</span>Actualmente es el dueño</label>
+                                    <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()" required>
+                                        <option value="0">No</option>    
+                                        <option value="1">Si</option>
+                                    </select>
+                        </div>
+                        
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="fecha_i"><span class="text-danger">*</span>Fecha de inicio</label>
+                            <input type="date" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-today required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="fecha_t">Fecha de termino</label>
+                            <input type="date" name="fecha_t" id="fecha_t" class="form-control">
+                        </div>
 
-        </div>
-    </form>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <button type="submit" id="btn_duenos" class="btn btn-success" ><i class=" glyph-icon icon-save"></i> Registrar</button>
+                        </div>
+                    </div>
+                </form>
 			</div>
 			<div class="modal-footer">
-                <button type="button" id="btn_duenos" onclick="registrar()" class="btn btn-success" data-dismiss="modal"><i class=" glyph-icon icon-save"></i> Registrar</button>
+                
 				<button id="btn_cancel" data-dismiss="modal" class="btn btn-danger" onclick ="cancelar()"><i class=" glyph-icon icon-times"></i> Cancelar</button>
 			</div>
 		</div>
@@ -98,19 +103,41 @@
 
 
 <script>
-    const habilitar_fecha = () =>{
-        let actual = document.getElementById('actual').value;
-        console.log('Actuual: ', actual);
-        if(actual == 1){
-            document.getElementById('fecha_t').setAttribute('disabled', true);
-            document.getElementById('fecha_t').value = null;
-        }else if(actual == 0){
-            document.getElementById('fecha_t').removeAttribute('disabled', false);
-        }
-    }
-</script>
 
-<script>
+$(document).ready(function(){  
+    $('#frm_container').parsley();
+
+    if (window.Parsley) {
+        window.Parsley.addValidator('maxToday', {
+            validateString: function(value) {
+                var hoy = new Date();
+                var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+                var anio = hoy.getFullYear(); // Devuelve el año actual
+                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+            },
+            messages: {
+                es: 'La fecha de inicio no puede ser posterior a hoy.'
+            }
+        });
+    } else {
+        console.log("Parsley.js no está cargado.");
+    }
+});
+
+$('#frm_container').on('submit', function(e){
+            e.preventDefault();
+            
+            if($('#frm_container').parsley().isValid()){
+                registrar();
+                $('#frm_container').parsley().reset();
+            }
+            
+            
+    });
+
 
     
     let base_url = "<?= base_url()?>secciones/propietarios/";
@@ -182,10 +209,39 @@
             data: {'vehiculos_id': sel},
             success: function(data){
                 console.log(data);
-                /* datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla); */
+                json = JSON.parse(data);
+                if(json.length > 0){
+                    $('#actual').val(0);
+                    $('#actual').attr('disabled', true);
+                }else{
+                    $('#actual').val(1);
+                    $('#actual').attr('disabled', false);
+                    $('#fecha_t').attr('disabled', true);
+                }
             }
         })
+    }
+
+
+
+    // Llamar la validación cuando se seleccione el dueño actual
+    function habilitar_fecha() {
+        var actual = document.getElementById("actual").value;
+        var fechaInicio = document.getElementById("fecha_i");
+        var fechaTermino = document.getElementById("fecha_t");
+
+        // Si el dueño es actual, habilitar la fecha de inicio y aplicar validación de Parsley
+        if (actual == "1") {
+            fechaInicio.disabled = false;
+            fechaTermino.disabled = true;
+            // Revalidar el campo con Parsley
+            $('#fecha_i').parsley().validate();
+        } else {
+            fechaInicio.disabled = false;
+            fechaTermino.disabled = false;
+            // Desactivar la validación si no es dueño actual
+            $('#fecha_i').parsley().reset();
+        }
     }
 
     function traer_catalogos(vehiculos_id = null, duenos_id = null){
