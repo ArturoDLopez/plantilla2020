@@ -57,7 +57,16 @@
         </button>
     </div>
 
-    <table id="tabla_tipos" data-url="<?php echo base_url()."catalogos/tipos/cargar_tipos"?>"></table>
+    <table id="tabla_tipos" data-url="<?php echo base_url()."catalogos/tipos/cargar_tipos"?>">
+        <thead>
+            <tr>
+                <th data-field="nom_tipo" data-visible="true">Tipo</th>
+                <th data-field="fecha_registro" data-visible="true">Fecha registro</th>
+                <th data-field="id" data-visible="true" data-formatter="accion"  data-align="center" data-halign="center">Acciones</th>
+                
+            </tr>
+        </thead>
+    </table>
     
 </div>
 
@@ -65,7 +74,8 @@
 
     $(document).ready(function(){
         $('#frm_container').parsley();
-        imprimir(columns);
+        //imprimir(columns);
+        tabla.bootstrapTable();
     });
 
     let tabla = $('#tabla_tipos');   
