@@ -13,7 +13,18 @@ class Vehiculos extends CI_Controller{
     }
 
     public function cargar_vehiculos(){
-        echo json_encode($this->Vehiculos_model->cargar());
+        $limit = $this->input->get('limit');
+        $offset = $this->input->get('offset');
+        $total = $this->Vehiculos_model->contar_vehiculos();
+        $vehiculos = $this->Vehiculos_model->obtener_vehiculos($limit, $offset);
+        // Formatear la respuesta
+        $response = [
+            'total' => $total, // Total de registros
+            'rows' => $vehiculos // Registros actuales
+        ];
+
+        // Enviar la respuesta como JSON
+        echo json_encode($response);
     }
 
     public function consultar_auto(){
@@ -32,6 +43,7 @@ class Vehiculos extends CI_Controller{
         );
         echo $this->Vehiculos_model->agregar($datos, $nom_marca);
     }
+    
 
     public function cargar_marcas(){
         echo json_encode($this->Vehiculos_model->traer_catalogos('marcas'));

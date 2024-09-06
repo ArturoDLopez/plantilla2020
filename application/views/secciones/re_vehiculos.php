@@ -15,7 +15,7 @@
         
         <div class="row">
             
-            <table id="tableV" data-url="<?= base_url()?>secciones/vehiculos/cargar_vehiculos">
+            <table id="tableV" >
 
             </table>
         </div>
@@ -94,9 +94,31 @@
 
 <script>
 
+
     $(document).ready(function(){
         $('#frm_container').parsley();
-        traer_datos_local(base_url + '/cargar_vehiculos', columns, tabla);
+        tabla.bootstrapTable({
+            url: base_url + '/cargar_vehiculos',
+            method: 'get',
+            pagination: true,
+            sidePagination: 'server', // Indica que el paginado es por servidor
+            pageSize: 10, // Número de registros 
+            pageList: [10, 25, 50, 100], // Opciones de paginado
+            queryParams: function (params) {
+                return {
+                    offset: params.offset, // Offset para el paginado
+                    limit: params.limit, // Límite de registros por página
+                    //search: params.search 
+                };
+            },
+            responseHandler: function (res) {
+                return {
+                    total: res.total, 
+                    rows: res.rows 
+                };
+            },
+            columns: columns
+        });
     });
 
     let base_url = "<?= base_url()?>secciones/vehiculos";
@@ -278,26 +300,6 @@
     function cancelar_local(){
         $('#frm_container').parsley().reset();
         cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
-    }
-
-    function traer_datos_local(url){
-        $.ajax({
-            url: url,
-            success: function(data){
-                datos = JSON.parse(data);
-                if(datos.length > 0){
-                    llamar_tabla(datos);
-                }
-            }
-        })
-    }
-
-    function llamar_tabla(datos){
-        tabla.bootstrapTable({
-            pagination: true,
-            columns: columns,
-            data: datos
-        })
     }
 
 </script>

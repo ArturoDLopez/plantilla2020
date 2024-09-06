@@ -132,7 +132,6 @@ function tabla_refresh(tabla){
 function llamar_tabla(tabla, data, columns){
     tabla.bootstrapTable('destroy');
     tabla.bootstrapTable({
-        pagination : true,
         data: data,
         columns: columns
     })

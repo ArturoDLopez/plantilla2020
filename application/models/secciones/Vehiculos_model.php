@@ -13,9 +13,24 @@ class Vehiculos_model extends CI_Model{
         $this->db->join('colores col','ve.colores_id = col.id','inner');
         $this->db->join('tipo','ve.tipo_id = tipo.id','inner');
         $this->db->where('ve.borrado', 0);
-
         $query = $this->db->get();
-        
+        return $query->result();
+    }
+
+    public function contar_vehiculos() {
+        $this->db->where('borrado', 0);
+        return $this->db->count_all_results('vehiculos');
+    }
+
+    public function obtener_vehiculos($limit, $offset) {
+        $this->db->select('ve.id, num_serie, nom_marca, modelo, nom_color, nom_tipo, ve.fecha_registro');
+        $this->db->from('vehiculos ve');
+        $this->db->join('marcas mar','ve.marcas_id = mar.id','inner');
+        $this->db->join('colores col','ve.colores_id = col.id','inner');
+        $this->db->join('tipo','ve.tipo_id = tipo.id','inner');
+        $this->db->where('ve.borrado', 0);
+        $this->db->limit($limit, $offset);
+        $query = $this->db->get();
         return $query->result();
     }
 
