@@ -292,6 +292,9 @@
                     });
                     tabla.bootstrapTable('refresh');
                 }
+            },
+            error: function(){
+                console.log("Fallo del servidor ");
             }
         })
     }

@@ -14,7 +14,7 @@ class Vehiculos_model extends CI_Model{
         $this->db->join('emplacado emp', 've.id = emp.vehiculos_id', 'inner');
         $this->db->join('placas pl', 'emp.placas_id = pl.id', 'inner');
         $this->db->join('propietario pro', 've.id = pro.vehiculos_id', 'inner');
-        $this->db->join('dueños du', 'pro.duenos_id = du.id', 'inner');
+        $this->db->join('duenos du', 'pro.duenos_id = du.id', 'inner');
         $this->db->join('(SELECT * FROM robos GROUP BY vehiculos_id ORDER BY fecha_registro ASC) AS ro', 've.id = ro.vehiculos_id', 'left');
         $this->db->where('pl.placa LIKE "%'.$placa.'%" OR ve.num_serie LIKE "%'.$placa.'%"');
         

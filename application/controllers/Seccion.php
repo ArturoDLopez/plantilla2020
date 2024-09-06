@@ -17,7 +17,7 @@ class Seccion extends CI_Controller {
 	public function index()
 	{
 		//validar si el usaurio esta logueado
-		$this->load->view('seccion/login');
+		$this->load->view('secciones/login');
 	}
 
 	public function validate(){
@@ -42,7 +42,7 @@ class Seccion extends CI_Controller {
 			);
 			$this->session->set_userdata($data);
 
-			echo json_encode(array('url' => base_url('seccion/buscar_vehiculo')));
+			echo json_encode(array('url' => base_url('secciones/buscar_vehiculo')));
 		}
 
 	}
@@ -58,7 +58,7 @@ class Seccion extends CI_Controller {
 		$data['enlace'] = $string;
 
 		$this->load->view('template/header', $data);
-			$this->load->view('seccion/ver');
+			$this->load->view('secciones/ver');
 		$this->load->view('template/footer');
 	}
 
@@ -77,13 +77,20 @@ class Seccion extends CI_Controller {
 		$data = $this->Vehiculos_model->buscar_vehiculo($placa);
  */
 		$this->load->view('template/header');
-        $this->load->view('seccion/tabla_vehiculos');
+        $this->load->view('secciones/tabla_vehiculos');
 		$this->load->view('template/footer');
 	}
 
 	public function buscar_vehiculo_ajax(){
 		$placa = $this->input->post('placa');
 		$data = $this->Vehiculos_model->buscar_vehiculo($placa);
+		$response['msj'] = "No se encontraron datos";
+		if(!$data){
+			return $this->output
+				->set_status_header(404)
+				->set_content_type("application/json")
+            	->set_output(json_encode($response));
+		}
 		echo json_encode($data);
 	}
 

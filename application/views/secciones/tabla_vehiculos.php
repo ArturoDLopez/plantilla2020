@@ -120,6 +120,10 @@
             success: function(data){
                 let json = JSON.parse(data);
                 llamar_tabla(json, value);
+            },
+            error: function (res){
+                console.log("Error: ");
+                console.log(res);
             }
         })
     }
