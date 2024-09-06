@@ -14,7 +14,10 @@ class Colores extends CI_Controller{
     }
 
     public function cargar_colores(){
-        echo json_encode($this->Colores_model->cargar());
+        $limit = $this->input->get('limit');
+        $offset = $this->input->get('offset');
+
+        echo json_encode($this->Colores_model->cargar($limit, $offset));
     }
 
     public function agregar_colores(){

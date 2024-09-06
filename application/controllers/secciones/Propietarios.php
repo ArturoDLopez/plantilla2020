@@ -13,7 +13,9 @@ class Propietarios extends CI_Controller{
     }
 
     public function cargar_propietarios(){
-        echo json_encode($this->Propietarios_model->cargar());
+        $limit =  $this->input->get('limit');
+        $offset = $this->input->get('offset');
+        echo json_encode($this->Propietarios_model->cargar($limit, $offset));
     }
 
     public function cargar_num_serie(){

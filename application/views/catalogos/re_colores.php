@@ -65,7 +65,20 @@
 
     $(document).ready(function(){
         $('#frm_container').parsley();
-        imprimir(columnsColor);
+        tabla.bootstrapTable({
+            columns: columnsColor,
+            pageSize: 10,
+            pageList: [10,20],
+            pagination: true,
+            sidePagination: 'server',
+            queryParams: function(params){
+                return{
+                    limit: params.limit,
+                    offset: params.offset
+                }
+            }
+            
+        })
     });
 
     let tabla = $('#tabla_colores');
@@ -120,19 +133,6 @@
 
         return boton;
     }
-
-    function imprimir(columns){
-        url = '<?= base_url(); ?>catalogos/colores/cargar_colores';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            success: function(data){
-                if(data != 0){
-                    llamar_tabla(data, columns);
-                }
-            }
-        });
-    };
 
     function ver(id){
         url = '<?= base_url(); ?>catalogos/colores/ver_vehiculos_colores';
@@ -211,22 +211,6 @@
             }
         });
     }
-    
-    function llamar_tabla(datos, columns){
-        datos = JSON.parse(datos);
-        console.log("Datos: ", datos);
-        if(datos.length == 0) {
-            tabla.bootstrapTable('destroy');
-            return
-        }
-
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            columns: columns,
-            data: datos
-        })
-    }
-
     function mostrar_modal(){
         $('#modalForm').modal('show');
     }

@@ -92,23 +92,10 @@
       </div>
     </div>
   </div>
+
 </div>
 
 <script src="../assets/js/modal.js">
-    
-</script>
-
-<script>
-    const habilitar_fecha = () =>{
-        let actual = document.getElementById('actual').value;
-        console.log('Actuual: ', actual);
-        if(actual == 1){
-            document.getElementById('fecha_t').setAttribute('disabled', true);
-            document.getElementById('fecha_t').value = null;
-        }else if(actual == 0){
-            document.getElementById('fecha_t').removeAttribute('disabled', false);
-        }
-    }
 </script>
 
 <script>
@@ -144,8 +131,6 @@
 
     ];
 
-    traer_datos(base_url + 'cargar_emplacado', columns, tabla);
-
     function acciones(value, row, index){
         return `
             <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
@@ -159,6 +144,18 @@
 
     $(document).ready(function(){  
         $('#frm_container').parsley();
+        tabla.bootstrapTable({
+            columns:columns,
+            pagination: true,
+            sidePagination: 'server',
+            paginationSize: '10',
+            queryParams: function (params){
+                return{
+                    limit: params.limit,
+                    offset: params.offset
+                }
+            }
+        });
 
         if (window.Parsley) {
             window.Parsley.addValidator('maxHoy', {
@@ -193,11 +190,18 @@
                 registrar_local()
                 $('#frm_container').parsley().reset();
             }
-            
-            
     });
 
-    
+    const habilitar_fecha = () =>{
+        let actual = document.getElementById('actual').value;
+        console.log('Actuual: ', actual);
+        if(actual == 1){
+            document.getElementById('fecha_t').setAttribute('disabled', true);
+            document.getElementById('fecha_t').value = null;
+        }else if(actual == 0){
+            document.getElementById('fecha_t').removeAttribute('disabled', false);
+        }
+    }
 
     function llamar(){
         $('#actual').attr('disabled', false);

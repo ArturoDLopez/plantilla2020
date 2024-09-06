@@ -6,9 +6,18 @@ class Placas_model extends CI_Model{
         $this->load->database();
     }
 
-    public function cargar(){
+    public function cargar($limit, $offset){
+
+        $this->db->where('borrado', 0);
+        $total = $this->db->count_all_results('placas');
+        $this->db->limit($limit, $offset);
         $query = $this->db->get_where('placas', array('borrado' => 0));
-        return $query->result();
+        
+
+        $data['total'] = $total;
+        $data['rows'] = $query->result();
+        
+        return $data;
     }
 
     public function agregar($datos, $campo){

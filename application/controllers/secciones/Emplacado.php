@@ -13,7 +13,9 @@ class Emplacado extends CI_Controller{
     }
 
     public function cargar_emplacado(){
-        echo json_encode($this->Emplacado_model->cargar());
+        $limit = $this->input->get('limit');
+        $offset = $this->input->get('offset');
+        echo json_encode($this->Emplacado_model->cargar($limit, $offset));
     }
 
     public function datos_num_serie(){

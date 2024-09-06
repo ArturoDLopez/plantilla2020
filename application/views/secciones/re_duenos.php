@@ -16,7 +16,23 @@
         </div>
         
         <div class="row">
-            <table id="tableV" data-url="<?= base_url()?>secciones/duenos/cargar_duenos" >
+            <table id="tableV" data-url="<?= base_url()?>secciones/duenos/cargar_duenos" 
+                data-pagination="true"
+                data-side-pagination="server"
+                data-page-size="10"
+                data-page-list= "[10, 20, 30]"
+                data-query-params= "queryParams"
+            >
+            <thead>
+                <tr>
+                    <th data-field="curp" >Curp</th>
+                    <th data-field="nombre" >Nombre</th>
+                    <th data-field="apellido_p" >Apellido paterno</th>
+                    <th data-field="apellido_m" >Apellido Materno</th>
+                    <th data-field="fecha_registro" >Fecha de registro</th>
+                    <th data-field="id" data-formatter="acciones" data-align="center">Acciones</th>
+                </tr>
+            </thead>
             </table>
         </div>
     </div>
@@ -77,7 +93,7 @@
 
     $(document).ready(function(){
         $('#frm_duenos').parsley();
-        traer_datos(base_url + 'cargar_duenos', columns, tabla);
+        tabla.bootstrapTable();
     });
 
     let base_url = "<?= base_url()?>secciones/duenos/";
@@ -116,6 +132,13 @@
             $('#frm_duenos').parsley().reset();
         }
     })
+
+    function queryParams(params){
+        return{
+            limit: params.limit,
+            offset: params.offset
+        }
+    }
 
     function acciones(value, row, index){
         return `

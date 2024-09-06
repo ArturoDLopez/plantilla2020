@@ -110,9 +110,19 @@
 
     $(document).ready(function(){  
         $('#frm_container').parsley();
+        tabla.bootstrapTable({
+            columns:columns,
+            pagination: true,
+            sidePagination: 'server',
+            paginationSize: '10',
+            queryParams: function (params){
+                return{
+                    limit: params.limit,
+                    offset: params.offset
+                }
+            }
+        });
     });
-
-    
 
     let base_url = "<?= base_url()?>secciones/robos/";
     let modal_id = "modalForm";
@@ -122,9 +132,6 @@
     let global;
     let datosTabla = 0;
     const columns = [{
-                        field: 'id',
-                        title: '#'
-                    }, {
                         field: 'num_serie',
                         title: 'Numero de serie'
                     }, {
@@ -151,8 +158,6 @@
         }
 
     ];
-
-    traer_datos( base_url + 'cargar_robos', columns, tabla);
 
     function acciones(value, row, index){
         return `

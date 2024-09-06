@@ -13,7 +13,9 @@ class Placas extends CI_Controller{
     }
 
     public function cargar_placas(){
-        echo json_encode($this->Placas_model->cargar());
+        $limit = $this->input->get('limit');
+        $offset = $this->input->get('offset');
+        echo json_encode($this->Placas_model->cargar($limit, $offset));
     }
 
     public function consultar_placa(){

@@ -24,7 +24,18 @@
 
     $(document).ready(function(){
         $('#frm_placas').parsley();
-        traer_datos();
+        tabla.bootstrapTable({
+            columns: columns,
+            pagination: true,
+            sidePagination: 'server',
+            sizePage: "10",
+            queryParams: function(params){
+                return{
+                    limit: params.limit,
+                    offset: params.offset
+                }
+            }
+        });
     });
 
     let base_url = "<?= base_url()?>secciones/placas/"
@@ -84,19 +95,6 @@
             }
         })
     }
-
-
-    function traer_datos(){
-        $.ajax({
-            url: base_url + 'cargar_placas',
-            method: 'POST',
-            success: function(data){
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-            }
-        })
-    }
-    
     function registrar(){
         $('#frm_placas').parsley().reset();
         $.ajax({
@@ -119,15 +117,6 @@
                     $('#placa').val("");
                 }
             }
-        })
-    }
-
-    function llamar_tabla(data){
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            pagination : true,
-            data: data,
-            columns: columns
         })
     }
 </script>

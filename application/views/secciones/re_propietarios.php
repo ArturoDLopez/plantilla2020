@@ -10,8 +10,29 @@
     </button>
 
     <div class="container ve_container">
-        <table id="tableV" data-url="<?= base_url()?>secciones/Propietarios/cargar_propietarios">
+        <table id="tableV" data-url="<?= base_url()?>secciones/Propietarios/cargar_propietarios"
+                    data-pagination="true"
+                    data-side-pagination="server"
+                    data-page-size="10"
+                    data-page-list=[10, 20]
+                    data-query-params="queryParams"
+        >
+            <thead>
+                <tr>
+                    <th data-field="num_serie">Numero de serie</th>
+                    <th data-field="nombre">Nombre</th>
+                    <th data-field="apellido_p">Apellido paterno</th>
+                    <th data-field="apellido_p">Apellido materno</th>
+                    <th data-field="actual">Actual</th>
+                    <th data-field="fecha_inicio">Fecha de inicio</th>
+                    <th data-field="fecha_termino">Fecha de termino</th>
+                    <th data-field="fecha_registro">Fecha de registro</th>
+                    <th data-field="id" data-formatter="acciones" data-align="center">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
 
+            </tbody>
         </table>
     </div>
 
@@ -96,48 +117,44 @@
 </div>
 
 <div class="container text-center" id="ve_container">
-    
 </div>
-
 
 <script> 
 
+    $(document).ready(function(){  
+        $('#frm_container').parsley();
+        tabla.bootstrapTable();
+
+        if (window.Parsley) {
+            window.Parsley.addValidator('maxHoy', {
+                validateString: function(value) {
+                    var hoy = new Date();
+                    if($('#actual').value = 1){
+                        var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    } else {
+                        var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    }
+                    
+                    var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+                    var anio = hoy.getFullYear(); // Devuelve el año actual
+                    var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                    return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+                },
+                messages: {
+                  es: 'La fecha de inicio no puede ser posterior a hoy.'
+                }
+            });
+        } 
+        else {
+            console.log("Parsley.js no está cargado.");
+        }
+    });
 
     let base_url = "<?= base_url()?>secciones/propietarios/";
     let tabla = $("#tableV");
     let variable;
     let datosTabla = 0;
-    let columns = [
-        {
-            field: 'num_serie', title: 'Numero de serie'
-        },
-        {
-            field: 'nombre', title: 'Nombre'
-        },
-        {
-            field: 'apellido_p', title: 'Apellido paterno'
-        },
-        {
-            field: 'apellido_m', title: 'Apellido materno'
-        },
-        {
-            field: 'actual', title: 'Actual'
-        },
-        {
-            field: 'fecha_inicio', title: 'Fecha de inicio'
-        },
-        {
-            field: 'fecha_termino', title: 'Fecha de finalizacion'
-        },
-        {
-            field: 'fecha_registro', title: 'Fecha de registro'
-        },
-        {
-            field: 'id', title: 'Acciones', formatter: acciones, align: 'center'
-        }
-
-    ];
-    traer_datos();
 
     function acciones(value, row, index){
         return `
@@ -150,16 +167,11 @@
         `
     }
 
-    function traer_datos(){
-        $.ajax({
-            url: base_url + 'cargar_propietarios',
-            method: 'POST',
-            success: function(data){
-                console.log(data);
-                datosTabla = JSON.parse(data);
-                llamar_tabla(datosTabla);
-            }
-        })
+    function queryParams(params) {
+        return {
+            limit: params.limit,
+            offset: params.offset
+        };
     }
 
     function datos_num_serie(){
@@ -207,36 +219,7 @@
         }
     }
 
-    $(document).ready(function(){  
-        $('#frm_container').parsley();
-
-        if (window.Parsley) {
-            window.Parsley.addValidator('maxHoy', {
-                validateString: function(value) {
-                    var hoy = new Date();
-                    if($('#actual').value = 1){
-                        var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                    } else {
-                        var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                    }
-                    
-                    var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
-                    var anio = hoy.getFullYear(); // Devuelve el año actual
-                    var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
-
-                    return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
-                },
-                messages: {
-                  es: 'La fecha de inicio no puede ser posterior a hoy.'
-                }
-            });
-        } 
-        else {
-            console.log("Parsley.js no está cargado.");
-        }
-    });
-
-$('#frm_container').on('submit', function(e){
+    $('#frm_container').on('submit', function(e){
             e.preventDefault();
             
             if($('#frm_container').parsley().isValid()){
@@ -392,18 +375,8 @@ $('#frm_container').on('submit', function(e){
     }
 
     function llamar_modal(){
-        
         limpiar();
         $("#modalForm").modal('show');  
-    }
-
-    function llamar_tabla(data){
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            pagination : true,
-            data: data,
-            columns: columns
-        })
     }
 
 </script>

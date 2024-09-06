@@ -65,7 +65,19 @@
 
     $(document).ready(function(){
         $('#frm_container').parsley();
-        imprimir(columns);
+        tabla.bootstrapTable({
+            columns: columns,
+            pagination: true,
+            sidePagination: 'server',
+            pageSize: 10,
+            queryParams: function (params){
+                return {
+                    offset: params.offset,
+                    limit: params.limit
+                }
+            }
+
+        });
     });
 
     let tabla = $('#tabla_marcas');
@@ -120,19 +132,6 @@
 
         return boton;
     }
-
-    function imprimir(columns){
-        url = '<?= base_url(); ?>catalogos/marcas/cargar_marcas';
-        $.ajax({
-            url: url,
-            type: 'POST',
-            success: function(data){
-                if(data != 0){
-                    llamar_tabla(data, columns);
-                }
-            }
-        });
-    };
 
     function ver(id){
         url = '<?= base_url(); ?>catalogos/marcas/ver_vehiculos_marcas';
@@ -210,21 +209,6 @@
             })
             }
         });
-    }
-
-    function llamar_tabla(datos, columns){
-        datos = JSON.parse(datos);
-        console.log("Datos: ", datos);
-        if(datos.length == 0) {
-            tabla.bootstrapTable('destroy');
-            return
-        }
-
-        tabla.bootstrapTable('destroy');
-        tabla.bootstrapTable({
-            columns: columns,
-            data: datos
-        })
     }
 
     function mostrar_modal(){

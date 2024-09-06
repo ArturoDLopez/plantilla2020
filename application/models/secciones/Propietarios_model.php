@@ -6,15 +6,23 @@ class Propietarios_model extends CI_Model{
         $this->load->database();
     }
 
-    public function cargar(){
+    public function cargar($limit, $offset){
+        $this->db->where('borrado', 0);
+        $total = $this->db->count_all_results('propietario');
+
+
         $this->db->select('pro.id, ve.num_serie, du.nombre, du.apellido_p, du.apellido_m, pro.actual, pro.fecha_inicio, pro.fecha_termino, pro.fecha_registro');
         $this->db->from('propietario pro');
         $this->db->join('vehiculos ve','pro.vehiculos_id = ve.id','inner');
         $this->db->join('duenos du','pro.duenos_id = du.id','inner');
         $this->db->where('pro.borrado', 0);
+        $this->db->limit($limit, $offset);
 
         $query = $this->db->get();
-        return $query->result();
+
+        $data['total'] = $total;
+        $data['rows'] = $query->result();
+        return $data;
     }
 
     public function agregar($datos){

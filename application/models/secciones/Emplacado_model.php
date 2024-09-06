@@ -6,15 +6,21 @@ class Emplacado_model extends CI_Model{
         $this->load->database();
     }
 
-    public function cargar(){
+    public function cargar($limit, $offset){
+        $this->db->where('borrado', 0);
+        $total = $this->db->count_all_results('emplacado');
+
         $this->db->select('emp.id, ve.num_serie, pl.placa, emp.actual, emp.fecha_inicio, emp.fecha_termino, emp.fecha_registro');
         $this->db->from('emplacado emp');
         $this->db->join('vehiculos ve', 'emp.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'emp.placas_id = pl.id', 'inner');
         $this->db->where('emp.borrado', 0);
+        $this->db->limit($limit, $offset);
         $query = $this->db->get();
-        
-        return $query->result();
+
+        $data['total'] = $total;
+        $data['rows'] = $query->result();
+        return $data;
     }
 
     public function agregar($datos){

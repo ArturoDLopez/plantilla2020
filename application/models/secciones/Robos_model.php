@@ -6,16 +6,23 @@ class Robos_model extends CI_Model{
         $this->load->database();
     }
 
-    public function cargar(){
+    public function cargar($limit, $offset){
+
+        $this->db->where('borrado', 0);
+        $total = $this->db->count_all_results('robos');
+
         $this->db->select('rob.id, ve.num_serie, pl.placa, rob.descripcion, rob.fecha, rob.fecha_registro, du.nombre, du.apellido_p');
         $this->db->from('robos rob');
         $this->db->join('vehiculos ve', 'rob.vehiculos_id = ve.id', 'inner');
         $this->db->join('placas pl', 'rob.placas_id = pl.id', 'inner');
         $this->db->join('duenos du', 'rob.duenos_id = du.id', 'inner');
         $this->db->where('rob.borrado', 0);
+        $this->db->limit($limit, $offset);
         $query = $this->db->get();
 
-        return $query->result();
+        $data['total'] = $total;
+        $data['rows'] = $query->result();
+        return $data;
     }
 
     public function agregar($datos){

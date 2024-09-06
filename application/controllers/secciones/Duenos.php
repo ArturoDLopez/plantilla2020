@@ -13,7 +13,9 @@ class Duenos extends CI_Controller{
     }
 
     public function cargar_duenos(){
-        echo json_encode($this->Duenos_model->cargar());
+        $limit = $this->input->get('limit');
+        $offset = $this->input->get('offset');
+        echo json_encode($this->Duenos_model->cargar($limit, $offset));
     }
 
     public function consultar_dueno(){
