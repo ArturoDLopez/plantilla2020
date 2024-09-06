@@ -60,6 +60,9 @@
 
 	<script type="text/javascript" src="<?= base_url()."assets/parsley/parsley.js"; ?>"></script>
 
+	<!-- Noty -->
+	<script type="text/javascript" src="<?php echo base_url();?>assets/noty/noty.js"></script>
+
 	<!-- Popper -->
 	<script type="text/javascript" src="<?= base_url(); ?>assets/vendor/bootstrap-3.3.7/js/popper.min.js"></script>
 

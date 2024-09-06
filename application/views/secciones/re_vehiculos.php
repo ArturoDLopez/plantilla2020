@@ -94,7 +94,6 @@
 
 <script>
 
-
     $(document).ready(function(){
         $('#frm_container').parsley();
         tabla.bootstrapTable({

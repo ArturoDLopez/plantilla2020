@@ -47,7 +47,32 @@ class Duenos extends CI_Controller{
     }
 
     public function eliminar_dueno(){
+
+        $response = [
+            'error' => false,
+            'msj' => ""
+        ];
+
         $id = $this->input->post('id');
-        echo $this->Duenos_model->borrado_logico($id, 'duenos');
+
+        if(empty($id)){
+            $response["error"] = true;
+            $response["msj"] = 'No llego el id';
+            return $this->output->set_output(json_encode($response));
+        }
+
+        $borrado = $this->Duenos_model->borrado_logico($id, 'duenos');
+        if($borrado != 1){
+            $response['error'] = true;
+            $response['msj'] = "No fue posible eliminar el registro";
+            return $this->output
+                ->set_content_type("application/json")
+                ->set_output(json_encode($response));
+        }  else {
+            $response['msj'] = 'Registro eliminado correctamente';
+        }
+        return $this->output
+            ->set_content_type("application/json")
+            ->set_output(json_encode($response));
     }
 }

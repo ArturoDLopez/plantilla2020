@@ -68,7 +68,31 @@ class Vehiculos extends CI_Controller{
     }
 
     public function eliminar_auto(){
+
+        $response = [
+            'error' => false,
+            'msj' => ""
+        ];
+
         $id = $this->input->post('id');
-        echo $this->Vehiculos_model->borrado_logico($id, 'vehiculos');
+
+        if(empty($id)){
+            $response["error"] = true;
+            $response["msj"] = 'No llego el id';
+            return $this->output->set_output(json_encode($response));
+        }
+        $borrado = $this->Vehiculos_model->borrado_logico($id, 'vehiculos');
+        if($borrado != 1){
+            $response['error'] = true;
+            $response['msj'] = "No fue posible eliminar el registro";
+            return $this->output
+                ->set_content_type("application/json")
+                ->set_output(json_encode($response));
+        }  else {
+            $response['msj'] = 'Registro eliminada correctamente';
+        }
+        return $this->output
+            ->set_content_type("application/json")
+            ->set_output(json_encode($response));
     }
 }

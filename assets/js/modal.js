@@ -94,7 +94,11 @@ function eliminar(row, url, columnas, tabla){
                 method: 'POST',
                 data: {'id': row},
                 success: function(data){
-                    if(data == 1){
+                    if(data.error){
+                        notificar(data.msj, 'error');
+                    }
+                    else{
+                        notificar(data.msj);
                         tabla.bootstrapTable('refresh');
                     }
                     /* data = JSON.parse(data);
@@ -135,4 +139,17 @@ function llamar_tabla(tabla, data, columns){
         data: data,
         columns: columns
     })
+}
+
+function notificar(texto, tipo) {
+
+    texto = typeof texto !== 'undefined' ? texto : "--";
+    tipo = typeof tipo !== 'undefined' ? tipo : "success";
+
+    new Noty({
+        type: tipo,
+        theme: 'sunset',
+        text: texto,
+        timeout: 1500
+    }).show();
 }
