@@ -6,6 +6,8 @@ class Colores extends CI_Controller {
         parent::__construct();
         $this->load->model('catalogos/Colores_model');
         $this->load->model('comunes/Comunes_model');
+        $this->load->library('encryption');
+        $this->load->helper('funciones');
     }
 
     public function index() {
@@ -19,6 +21,9 @@ class Colores extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
         
         $colores = $this->Colores_model->cargar($limit, $offset);
+        foreach($colores['rows'] as $color){
+            $color->id = encriptar($color->id);
+        }
         return $this->response($colores);
     }
 
@@ -32,7 +37,7 @@ class Colores extends CI_Controller {
         $datos = ['nom_color' => $nom_color];
         $result = $this->Colores_model->agregar($datos, $nom_color);
 
-        if ($result === false) {
+        if ($result === 0) {
             return $this->response(['status' => 'error', 'message' => 'Error al agregar el color'], 400);
         }
 
@@ -40,7 +45,9 @@ class Colores extends CI_Controller {
     }
 
     public function ver_vehiculos_colores() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
+        
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -52,6 +59,8 @@ class Colores extends CI_Controller {
 
     public function eliminar_colores() {
         $id = $this->input->post('id', TRUE);
+
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -79,5 +88,7 @@ class Colores extends CI_Controller {
             ->set_status_header($status_code)
             ->set_output(json_encode($data));
     }
+
+
 }
 ?>

@@ -41,16 +41,16 @@ $('#frm_container').on('submit', function(e){
 
 function accionC(value, row, index){
     let boton = `
-    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
+    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar('${btoa(row.id)}')">
                 <i class="glyph-icon icon-trash"></i>
     </button>
     `;
     if(row.vehiculos_id != null){
         boton = `
-        <button class="btn btn-round btn-info" title="Ver uso del color" type="button" onclick="ver(`+row.id+`)">
+        <button class="btn btn-round btn-info" title="Ver uso del color" type="button" onclick="ver('${btoa(row.id)}')">
                     <i class="glyph-icon icon-eye"></i>
         </button>
-        <button class="btn btn-round btn-danger" title="Ver uso" disabled type="button" onclick="eliminar(`+row.id+`)">
+        <button class="btn btn-round btn-danger" title="Ver uso" disabled type="button" onclick="eliminar('${btoa(row.id)}')">
                     <i class="glyph-icon icon-trash"></i>
         </button>
     `;
@@ -64,7 +64,7 @@ function ver(id){
     $.ajax({
         url: url,
         type: 'POST',
-        data: {'id':id},
+        data: {'id':atob(id)},
         success: function(data){
             json = data.data;
             if(json.length >= 0){
@@ -133,7 +133,7 @@ function eliminar(id){
             $.ajax({
                 url: url,
                 method: 'POST',
-                data: {'id': "dadasfafa"},  
+                data: {'id': atob(id)},  
                 success: function(response){
                     if(response.status === 'success'){
                         notificar(response.message, 'success');
