@@ -1,0 +1,211 @@
+
+base_url = base_url + "secciones/vehiculos";
+let modal_id = "modalForm";
+let tabla = $("#tableV");
+let arreglo_campos = ['num_serie', 'marca', 'modelo', 'color', 'tipo'];
+let variable;
+let datosTabla = 0;
+let elemento = document.getElementById('btn_duenos');
+let columns = [
+    {
+        field: 'num_serie', title: 'Numero de serie'
+    },
+    {
+        field: 'nom_marca', title: 'Marca'
+    },
+    {
+        field: 'modelo', title: 'modelo'
+    },
+    {
+        field: 'nom_tipo', title: 'Tipo'
+    },
+    {
+        field: 'nom_color', title: 'Color'
+    },
+    {
+        field: 'fecha_registro', title: 'Fecha de registro'
+    },
+    {
+        field: 'id', title: 'Acciones', formatter: acciones, align: 'center'
+    }
+
+];
+
+$(document).ready(function(){
+    $('#frm_container').parsley();
+    tabla.bootstrapTable({
+        url: base_url + '/cargar_vehiculos',
+        method: 'get',
+        pagination: true,
+        sidePagination: 'server', // Indica que el paginado es por servidor
+        pageSize: 10, // Número de registros 
+        pageList: [10, 25, 50, 100], // Opciones de paginado
+        queryParams: function (params) {
+            return {
+                offset: params.offset, // Offset para el paginado
+                limit: params.limit, // Límite de registros por página
+                //search: params.search 
+            };
+        },
+        responseHandler: function (res) {
+            return {
+                total: res.total, 
+                rows: res.rows 
+            };
+        },
+        columns: columns
+    });
+});
+
+
+$('#frm_container').on('submit', function(e){
+    e.preventDefault();
+    if($('#frm_container').parsley().isValid()){
+        registrar_local();
+        $('#frm_container').parsley().reset();
+    }
+})
+
+function acciones(value, row, index){
+    return `
+        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
+            <i class="glyph-icon icon-edit"></i>
+        </button>
+        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, '${base_url}/eliminar_auto', columns, tabla)">
+            <i class="glyph-icon icon-trash"></i>
+        </button>
+    `;
+}
+
+function llamar(){
+    let marcas, colores, tipos, opcionesM;
+    $.ajax({
+        url: base_url + '/cargar_marcas',
+        method: 'POST',
+        success: function(data){
+            json = JSON.parse(data);
+            if(json.length > 0){
+                let opciones = '<option disabled="" selected="" hidden="">Seleccione una marca...</option>'
+                json.forEach(element => {
+                        opciones += `<option value="`+element.id+`">`+element.nom_marca+`</option>`
+                    });
+                document.getElementById('marca').innerHTML = opciones
+            }
+        }
+    });
+
+    $.ajax({
+        url: base_url + '/cargar_colores',
+        method: 'POST',
+        success: function(data){
+            json = JSON.parse(data);
+            if(json.length > 0){
+                let opciones = '<option disabled="" selected="" hidden="">Seleccione un color...</option>'
+                json.forEach(element => {
+                        opciones += `<option value="`+element.id+`">`+element.nom_color+`</option>`
+                    });
+                document.getElementById('color').innerHTML = opciones
+            }
+        }
+    });
+    $.ajax({
+        url: base_url + '/cargar_tipos',
+        method: 'POST',
+        success: function(data){
+            json = JSON.parse(data);
+            if(json.length > 0){
+                let opciones = '<option disabled="" selected="" hidden="">Seleccione un tipo...</option>'
+                json.forEach(element => {
+                        opciones += `<option value="`+element.id+`">`+element.nom_tipo+`</option>`
+                    });
+                document.getElementById('tipo').innerHTML = opciones
+            }
+            
+        }
+    });
+
+    llamar_modal(modal_id, arreglo_campos);
+}
+
+function rellenar(id){
+    $.ajax({
+        url: base_url + '/consultar_auto',
+        method: 'POST',
+        data: {'id': id},
+        success: function(datos){
+            datos = JSON.parse(datos);
+            console.log(datos);
+            llamar(modal_id, arreglo_campos, id);
+            document.getElementById('modalFormLabel').innerHTML = 'Actualizar vehiculos';
+            document.getElementById('btn_duenos').innerHTML = 'Actualizar';
+            document.getElementById('num_serie').value = datos.num_serie;
+            document.getElementById('marca').value = datos.marcas_id;
+            document.getElementById('modelo').value = datos.modelo; 
+            document.getElementById('color').value = datos.colores_id;
+            document.getElementById('tipo').value = datos.tipo_id;
+            variable = id;
+        }
+    })
+}
+
+function registrar_local(){
+    $('#frm_container').parsley().reset();
+    datos = {
+            'num_serie' : document.getElementById('num_serie').value,
+            'marca' : document.getElementById('marca').value,
+            'modelo' : document.getElementById('modelo').value,
+            'color' : document.getElementById('color').value,
+            'tipo' : document.getElementById('tipo').value,
+        }
+    url = base_url+'/agregar_vehiculos';
+    if(elemento.innerHTML == 'Actualizar'){
+        url = base_url+'/editar_auto'
+        datos.id = variable;
+    }
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: datos,
+        success: function(data){
+            elemento.innerHTML = 'Registrar';
+            if(elemento.innerHTML == 'Actualizar'){
+                elemento.innerHTML = 'Registrar';
+            }
+            limpiar(arreglo_campos);
+            if(data == 0){
+                Swal.fire({
+                    title: 'Error',
+                    text: 'El dato que intentas ingresar ya existe',
+                    icon: 'warning',
+                    confirmButtonText: 'Aceptar'
+                })
+            }
+            else{
+                const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+                });
+                Toast.fire({
+                icon: "success",
+                title: "Agregado correctamente"
+                });
+                tabla.bootstrapTable('refresh');
+            }
+        },
+        error: function(){
+            console.log("Fallo del servidor ");
+        }
+    })
+}
+
+function cancelar_local(){
+    $('#frm_container').parsley().reset();
+    cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
+}

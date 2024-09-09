@@ -166,4 +166,8 @@
 
 	<div class="clearfix"></div>
 
+	<script>
+		var base_url = '<?= base_url(); ?>';
+	</script>
+
     <main id="content">
