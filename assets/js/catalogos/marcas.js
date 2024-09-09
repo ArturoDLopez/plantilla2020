@@ -1,14 +1,14 @@
-base_url = base_url + "catalogos/colores/";
-let tabla = $('#tabla_colores');
+base_url = base_url + 'catalogos/marcas/';
+let tabla = $('#tabla_marcas');
 let tabla2 = $('#ver_uso');
-columnsColor = [{
-                field: 'nom_color',
-                title: 'Color'
+columns = [{
+                field: 'nom_marca',
+                title: 'marca'
             }, {
                 field: 'fecha_registro',
                 title: 'Fecha de registro'
             }, {
-                field: 'id', title: 'Acciones', formatter: accionC, align: 'center'
+                field: 'id', title: 'Acciones', formatter: accion, align: 'center'
             }
 ];
 let columnsV = [
@@ -28,19 +28,18 @@ let columnsV = [
 $(document).ready(function(){
     $('#frm_container').parsley();
     tabla.bootstrapTable({
-        columns: columnsColor,
-        pageSize: 10,
-        pageList: [10,20],
+        columns: columns,
         pagination: true,
         sidePagination: 'server',
-        queryParams: function(params){
-            return{
-                limit: params.limit,
-                offset: params.offset
+        pageSize: 10,
+        queryParams: function (params){
+            return {
+                offset: params.offset,
+                limit: params.limit
             }
         }
-        
-    })
+
+    });
 });
 
 
@@ -52,7 +51,7 @@ $('#frm_container').on('submit', function(e){
     }
 })
 
-function accionC(value, row, index){
+function accion(value, row, index){
     let boton = `
     <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
                 <i class="glyph-icon icon-trash"></i>
@@ -60,7 +59,7 @@ function accionC(value, row, index){
     `;
     if(row.vehiculos_id != null){
         boton = `
-        <button class="btn btn-round btn-info" title="Ver uso del color" type="button" onclick="ver(`+row.id+`)">
+        <button class="btn btn-round btn-info" title="La marca esta en uso" type="button" onclick="ver(`+row.id+`)">
                     <i class="glyph-icon icon-eye"></i>
         </button>
         <button class="btn btn-round btn-danger" title="Ver uso" disabled type="button" onclick="eliminar(`+row.id+`)">
@@ -73,7 +72,7 @@ function accionC(value, row, index){
 }
 
 function ver(id){
-    url = base_url + 'ver_vehiculos_colores';
+    url = base_url + 'ver_vehiculos_marcas';
     $.ajax({
         url: url,
         type: 'POST',
@@ -81,7 +80,7 @@ function ver(id){
         success: function(data){
             json = JSON.parse(data);
             if(json.length >= 0){
-                $('#modalColores').modal('show');
+                $('#modalMarcas').modal('show');
                 tabla2.bootstrapTable('destroy');
                 tabla2.bootstrapTable({
                     columns: columnsV,
@@ -93,9 +92,9 @@ function ver(id){
 }
 
 function agregar(){
-    url = base_url + "agregar_colores";
+    url =  base_url + "agregar_marcas";
     let data = {
-            'color': document.getElementById('color').value
+            'marca': document.getElementById('marca').value
         };
         
         $.ajax({
@@ -125,7 +124,7 @@ function agregar(){
 }
 
 function eliminar(id, url){
-    url = base_url + "eliminar_colores";
+    url =  base_url + "eliminar_marcas";
 
     Swal.fire({
         title: 'Eliminar',
@@ -149,6 +148,7 @@ function eliminar(id, url){
         }
     });
 }
+
 function mostrar_modal(){
     $('#modalForm').modal('show');
 }
