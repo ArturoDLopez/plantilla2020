@@ -60,8 +60,7 @@ function datos_num_serie(){
         method: 'POST',
         data: {'vehiculos_id': sel},
         success: function(data){
-            console.log(data);
-            json = JSON.parse(data);
+            json = data.data;
             if(json.length > 0){
                 $('#actual').val(0);
                 $('#actual').attr('disabled', true);
@@ -70,6 +69,15 @@ function datos_num_serie(){
                 $('#actual').attr('disabled', false);
                 $('#fecha_t').attr('disabled', true);
             }
+        },
+        error: function(xhr, status, error){
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     })
 }
@@ -112,7 +120,7 @@ function traer_catalogos(vehiculos_id = null, duenos_id = null){
         method: "POST",
         url: base_url + "cargar_num_serie",
         success: function(data){
-            json = JSON.parse(data);
+            json = data.data;
             if(json.length > 0){
                 let opciones;
                 opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
@@ -130,8 +138,10 @@ function traer_catalogos(vehiculos_id = null, duenos_id = null){
         method: "POST",
         url: base_url + "cargar_curp",
         success: function(data){
-            json = JSON.parse(data);
-            if(json.length > 0){
+            
+            json = data.data;
+            
+            if(data.status == 'success'){
                 let opciones;
                 opciones = '<option value="" disabled="" selected="" hidden="">Selecciona una curp...</option>';
                 json.forEach(element => {
@@ -143,6 +153,18 @@ function traer_catalogos(vehiculos_id = null, duenos_id = null){
                     document.getElementById('dueno').value = duenos_id;
                 }
             }
+            else{
+                notificar_swal('Error', 'No se pudo cargar la CURP', 'error');
+            }
+        },
+        error: function(xhr, status, error){
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     })
     llamar_modal();
@@ -154,7 +176,7 @@ function rellenar(id){
         method: 'POST',
         data: {'id': id},
         success: function(datos){
-            datos = JSON.parse(datos);
+            datos = datos.data;
             console.log("Rellenar: ", datos);
             let fecha_inicio_completa = datos.fecha_inicio;
             let fecha_inicio =datos.fecha_inicio == null || datos.fecha_inicio == "0000-00-00 00:00:00" || datos.fecha_inicio == "" ?  "" : new Date(datos.fecha_inicio);
@@ -176,6 +198,15 @@ function rellenar(id){
             document.getElementById('fecha_t').value = fecha_termino;
             variable = id;
             
+        },
+        error: function(xhr, status, error){
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     })
 }
@@ -199,14 +230,21 @@ function registrar(){
         data: data,
         success: function(data){
             console.log(data);
-            datosTabla = JSON.parse(data);
+            datosTabla = data.data
+            if(data.status == 'error'){
+                notificar(data.message, 'error');
+                return;
+            }
+            notificar(data.message, 'success');
             tabla.bootstrapTable('refresh');
             document.getElementById('btn_duenos').innerHTML = 'Registrar';
             if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
                 document.getElementById('btn_duenos').innerHTML = 'Registrar';
             }
             limpiar();
-            
+        },
+        error: function(xhr, status, error){
+            notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
     })
 }
@@ -227,11 +265,27 @@ function eliminar(value, row){
                 method: 'POST',
                 data: {'id': row},
                 success: function(data){
-                    data = JSON.parse(data);
-                    if(data > 0){
-                        tabla.bootstrapTable('refresh');
-                        return;
+                    if(data.status == 'error'){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se puede eliminar el propietario',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        })
                     }
+                    else{
+                        notificar(data.message, 'success');
+                        tabla.bootstrapTable('refresh');
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error('Error: ', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    })
                 }
             })
         }
@@ -254,4 +308,27 @@ function editar_titulo(){
 function llamar_modal(){
     limpiar();
     $("#modalForm").modal('show');  
+}
+
+
+function notificar(texto, tipo) {
+
+    texto = typeof texto !== 'undefined' ? texto : "--";
+    tipo = typeof tipo !== 'undefined' ? tipo : "success";
+
+    new Noty({
+        type: tipo,
+        theme: 'sunset',
+        text: texto,
+        timeout: 1500
+    }).show();
+}
+
+function notificar_swal(titulo, texto, icono){
+    Swal.fire({
+        title: titulo,
+        text: texto,
+        icon: icono,
+        confirmButtonText: 'Aceptar'
+    });
 }

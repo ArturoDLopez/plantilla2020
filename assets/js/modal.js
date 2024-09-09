@@ -16,7 +16,6 @@ function traer_datos(url, columnas, tabla){
         url: url,
         method: 'POST',
         success: function(data){
-            //console.log('traer datos:',data);
             datosTabla = JSON.parse(data);
             llamar_tabla(tabla, datosTabla, columnas);
         }
@@ -46,34 +45,16 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
                 element.innerHTML = 'Registrar';
             }
             limpiar(elementos);
-            if(data != 1){
-                Swal.fire({
-                    title: 'Error',
-                    text: 'El dato que intentas ingresar ya existe',
-                    icon: 'warning',
-                    confirmButtonText: 'Aceptar'
-                })
+            if(data.status == 'error'){
+                notificar(data.message, 'error');
             }
-            if(data == 1){
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    didOpen: (toast) => {
-                        toast.onmouseenter = Swal.stopTimer;
-                        toast.onmouseleave = Swal.resumeTimer;
-                    }
-                });
-                Toast.fire({
-                    icon: "success",
-                    title: "Agregado correctamente"
-                });
-                    tabla.bootstrapTable('refresh');
+            if(data.status == 'success'){
+                notificar('Registro exitoso', 'success');
+                tabla.bootstrapTable('refresh');
             }
-            
-            
+        },
+        error: function(xhr, status, error){
+            notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
     })
 }
@@ -93,20 +74,16 @@ function eliminar(row, url, columnas, tabla){
                 url: url,
                 method: 'POST',
                 data: {'id': row},
-                success: function(data){
-                    if(data.error){
-                        notificar(data.msj, 'error');
-                    }
-                    else{
-                        notificar(data.msj);
+                success: function(response){
+                    if(response.status === 'success'){
+                        notificar(response.message, 'success');
                         tabla.bootstrapTable('refresh');
+                    } else {
+                        notificar(response.message, 'error');
                     }
-                    /* data = JSON.parse(data);
-                    console.log('Datos al eliminar: ', data);
-                    if(data.length > 0){
-                        llamar_tabla(tabla, data, columnas);
-                        return;
-                    } */
+                },
+                error: function(xhr, status, error){
+                    notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
                 }
             })
         }

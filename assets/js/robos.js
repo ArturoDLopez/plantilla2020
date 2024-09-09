@@ -78,18 +78,23 @@ function llamar() {
     $.ajax({
         url: base_url + 'cargar_num_serie',
         success: function (data) {
-            json = JSON.parse(data);
-            if (json.length > 0) {
+            
+            if (data.status == 'success') {
                 let opciones;
                 opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
-                json.forEach(element => {
+                data.data.forEach(element => {
                     opciones += '<option value="' + element.id + '">' + element.num_serie + '</option>';
                 })
                 document.getElementById('num_serie').innerHTML = opciones;
+                llamar_modal(modal_id, arreglo_campos);
             }
+
+        },
+        error: function (xhr, status) {
+            notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
     })
-    llamar_modal(modal_id, arreglo_campos);
+    
 }
 
 function rellenar(id) {
@@ -98,8 +103,9 @@ function rellenar(id) {
         method: 'POST',
         data: { 'id': id },
         success: function (datos) {
-            datos = JSON.parse(datos);
+            datos = datos.data;
             console.log(datos);
+            llamar();
             llamar_modal(modal_id, arreglo_campos);
             document.getElementById('modalFormLabel').innerHTML = 'Actualizar robo';
             document.getElementById('btn_duenos').innerHTML = 'Actualizar';
@@ -110,7 +116,11 @@ function rellenar(id) {
             document.getElementById('fecha_r').value = datos.fecha;
             variable = id;
             buscar_datos();
+        },
+        error: function (xhr, status, error) {
+            notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
+
     })
 }
 
@@ -127,8 +137,12 @@ function buscar_datos() {
         type: 'POST',
         data: json,
         success: function (data) {
+            if (data == 'error') {
+                notificar_swal('Error', 'Ocurrio un error inesperado', 'error');
+                return;
+            }
             console.log('datos crudos:', data);
-            var json = JSON.parse(data);
+            var json = data.data;
             global = json;
             console.log('json.parse', json);
             let placa = json.placa;
@@ -136,6 +150,15 @@ function buscar_datos() {
             document.getElementById('inp_placa').value = placa;
             document.getElementById('inp_dueno').value = dueno;
 
+        },
+        error: function (xhr, status, error) {
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
 
     })
@@ -176,4 +199,13 @@ function registrar_local() {
 function cancelar_local() {
     cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
     $('#frm_container').parsley().reset();
+}
+
+function notificar_swal(titulo, texto, icono){
+    Swal.fire({
+        title: titulo,
+        text: texto,
+        icon: icono,
+        confirmButtonText: 'Aceptar'
+    });
 }

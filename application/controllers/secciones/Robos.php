@@ -1,90 +1,130 @@
 <?php
 
-class Robos extends CI_Controller{
-    public function __construct(){
+class Robos extends CI_Controller {
+    public function __construct() {
         parent::__construct();
         $this->load->model('secciones/Robos_model');
     }
 
-    public function index(){
+    public function index() {
         $this->load->view('template/header');
         $this->load->view('secciones/re_robos');
         $this->load->view('template/footer');
     }
 
-    public function cargar_robos(){
-        $limit = $this->input->get('limit');
-        $offset = $this->input->get('offset');
-        echo json_encode($this->Robos_model->cargar($limit, $offset));
+    public function cargar_robos() {
+        $limit = (int)$this->input->get('limit', TRUE);
+        $offset = (int)$this->input->get('offset', TRUE);
+
+        $robos = $this->Robos_model->cargar($limit, $offset);
+        return $this->response($robos);
     }
 
-    public function cargar_num_serie(){
-        $condiciones = array('borrado' => 0);
-        echo json_encode($this->Robos_model->traer_num_serie('vehiculos', $condiciones));
+    public function cargar_num_serie() {
+        $condiciones = ['borrado' => 0];
+        $numeros_serie = $this->Robos_model->traer_num_serie('vehiculos', $condiciones);
+        return $this->response(['status' => 'success', 'data' => $numeros_serie]);
     }
 
-    public function consultar_robo(){
-        $id = array('id' => $this->input->post('id'));
-        echo json_encode($this->Robos_model->get_by_id('robos', $id));
+    public function consultar_robo() {
+        $id = (int)$this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $robo = $this->Robos_model->get_by_id('robos', ['id' => $id]);
+
+        if (empty($robo)) {
+            return $this->response(['status' => 'error', 'message' => 'Robo no encontrado'], 404);
+        }
+
+        return $this->response(['status' => 'success', 'data' => $robo]);
     }
 
-    public function buscar_datos(){
-        $serie = $this->input->post('serie');
+    public function buscar_datos() {
+        $serie = $this->input->post('serie', TRUE);
+
+        if (empty($serie)) {
+            return $this->response(['status' => 'error', 'message' => 'Número de serie requerido'], 400);
+        }
+
         $registro = $this->Robos_model->serie_placa($serie);
-        echo json_encode($registro);
+        return $this->response(['status' => 'success', 'data' => $registro]);
     }
 
-    public function agregar_robo(){
-        $datos = array(
-            'vehiculos_id' => $this->input->post('num_serie'),
-            'placas_id' => $this->input->post('placas_id'),
-            'duenos_id' => $this->input->post('duenos_id'),
-            'descripcion' => $this->input->post('descripcion'),
-            'fecha' => $this->input->post('fecha_r'),
-
-        );
-        echo $this->Robos_model->agregar($datos);
-    }
-
-    public function editar_robo(){
-        $id = $this->input->post('id');
-        $datos = array(
-            'vehiculos_id' => $this->input->post('num_serie'),
-            'placas_id' => $this->input->post('placas_id'),
-            'duenos_id' => $this->input->post('duenos_id'),
-            'descripcion' => $this->input->post('descripcion'),
-            'fecha' => $this->input->post('fecha_r'),
-
-        );
-        echo $this->Robos_model->actualizar('robos', $datos, $id);
-    }
-
-    public function eliminar_robo(){
-
-        $response = [
-            'error' => false,
-            'msj' => ""
+    public function agregar_robo() {
+        $datos = [
+            'vehiculos_id' => $this->input->post('num_serie', TRUE),
+            'placas_id' => $this->input->post('placas_id', TRUE),
+            'duenos_id' => $this->input->post('duenos_id', TRUE),
+            'descripcion' => $this->input->post('descripcion', TRUE),
+            'fecha' => $this->input->post('fecha_r', TRUE),
         ];
 
-        $id = $this->input->post('id');
+        if (empty($datos['vehiculos_id']) || empty($datos['placas_id']) || empty($datos['descripcion']) || empty($datos['fecha'])) {
+            return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
+        }
 
-        if(empty($id)){
-            $response["error"] = true;
-            $response["msj"] = 'No llego el id';
-            return $this->output->set_output(json_encode($response));
+        $robo_id = $this->Robos_model->agregar($datos);
+
+        if (!$robo_id) {
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar el robo'], 500);
         }
+
+        return $this->response(['status' => 'success', 'message' => 'Robo agregado exitosamente', 'id' => $robo_id], 201);
+    }
+
+    public function editar_robo() {
+        $id = (int)$this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $datos = [
+            'vehiculos_id' => $this->input->post('num_serie', TRUE),
+            'placas_id' => $this->input->post('placas_id', TRUE),
+            'duenos_id' => $this->input->post('duenos_id', TRUE),
+            'descripcion' => $this->input->post('descripcion', TRUE),
+            'fecha' => $this->input->post('fecha_r', TRUE),
+        ];
+
+        $resultado = $this->Robos_model->actualizar('robos', $datos, $id);
+
+        if (!$resultado) {
+            return $this->response(['status' => 'error', 'message' => 'Error al actualizar el robo'], 500);
+        }
+
+        return $this->response(['status' => 'success', 'message' => 'Robo actualizado exitosamente']);
+    }
+
+    public function eliminar_robo() {
+        $id = (int)$this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
         $borrado = $this->Robos_model->borrado_logico($id, 'robos');
-        if($borrado != 1){
-            $response['error'] = true;
-            $response['msj'] = "No fue posible eliminar el registro";
-            return $this->output
-                ->set_content_type("application/json")
-                ->set_output(json_encode($response));
-        }  else {
-            $response['msj'] = 'Registro eliminada correctamente';
+
+        if ($borrado != 1) {
+            return $this->response(['status' => 'error', 'message' => 'No fue posible eliminar el registro'], 500);
         }
+
+        return $this->response(['status' => 'success', 'message' => 'Registro eliminado correctamente']);
+    }
+
+    private function validar_id($id) {
+        return !empty($id) && is_numeric($id) && (int)$id > 0;
+    }
+
+    private function response($data, $status_code = 200) {
         return $this->output
-            ->set_content_type("application/json")
-            ->set_output(json_encode($response));
+            ->set_content_type('application/json')
+            ->set_status_header($status_code)
+            ->set_output(json_encode($data));
     }
 }
+
+?>

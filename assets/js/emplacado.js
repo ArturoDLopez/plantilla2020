@@ -1,176 +1,98 @@
-
-
 base_url += "secciones/emplacado/";
+let elemento = document.getElementById('btn_duenos');
 let modal_id = "modalForm";
 let tabla = $("#tableV");
 let arreglo_campos = ['num_serie', 'placa', 'actual', 'fecha_i', 'fecha_t'];
 let variable;
 let datosTabla = 0;
 let columns = [
-    {
-        field: 'num_serie', title: 'Numero de serie'
-    },
-    {
-        field: 'placa', title: 'Placas'
-    },
-    {
-        field: 'actual', title: 'Actual'
-    },
-    {
-        field: 'fecha_inicio', title: 'Fecha de inicio'
-    },
-    {
-        field: 'fecha_termino', title: 'Fecha de finalizacion'
-    },
-    {
-        field: 'fecha_registro', title: 'Fecha de registro'
-    },
-    {
-        field: 'id', title: 'Acciones', formatter: acciones, align: 'center'
-    }
-
+    { field: 'num_serie', title: 'Numero de serie' },
+    { field: 'placa', title: 'Placas' },
+    { field: 'actual', title: 'Actual' },
+    { field: 'fecha_inicio', title: 'Fecha de inicio' },
+    { field: 'fecha_termino', title: 'Fecha de finalizacion' },
+    { field: 'fecha_registro', title: 'Fecha de registro' },
+    { field: 'id', title: 'Acciones', formatter: acciones, align: 'center' }
 ];
 
-function acciones(value, row, index){
+$(document).ready(function(){
+    $('#frm_container').parsley();
+    tabla.bootstrapTable({
+        columns: columns,
+        pagination: true,
+        sidePagination: 'server',
+        paginationSize: 10,
+        queryParams: queryParams
+    });
+});
+
+$('#frm_container').on('submit', function(e){
+    e.preventDefault();
+    if ($('#frm_container').parsley().isValid()) {
+        registrar_local();
+        $('#frm_container').parsley().reset();
+    }
+});
+
+function queryParams(params) {
+    return {
+        limit: params.limit,
+        offset: params.offset
+    };
+}
+
+function acciones(value, row, index) {
     return `
         <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
             <i class="glyph-icon icon-edit"></i>
         </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar_local(${row.id}, '${base_url}eliminar_emplacado', columns, tabla)">
+        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id})">
             <i class="glyph-icon icon-trash"></i>
         </button>
     `;
 }
 
-$(document).ready(function(){  
-    $('#frm_container').parsley();
-    tabla.bootstrapTable({
-        columns:columns,
-        pagination: true,
-        sidePagination: 'server',
-        paginationSize: '10',
-        queryParams: function (params){
-            return{
-                limit: params.limit,
-                offset: params.offset
-            }
-        }
-    });
-
-    if (window.Parsley) {
-        window.Parsley.addValidator('maxHoy', {
-            validateString: function(value) {
-                var hoy = new Date();
-                if($('#actual').value = 1){
-                    var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                } else {
-                    var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                }
-                
-                var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
-                var anio = hoy.getFullYear(); // Devuelve el año actual
-                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
-
-                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
-            },
-            messages: {
-                es: 'La fecha de inicio no puede ser posterior a hoy.'
-            }
-        });
-    } 
-    else {
-        console.log("Parsley.js no está cargado.");
-    }
-});
-
-$('#frm_container').on('submit', function(e){
-        e.preventDefault();
-        
-        if($('#frm_container').parsley().isValid()){
-            registrar_local()
-            $('#frm_container').parsley().reset();
-        }
-});
-
-const habilitar_fecha = () =>{
-    let actual = document.getElementById('actual').value;
-    console.log('Actuual: ', actual);
-    if(actual == 1){
-        document.getElementById('fecha_t').setAttribute('disabled', true);
-        document.getElementById('fecha_t').value = null;
-    }else if(actual == 0){
-        document.getElementById('fecha_t').removeAttribute('disabled', false);
-    }
-}
-
-function llamar(){
+function llamar() {
     $('#actual').attr('disabled', false);
-    $.ajax({
-        url: base_url + 'cargar_placas_sin_asignar',
-        method: 'POST',
-        success: function(datos){
-            json = JSON.parse(datos);
-            if(json.length > 0){
-                let opciones = '';
-                opciones = '<option value="" disabled="" selected="" hidden="">Selecciona unas placas..</option>';
-                json.forEach(element => {
-                        console.log('placa: ', element.placa);
-                        opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
-                    });
-                document.getElementById('placa').innerHTML = opciones
-                
-                console.log(opciones);
-            }
-            
-        }
-    });
-
-    $.ajax({
-        url: base_url + 'cargar_numero_serie',
-        method: 'POST',
-        success: function(datos){
-            json = JSON.parse(datos);
-            if(json.length > 0){
-                let opciones = '';
-                opciones = '<option value="" disabled="" selected="" hidden="">Selecciona un numero de serie...</option>';
-                json.forEach(element => {
-                        opciones += `<option value="`+element.id+`">`+element.num_serie+`</option>`
-                    });
-                document.getElementById('num_serie').innerHTML = opciones
-                
-                console.log(opciones);
-            }
-            
-        }
-    });
-    
+    cargarOpciones('cargar_placas_sin_asignar', 'placa');
+    cargarOpciones('cargar_numero_serie', 'num_serie');
     llamar_modal(modal_id, arreglo_campos);
 }
 
-function datos_num_serie(){
-    var combo = document.getElementById("num_serie");
-    var sel = combo.options[combo.selectedIndex].value;
-    console.log("Selecionado: ", sel);
+function cargarOpciones(url, elementoId) {
+    $.ajax({
+        url: base_url + url,
+        method: 'POST',
+        success: function(datos) {
+            let opciones = '<option value="" disabled="" selected="" hidden="">Selecciona una opción...</option>';
+            let json = datos.data;
+            json.forEach(element => {
+                opciones += `<option value="${element.id}">${element.placa || element.num_serie}</option>`;
+            });
+            document.getElementById(elementoId).innerHTML = opciones;
+        }
+    });
+}
+
+function datos_num_serie() {
+    let sel = document.getElementById("num_serie").value;
     $.ajax({
         url: base_url + 'datos_num_serie',
         method: 'POST',
-        data: {'vehiculos_id': sel},
-        success: function(data){
-            console.log(data);
-            json = JSON.parse(data);
-            if(json.length > 0){
-                $('#actual').val(0);
-                $('#actual').attr('disabled', true);
-            }else{
-                $('#actual').val(1);
-                $('#actual').attr('disabled', false);
+        data: { 'vehiculos_id': sel },
+        success: function(data) {
+            let json = data.data;
+            if (json.length > 0) {
+                $('#actual').val(0).attr('disabled', true);
                 $('#fecha_t').attr('disabled', true);
+            } else {
+                $('#actual').val(1).attr('disabled', false);
+                $('#fecha_t').attr('disabled', false);
             }
         }
-    })
+    });
 }
 
-let anterior_id;
 
 function rellenar(id){
     $('#actual').attr('disabled', false);
@@ -179,40 +101,23 @@ function rellenar(id){
         method: 'POST',
         data: {'id': id},
         success: function(datos){
-            datos = JSON.parse(datos);
-
-            let fecha_inicio_completa = datos.fecha_inicio;
-            let fecha_inicio =datos.fecha_inicio == null || datos.fecha_inicio == "0000-00-00 00:00:00" || datos.fecha_inicio == "" ?  "" : new Date(datos.fecha_inicio);
-            fecha_inicio = fecha_inicio == "" ? "" : fecha_inicio.toISOString().split('T')[0];
-
-            let fecha_termino_completa = datos.fecha_termino;
-            console.log("datos.fecha_termino: ", fecha_termino_completa);
-            let fecha_termino = datos.fecha_termino == null || datos.fecha_termino == "0000-00-00 00:00:00" || datos.fecha_termino == "" ?  "" : new Date(datos.fecha_termino);
-            console.log('Fehca de termino: ', fecha_termino);
-            fecha_termino = fecha_termino == "" ? "" : fecha_termino.toISOString().split('T')[0];
+            datos = datos.data;
+            let fecha_inicio = datos.fecha_inicio && datos.fecha_inicio !== "0000-00-00 00:00:00" ? new Date(datos.fecha_inicio).toISOString().split('T')[0] : "";
+            let fecha_termino = datos.fecha_termino && datos.fecha_termino !== "0000-00-00 00:00:00" ? new Date(datos.fecha_termino).toISOString().split('T')[0] : "";
 
             anterior_id = datos.placas_id;
-            console.log('placas_id: ', datos.placas_id);
+
             $.ajax({
                 url: base_url + 'cargar_placas_sin_asignar_excepto',
                 method: 'POST',
                 data: {'id': datos.placas_id},
                 success: function(data){
-                    json = JSON.parse(data);
+                    json = data.data;
                     if(json.length > 0){
-                        let opciones = '';
-
-                        json.forEach(element => {
-                            opciones += `<option value="`+element.id+`">`+element.placa+`</option>`
-                            //document.getElementById('placa').value = datos.placas_id;
-                        });
-
-                        document.getElementById('placa').innerHTML = opciones
+                        let opciones = json.map(element => `<option value="${element.id}">${element.placa}</option>`).join('');
+                        document.getElementById('placa').innerHTML = opciones;
                         document.getElementById('placa').value = datos.placas_id;
-                        console.log(opciones);
-                        
                     }
-                    
                 }
             });
 
@@ -220,58 +125,48 @@ function rellenar(id){
                 url: base_url + 'cargar_numero_serie',
                 method: 'POST',
                 success: function(data){
-                    json = JSON.parse(data);
+                    json = data.data;
                     if(json.length > 0){
-                        let opciones = '';
-
-                        json.forEach(element => {
-                                opciones += `<option value="`+element.id+`">`+element.num_serie+`</option>`
-                            });
-                        document.getElementById('num_serie').innerHTML = opciones
+                        let opciones = json.map(element => `<option value="${element.id}">${element.num_serie}</option>`).join('');
+                        document.getElementById('num_serie').innerHTML = opciones;
                         document.getElementById('num_serie').value = datos.vehiculos_id;
-                        
-                        console.log(opciones);
                     }
-                    
                 }
             });
 
             llamar_modal(modal_id, arreglo_campos);
-            console.log('Datos placas: ', datos.placas_id);
             document.getElementById('modalFormLabel').innerHTML = 'Actualizar Emplacado';
             document.getElementById('btn_duenos').innerHTML = 'Actualizar';
             document.getElementById('num_serie').value = datos.vehiculos_id;
-            //document.getElementById('placa').value = datos.placas_id;
             document.getElementById('actual').value = datos.actual; 
             document.getElementById('fecha_i').value = fecha_inicio;
             document.getElementById('fecha_t').value = fecha_termino;
             variable = id;
+        },
+        error: function(xhr, status, error){
+            notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
-    })
+    });
 }
 
-function registrar_local(){
-    let elemento = document.getElementById('btn_duenos');
-    $('#actual').attr('disabled', false);
-    datos = {
-            'num_serie' : document.getElementById('num_serie').value,
-            'placa' : document.getElementById('placa').value,
-            'actual' : document.getElementById('actual').value,
-            'fecha_i' : document.getElementById('fecha_i').value,
-            'fecha_t' : document.getElementById('fecha_t').value,
-        }
-    if(elemento.innerHTML == 'Registrar'){
-        document.getElementById('modalFormLabel').innerHTML = 'Registrar Emplacado';
-    }
-    else{
+
+function registrar_local() {
+    let datos = {
+        'num_serie': $('#num_serie').val(),
+        'placa': $('#placa').val(),
+        'actual': $('#actual').val(),
+        'fecha_i': $('#fecha_i').val(),
+        'fecha_t': $('#fecha_t').val()
+    };
+    let url = elemento.innerHTML === 'Registrar' ? base_url + 'agregar_emplacado' : base_url + 'editar_emplacado';
+    if (elemento.innerHTML !== 'Registrar') {
         datos.id = variable;
         datos.anterior_id = anterior_id;
     }
-    registrar(base_url + 'agregar_emplacado', base_url + 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
+    registrar(url, base_url + 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
 }
 
-function eliminar_local(row, url, columnas, tabla){
-    console.log('Row', row);
+function eliminar(row) {
     Swal.fire({
         title: 'Eliminar',
         text: '¿Seguro que quieres eliminar este registro?',
@@ -280,38 +175,95 @@ function eliminar_local(row, url, columnas, tabla){
         confirmButtonText: 'Confirmar',
         cancelButtonText: 'Cancelar',
     }).then((result) => {
-        if(result.value){
-
+        if (result.value) {
             $.ajax({
-                url:base_url +  'consultar_emplacado',
+                url: base_url + 'consultar_emplacado',
                 method: 'POST',
-                data: {'id': row},
-                success: function(datos){
-                    datos = JSON.parse(datos);
-                    console.log("Donde: ", datos)
-                        $.ajax({
-                            url: url,
-                            method: 'POST',
-                            data: {'id': row, 'anterior_id' : datos.placas_id,},
-                            success: function(data){
-                                data = JSON.parse(data);
-                                console.log('Datos al eliminar: ', data);
-                                if(data.length > 0){
-                                    tabla.bootstrapTable('refresh');
-                                    return;
-                                }
+                data: { 'id': row },
+                success: function(datos) {
+                    let data = datos.data;
+                    $.ajax({
+                        url: base_url + 'eliminar_emplacado',
+                        method: 'POST',
+                        data: { 'id': row, 'anterior_id': data.placas_id },
+                        success: function(response) {
+                            if (response.status === 'success') {
+                                notificar(response.message, 'success');
+                                tabla.bootstrapTable('refresh');
+                            } else {
+                                notificar(response.message, 'error');
                             }
-                        })
-                    
+                        },
+                        error: function(xhr) {
+                            notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
+                        }
+                    });
                 }
             });
-
-            
         }
-    })
+    });
 }
 
-function cancelar_local(){
+function cancelar_local() {
+    $('#frm_container').parsley().reset();
     cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
 }
 
+function notificar(texto, tipo) {
+    texto = typeof texto !== 'undefined' ? texto : "--";
+    tipo = typeof tipo !== 'undefined' ? tipo : "success";
+    new Noty({
+        type: tipo,
+        theme: 'sunset',
+        text: texto,
+        timeout: 1500
+    }).show();
+}
+
+function notificar_swal(titulo, texto, icono) {
+    Swal.fire({
+        title: titulo,
+        text: texto,
+        icon: icono,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+function registrar(url_primaria, url_secundaria, data, element, columnas, elementos, tabla) {
+    url = element.innerHTML === 'Actualizar' ? url_secundaria : url_primaria;
+    $.ajax({
+        url: url,
+        method: 'POST',
+        data: data,
+        success: function(data) {
+            element.innerHTML = 'Registrar';
+            limpiar(elementos);
+            if (data.status === 'success') {
+                notificar('Registro exitoso', 'success');
+                tabla.bootstrapTable('refresh');
+            } else {
+                notificar(data.message, 'error');
+            }
+        },
+        error: function(xhr) {
+            notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
+        }
+    });
+}
+
+function limpiar(elementos) {
+    elementos.forEach(e => {
+        document.getElementById(e).value = "";
+    });
+}
+
+function cancelar(btn1, btn2, elementos) {
+    document.getElementById(btn1).innerHTML = 'Registrar';
+    document.getElementById(btn2).innerHTML = 'Cancelar';
+    limpiar(elementos);
+}
+
+function llamar_modal(id, e) {
+    limpiar(e);
+    $("#" + id).modal('show');
+}

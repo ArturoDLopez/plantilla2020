@@ -1,50 +1,83 @@
 <?php
 
-class Tipos extends CI_Controller{
-    public function __construct(){
+class Tipos extends CI_Controller {
+    public function __construct() {
         parent::__construct();
         $this->load->model('catalogos/Tipos_model');
         $this->load->model('comunes/Comunes_model');
     }
 
-    public function index(){
+    public function index() {
         $this->load->view('template/header');
         $this->load->view('catalogos/re_tipos');
         $this->load->view('template/footer');
     }
 
     public function cargar_tipos() {
-        $limit = $this->input->get('limit'); // Tamaño de la página
-        $offset = $this->input->get('offset'); // Desplazamiento de registros
-    
-        // Obtener los datos paginados desde el modelo
+        $limit = (int)$this->input->get('limit', TRUE);
+        $offset = (int)$this->input->get('offset', TRUE);
+
         $data = $this->Tipos_model->cargar_tipos_paginado($limit, $offset);
-    
-        // Devolver el número total de registros y los datos de la página actual
-        echo json_encode(array(
-            'total' => $data['total'], // Número total de registros
-            'rows' => $data['rows']    // Registros para la página actual
-        ));
+        return $this->response([
+            'total' => $data['total'],
+            'rows' => $data['rows']
+        ]);
     }
 
-    public function agregar_tipos(){
-        $nom_tipo = $this->input->post('tipo');
-        $datos = array(
-            'nom_tipo' => $this->input->post('tipo')
-        );
-        echo $this->Tipos_model->agregar($datos, $nom_tipo);
+    public function agregar_tipos() {
+        $nom_tipo = $this->input->post('tipo', TRUE);
+
+        if (empty($nom_tipo) || !is_string($nom_tipo)) {
+            return $this->response(['status' => 'error', 'message' => 'Tipo no proporcionado o inválido'], 400);
+        }
+
+        $datos = ['nom_tipo' => $nom_tipo];
+        $result = $this->Tipos_model->agregar($datos, $nom_tipo);
+
+        if ($result === false) {
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar el tipo'], 400);
+        }
+
+        return $this->response(['status' => 'success', 'message' => 'Tipo agregado correctamente']);
     }
 
-    public function ver_vehiculos_tipos(){
-        $id = $this->input->post('id');
-        echo json_encode($this->Comunes_model->cargar_uso('vehiculos', 'tipo_id', $id));
+    public function ver_vehiculos_tipos() {
+        $id = (int)$this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $vehiculos = $this->Comunes_model->cargar_uso('vehiculos', 'tipo_id', $id);
+        return $this->response(['status' => 'success', 'data' => $vehiculos]);
     }
 
-    public function eliminar_tipos(){
-        $id = $this->input->post('id');
-        echo $this->Tipos_model->eliminar($id);
+    public function eliminar_tipos() {
+        $id = $this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $result = $this->Tipos_model->eliminar($id);
+
+        if ($result === 0) {
+            return $this->response(['status' => 'error', 'message' => 'Error al eliminar el tipo o tipo no encontrado'], 400);
+        }
+
+        return $this->response(['status' => 'success', 'message' => 'Tipo eliminado correctamente']);
     }
 
+    private function validar_id($id) {
+        return !empty($id) && is_numeric($id) && (int)$id > 0;
+    }
+
+    private function response($data, $status_code = 200) {
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header($status_code)
+            ->set_output(json_encode($data));
+    }
 }
 
 ?>

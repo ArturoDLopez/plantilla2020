@@ -61,10 +61,27 @@ function eliminar(row){
                 method: 'POST',
                 data: {'id': row},
                 success: function(data){
-                    if(data > 0){
-                        tabla.bootstrapTable('refresh');
-                        return;
+                    if(data.status == 'error'){
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'No se puede eliminar la placa',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                        })
                     }
+                    else{
+                        notificar('Placa eliminada correctamente', 'success');
+                        tabla.bootstrapTable('refresh');
+                    }
+                },
+                error: function(xhr, status, error){
+                    console.error('Error: ', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'No se puede eliminar la placa',
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    })
                 }
 
             })
@@ -77,9 +94,8 @@ function registrar(){
         url: base_url + 'agregar_placa',
         method: 'POST',
         data: {'placa':document.getElementById('placa').value},
-        success: function(data){
-            console.log(data);
-            if(data != 1){
+        success: function(data){        
+            if(data.status == 'error'){
                 Swal.fire({
                         title: 'Error',
                         text: 'El dato que intentas ingresar ya existe',
@@ -91,7 +107,29 @@ function registrar(){
                 tabla.bootstrapTable('refresh');
                 $('#frm_placas').parsley().reset();
                 $('#placa').val("");
+                notificar('Placa registrada correctamente', 'success');
             }
+        },
+        error: function(xhr, status, error){
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'No se puede registrar la placa',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            })
         }
     })
+}
+
+function notificar(texto, tipo) {
+    texto = typeof texto !== 'undefined' ? texto : "--";
+    tipo = typeof tipo !== 'undefined' ? tipo : "success";
+
+    new Noty({
+        type: tipo,
+        theme: 'sunset',
+        text: texto,
+        timeout: 1500
+    }).show();
 }

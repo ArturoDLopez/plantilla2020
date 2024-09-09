@@ -1,27 +1,15 @@
 base_url = base_url + "catalogos/colores/";
 let tabla = $('#tabla_colores');
 let tabla2 = $('#ver_uso');
-columnsColor = [{
-                field: 'nom_color',
-                title: 'Color'
-            }, {
-                field: 'fecha_registro',
-                title: 'Fecha de registro'
-            }, {
-                field: 'id', title: 'Acciones', formatter: accionC, align: 'center'
-            }
+columnsColor = [
+    {field: 'nom_color', title: 'Color'}, 
+    {field: 'fecha_registro', title: 'Fecha de registro'}, 
+    {field: 'id', title: 'Acciones', formatter: accionC, align: 'center'}
 ];
 let columnsV = [
-    {
-        field: 'num_serie', title: 'Numero de serie'
-    },
-    {
-        field: 'modelo', title: 'modelo'
-    },
-    {
-        field: 'fecha_registro', title: 'Fecha de registro'
-    },
-
+    {field: 'num_serie', title: 'Numero de serie'},
+    {field: 'modelo', title: 'modelo'},
+    {field: 'fecha_registro', title: 'Fecha de registro'},
 ];
 
 
@@ -42,7 +30,6 @@ $(document).ready(function(){
         
     })
 });
-
 
 $('#frm_container').on('submit', function(e){
     e.preventDefault();
@@ -79,7 +66,7 @@ function ver(id){
         type: 'POST',
         data: {'id':id},
         success: function(data){
-            json = JSON.parse(data);
+            json = data.data;
             if(json.length >= 0){
                 $('#modalColores').modal('show');
                 tabla2.bootstrapTable('destroy');
@@ -88,6 +75,15 @@ function ver(id){
                     data: json
                 });
             }
+        },
+        error: function(xhr, status, error){
+            console.error('Error: ', error);
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     });
 }
@@ -103,52 +99,79 @@ function agregar(){
             data: data,
             url: url,
             success: function (data){
-                if (data == 0){
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'El dato que intentas ingresar ya existe',
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar'
-                    })
-                }
-                else{
-                    Swal.fire({
-                        title: 'Agregado correctamente',
-                        icon: 'success',
-                        confirmButtonText: 'Aceptar',        
-                    })
+                if(data.status === 'success'){
+                    notificar(data.message, 'success');
                     tabla.bootstrapTable('refresh');
+                } else {
+                    notificar(data.message, 'error');
                 }
-                console.log('Datos en el success: ', data);
+            },
+            error: function(xhr, status, error){
+                console.error('Error: ', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
             }
         })
 }
 
-function eliminar(id, url){
-    url = base_url + "eliminar_colores";
+function eliminar(id){
+    let url = base_url + "eliminar_colores";
 
     Swal.fire({
         title: 'Eliminar',
-        text: 'Seguro que quieres eliminar este elemento?',
+        text: '¿Seguro que quieres eliminar este elemento?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Confirmar',
         cancelButtonText: 'Cancelar',
     }).then((result) => {
-        if(result.value){
+        if(result.isConfirmed){
             $.ajax({
-            url: url,
-            method: 'POST',
-            data: {'id': id},
-            success: function(data){
-                if(data != 0){
-                    tabla.bootstrapTable('refresh');
+                url: url,
+                method: 'POST',
+                data: {'id': "dadasfafa"},  
+                success: function(response){
+                    if(response.status === 'success'){
+                        notificar(response.message, 'success');
+                        tabla.bootstrapTable('refresh');
+                    } else {
+                        notificar(response.message, 'error');
+                    }
+                },
+                error: function(xhr, status, error){
+                    notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
                 }
-            }
-        })
+            });
         }
     });
 }
+
 function mostrar_modal(){
     $('#modalForm').modal('show');
+}
+
+function notificar(texto, tipo) {
+
+    texto = typeof texto !== 'undefined' ? texto : "--";
+    tipo = typeof tipo !== 'undefined' ? tipo : "success";
+
+    new Noty({
+        type: tipo,
+        theme: 'sunset',
+        text: texto,
+        timeout: 1500
+    }).show();
+}
+
+function notificar_swal(titulo, texto, icono){
+    Swal.fire({
+        title: titulo,
+        text: texto,
+        icon: icono,
+        confirmButtonText: 'Aceptar'
+    });
 }

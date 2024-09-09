@@ -1,80 +1,80 @@
 <?php
 
-class Marcas extends CI_Controller{
-    public function __construct(){
+class Marcas extends CI_Controller {
+
+    public function __construct() {
         parent::__construct();
-        //$this->load->model('Catalogos_model');
         $this->load->model('catalogos/Marcas_model');
         $this->load->model('comunes/Comunes_model');
     }
 
-    public function index(){
+    public function index() {
         $this->load->view('template/header');
         $this->load->view('catalogos/re_marcas');
         $this->load->view('template/footer');
     }
 
-    public function cargar_marcas(){
-        $limit = $this->input->get('limit');
-        $offset = $this->input->get('offset');
+    public function cargar_marcas() {
+        $limit = (int)$this->input->get('limit', TRUE);
+        $offset = (int)$this->input->get('offset', TRUE);
 
-        echo json_encode($this->Marcas_model->cargar($limit, $offset));
+        $marcas = $this->Marcas_model->cargar($limit, $offset);
+        return $this->response($marcas);
     }
 
-    public function agregar_marcas(){
-        $nom_marca = $this->input->post('marca');
-        $datos = array(
-            'nom_marca' => $this->input->post('marca')
-        );
-        echo $this->Marcas_model->agregar($datos, $nom_marca);
-    }
+    public function agregar_marcas() {
+        $nom_marca = $this->input->post('marca', TRUE);
 
-    public function ver_vehiculos_marcas(){
-        $id = $this->input->post('id');
-        echo json_encode($this->Comunes_model->cargar_uso('vehiculos', 'marcas_id', $id));
-    }
-
-    public function eliminar_marcas(){
-        $id = $this->input->post('id');
-        echo $this->Marcas_model->eliminar($id);
-    }
-
-   /*  public function index(){
-
-        $data = new stdClass();
-
-        $marcas = array('marcas' => $this->Marcas_model->cat_marcas());
-
-        $data->marcas = $marcas;
-
-        $this->load->view('template/header');
-        $this->load->view('seccion/re_marcas', $data);
-        $this->load->view('template/footer');
-    }
-
-    public function cargar_marcas(){
-        $datos = $this->Marcas_model->cat_marcas();
-        echo (json_encode($datos));
-    }
-
-    public function agregar_marcas(){
-        $valor = $this->input->post('nombre');
-        $datos = array(
-            'nom_marca' => $valor,
-            'fecha_registro' => date('Y-m-d H:i:s'),
-            'borrado' => 0
-        );
-        $num_row = $this->Marcas_model->buscar_registro($valor);
-        if($num_row == 0){
-            $insert_id = $this->Marcas_model->registrar_marca($datos);
-            echo $insert_id;
+        if (empty($nom_marca) || !is_string($nom_marca)) {
+            return $this->response(['status' => 'error', 'message' => 'Marca no proporcionada o inválida'], 400);
         }
-        else{
-            echo 0;
+
+        $datos = ['nom_marca' => $nom_marca];
+        $result = $this->Marcas_model->agregar($datos, $nom_marca);
+
+        if ($result === false) {
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar la marca'], 400);
         }
+
+        return $this->response(['status' => 'success', 'message' => 'Marca agregada correctamente']);
     }
 
- */
+    public function ver_vehiculos_marcas() {
+        $id = (int)$this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $vehiculos = $this->Comunes_model->cargar_uso('vehiculos', 'marcas_id', $id);
+        return $this->response(['status' => 'success', 'data' => $vehiculos]);
+    }
+
+    public function eliminar_marcas() {
+        $id = $this->input->post('id', TRUE);
+
+        if (!$this->validar_id($id)) {
+            return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
+        }
+
+        $result = $this->Marcas_model->eliminar($id);
+
+        if ($result === 0) {
+            return $this->response(['status' => 'error', 'message' => 'Error al eliminar la marca o marca no encontrada'], 400);
+        }
+
+        return $this->response(['status' => 'success', 'message' => 'Marca eliminada correctamente']);
+    }
+
+    private function validar_id($id) {
+        return !empty($id) && is_numeric($id) && (int)$id > 0;
+    }
+
+    private function response($data, $status_code = 200) {
+        return $this->output
+            ->set_content_type('application/json')
+            ->set_status_header($status_code)
+            ->set_output(json_encode($data));
+    }
 }
-
 ?>
