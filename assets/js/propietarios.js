@@ -35,10 +35,10 @@ $(document).ready(function(){
 
 function acciones(value, row, index){
     return `
-    <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(`+row.id+`)">
+    <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar('${row.id}')">
                 <i class="glyph-icon icon-edit"></i>
     </button>
-    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+value+','+row.id+`)">
+    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar('${row.id}')">
                 <i class="glyph-icon icon-trash"></i>
     </button>
     `
@@ -249,7 +249,7 @@ function registrar(){
     })
 }
 
-function eliminar(value, row){
+function eliminar(row){
     console.log('Row', row);
     Swal.fire({
         title: 'Eliminar',

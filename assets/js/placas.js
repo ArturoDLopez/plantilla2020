@@ -40,7 +40,7 @@ $('#frm_placas').on('submit', function(e){
 
 function acciones(value, row, index){
     return `
-    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(`+row.id+`)">
+    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar('${row.id}')">
                 <i class="glyph-icon icon-trash"></i>
     </button>
     `

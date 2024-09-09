@@ -36,10 +36,10 @@ function queryParams(params){
 
 function acciones(value, row, index){
     return `
-        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar(${row.id})">
+        <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar('${row.id}')">
             <i class="glyph-icon icon-edit"></i>
         </button>
-        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar(${row.id}, '${base_url}eliminar_dueno', columns, tabla)">
+        <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar('${row.id}', '${base_url}eliminar_dueno', columns, tabla)">
             <i class="glyph-icon icon-trash"></i>
         </button>
     `;

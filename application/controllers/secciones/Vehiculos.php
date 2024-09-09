@@ -18,7 +18,9 @@ class Vehiculos extends CI_Controller {
 
         $total = $this->Vehiculos_model->contar_vehiculos();
         $vehiculos = $this->Vehiculos_model->obtener_vehiculos($limit, $offset);
-
+        foreach($vehiculos as $ve){
+            $ve->id = encriptar($ve->id);
+        }
         $response = [
             'total' => $total,
             'rows' => $vehiculos
@@ -28,7 +30,8 @@ class Vehiculos extends CI_Controller {
     }
 
     public function consultar_auto() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -81,7 +84,8 @@ class Vehiculos extends CI_Controller {
     }
 
     public function editar_auto() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -105,7 +109,8 @@ class Vehiculos extends CI_Controller {
     }
 
     public function eliminar_auto() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

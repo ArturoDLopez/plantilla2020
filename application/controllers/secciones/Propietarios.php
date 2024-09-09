@@ -17,6 +17,9 @@ class Propietarios extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
 
         $propietarios = $this->Propietarios_model->cargar($limit, $offset);
+        foreach($propietarios['rows'] as $pro){
+            $pro->id = encriptar($pro->id);
+        }
         return $this->response($propietarios);
     }
 
@@ -45,7 +48,8 @@ class Propietarios extends CI_Controller {
     }
 
     public function consultar_propietario() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -83,7 +87,8 @@ class Propietarios extends CI_Controller {
     }
 
     public function editar_propietario() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -107,7 +112,8 @@ class Propietarios extends CI_Controller {
     }
 
     public function eliminar_propietario() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

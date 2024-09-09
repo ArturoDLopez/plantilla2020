@@ -17,6 +17,9 @@ class Robos extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
 
         $robos = $this->Robos_model->cargar($limit, $offset);
+        foreach($robos['rows'] as $robo){
+            $robo->id = encriptar($robo->id);
+        }
         return $this->response($robos);
     }
 
@@ -27,13 +30,15 @@ class Robos extends CI_Controller {
     }
 
     public function consultar_robo() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
         }
 
         $robo = $this->Robos_model->get_by_id('robos', ['id' => $id]);
+        //$robo->id = encriptar($robo->id);
 
         if (empty($robo)) {
             return $this->response(['status' => 'error', 'message' => 'Robo no encontrado'], 404);
@@ -76,7 +81,8 @@ class Robos extends CI_Controller {
     }
 
     public function editar_robo() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -100,7 +106,8 @@ class Robos extends CI_Controller {
     }
 
     public function eliminar_robo() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

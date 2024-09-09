@@ -16,6 +16,9 @@ class Emplacado extends CI_Controller {
         $limit = $this->input->get('limit', TRUE);
         $offset = $this->input->get('offset', TRUE);
         $emplacado = $this->Emplacado_model->cargar($limit, $offset);
+        foreach($emplacado['rows'] as $dueno){
+            $dueno->id = encriptar($dueno->id);
+        }
         return $this->response($emplacado);
     }
 
@@ -56,6 +59,7 @@ class Emplacado extends CI_Controller {
 
     public function consultar_emplacado() {
         $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (empty($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID requerido'], 400);
@@ -97,6 +101,7 @@ class Emplacado extends CI_Controller {
 
     public function editar_emplacado() {
         $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
         $placa_id = $this->input->post('placa', TRUE);
         $anterior_id = $this->input->post('anterior_id', TRUE);
 
@@ -113,22 +118,24 @@ class Emplacado extends CI_Controller {
         ];
 
         $emplacado_id = $this->Emplacado_model->actualizar('emplacado', $datos, $id);
-        if (!$emplacado_id) {
+        if ($emplacado_id == 0) {
             return $this->response(['status' => 'error', 'message' => 'Error al actualizar emplacado'], 500);
         }
 
-        $actualizado_placa = $this->Emplacado_model->actualizar_placa($placa_id, 'placas', $id);
-        $actualizado_anterior = $this->Emplacado_model->actualizar_placa($anterior_id, 'placas', null);
-
-        if ($actualizado_placa == 0|| $actualizado_anterior == 0) {
-            return $this->response(['status' => 'error', 'message' => 'Error al actualizar placas'], 500);
+        if($id == $anterior_id){
+            $actualizado_placa = $this->Emplacado_model->actualizar_placa($placa_id, 'placas', $id);
+            $actualizado_anterior = $this->Emplacado_model->actualizar_placa($anterior_id, 'placas', null);
+            if ($actualizado_placa == 0|| $actualizado_anterior == 0) {
+                return $this->response(['status' => 'error', 'message' => 'Error al actualizar placas'], 500);
+            }
         }
-
+    
         return $this->response(['status' => 'success', 'message' => 'Emplacado actualizado exitosamente']);
     }
 
     public function eliminar_emplacado() {
         $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
         $anterior_id = $this->input->post('anterior_id', TRUE);
 
         if (empty($id) || empty($anterior_id)) {

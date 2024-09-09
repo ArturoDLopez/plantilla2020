@@ -55,19 +55,20 @@ class Duenos_model extends CI_Model{
     }
 
     public function actualizar($tabla, $datos, $id, $campo){
+        $misma_curp = $this->db->get_where('duenos', array('borrado' => 0, 'curp' => $campo, 'id' => $id));
         $row = $this->db->get_where('duenos', array('borrado' => 0, 'curp' => $campo));
-        if($row->num_rows() == 0){
+        if($misma_curp->num_rows() == 1 || $row->num_rows() == 0){
             $this->db->where('id', $id);
             $this->db->update($tabla, $datos);
             if ($this->db->affected_rows() == 1){
-                return 1;
+                return true;
             }
             else{
-                return 3;
+                return false;
             }
         }
         else{
-            return 0;
+            return false;
         }
     }
 

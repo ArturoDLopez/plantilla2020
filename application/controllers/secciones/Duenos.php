@@ -26,11 +26,15 @@ class Duenos extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
 
         $duenos = $this->Duenos_model->cargar($limit, $offset);
+        foreach($duenos['rows'] as $dueno){
+            $dueno->id = encriptar($dueno->id);
+        }
         return $this->response($duenos);
     }
 
     public function consultar_dueno() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -61,7 +65,8 @@ class Duenos extends CI_Controller {
     }
 
     public function editar_dueno() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
         $datos = $this->get_dueno_data();
 
         if (!$this->validar_id($id) || empty($datos['curp']) || empty($datos['nombre']) || empty($datos['apellido_p']) || empty($datos['apellido_m'])) {
@@ -74,15 +79,17 @@ class Duenos extends CI_Controller {
         }
 
         $updated = $this->Duenos_model->actualizar('duenos', $datos, $id, $datos['curp']);
+        
         if (!$updated) {
-            return $this->response(['status' => 'error', 'message' => 'Error al actualizar dueño'], 500);
+            return $this->response(['status' => 'error', 'message' => 'Error al actualizar dueño, posible dato duplicado'], 500);
         }
 
         return $this->response(['status' => 'success', 'message' => 'Dueño actualizado exitosamente']);
     }
 
     public function eliminar_dueno() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

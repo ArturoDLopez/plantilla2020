@@ -15,12 +15,17 @@ class Placas extends CI_Controller {
     public function cargar_placas() {
         $limit = (int)$this->input->get('limit', TRUE);
         $offset = (int)$this->input->get('offset', TRUE);
+        $duenos = $this->Placas_model->cargar($limit, $offset);
+        foreach($duenos['rows'] as $dueno){
+            $dueno->id = encriptar($dueno->id);
+        }
 
-        return $this->response($this->Placas_model->cargar($limit, $offset));
+        return $this->response($duenos);
     }
 
     public function consultar_placa() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -53,7 +58,8 @@ class Placas extends CI_Controller {
     }
 
     public function editar_placa() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
         $placa = $this->input->post('placa', TRUE);
 
         if (!$this->validar_id($id) || empty($placa) || !is_string($placa)) {
@@ -71,7 +77,8 @@ class Placas extends CI_Controller {
     }
 
     public function eliminar_placa() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
