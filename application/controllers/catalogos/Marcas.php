@@ -19,6 +19,9 @@ class Marcas extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
 
         $marcas = $this->Marcas_model->cargar($limit, $offset);
+        foreach($marcas['rows'] as $marca){
+            $marca->id = encriptar($marca->id);
+        }
         return $this->response($marcas);
     }
 
@@ -40,7 +43,8 @@ class Marcas extends CI_Controller {
     }
 
     public function ver_vehiculos_marcas() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -52,6 +56,7 @@ class Marcas extends CI_Controller {
 
     public function eliminar_marcas() {
         $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

@@ -33,13 +33,13 @@ $('#frm_container').on('submit', function(e) {
 
 function accion(value, row, index) {
     let boton = `
-        <button class="btn btn-round btn-danger" title="Eliminar" onclick="eliminar(${row.id})">
+        <button class="btn btn-round btn-danger" title="Eliminar" onclick="eliminar('${row.id}')">
             <i class="glyph-icon icon-trash"></i>
         </button>
     `;
     if (row.vehiculos_id != null) {
         boton = `
-        <button class="btn btn-round btn-info" title="Ver uso del tipo" onclick="ver(${row.id})">
+        <button class="btn btn-round btn-info" title="Ver uso del tipo" onclick="ver('${row.id}')">
             <i class="glyph-icon icon-eye"></i>
         </button>
         <button class="btn btn-round btn-danger" disabled>

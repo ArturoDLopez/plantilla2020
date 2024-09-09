@@ -18,6 +18,9 @@ class Tipos extends CI_Controller {
         $offset = (int)$this->input->get('offset', TRUE);
 
         $data = $this->Tipos_model->cargar_tipos_paginado($limit, $offset);
+        foreach($data['rows'] as $tipo){
+            $tipo->id = encriptar($tipo->id);
+        }
         return $this->response([
             'total' => $data['total'],
             'rows' => $data['rows']
@@ -42,7 +45,8 @@ class Tipos extends CI_Controller {
     }
 
     public function ver_vehiculos_tipos() {
-        $id = (int)$this->input->post('id', TRUE);
+        $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
@@ -54,6 +58,7 @@ class Tipos extends CI_Controller {
 
     public function eliminar_tipos() {
         $id = $this->input->post('id', TRUE);
+        $id = desencriptar($id);
 
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);

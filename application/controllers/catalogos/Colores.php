@@ -7,7 +7,6 @@ class Colores extends CI_Controller {
         $this->load->model('catalogos/Colores_model');
         $this->load->model('comunes/Comunes_model');
         $this->load->library('encryption');
-        $this->load->helper('funciones');
     }
 
     public function index() {
