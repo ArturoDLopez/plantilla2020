@@ -309,26 +309,3 @@ function llamar_modal(){
     limpiar();
     $("#modalForm").modal('show');  
 }
-
-
-function notificar(texto, tipo) {
-
-    texto = typeof texto !== 'undefined' ? texto : "--";
-    tipo = typeof tipo !== 'undefined' ? tipo : "success";
-
-    new Noty({
-        type: tipo,
-        theme: 'sunset',
-        text: texto,
-        timeout: 1500
-    }).show();
-}
-
-function notificar_swal(titulo, texto, icono){
-    Swal.fire({
-        title: titulo,
-        text: texto,
-        icon: icono,
-        confirmButtonText: 'Aceptar'
-    });
-}

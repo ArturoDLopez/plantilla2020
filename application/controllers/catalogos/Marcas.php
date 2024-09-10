@@ -9,7 +9,10 @@ class Marcas extends CI_Controller {
     }
 
     public function index() {
-        $this->load->view('template/header');
+        $data = new stdClass();
+		$login = true;
+		$data->login = $login;
+        $this->load->view('template/header', $data);
         $this->load->view('catalogos/re_marcas');
         $this->load->view('template/footer');
     }
@@ -35,8 +38,8 @@ class Marcas extends CI_Controller {
         $datos = ['nom_marca' => $nom_marca];
         $result = $this->Marcas_model->agregar($datos, $nom_marca);
 
-        if ($result === false) {
-            return $this->response(['status' => 'error', 'message' => 'Error al agregar la marca'], 400);
+        if ($result === 0) {
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar la marca, posible repeticion de datos'], 400);
         }
 
         return $this->response(['status' => 'success', 'message' => 'Marca agregada correctamente']);

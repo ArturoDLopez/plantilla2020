@@ -52,7 +52,7 @@
         Colores
     </h1>
     <div id="opciones">
-        <button class='btn btn-success' onclick="mostrar_modal()">
+        <button class='btn btn-success' onclick="mostrar_modal('modalForm')">
             Agregar color
         </button>
     </div>
@@ -62,3 +62,4 @@
 </div>
 
 <script src="../assets/js/catalogos/colores.js"></script>
+<script src="../assets/js/funciones.js"></script>

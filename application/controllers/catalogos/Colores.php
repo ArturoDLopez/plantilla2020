@@ -10,7 +10,10 @@ class Colores extends CI_Controller {
     }
 
     public function index() {
-        $this->load->view('template/header');
+        $data = new stdClass();
+		$login = true;
+		$data->login = $login;
+        $this->load->view('template/header', $data);
         $this->load->view('catalogos/re_colores');
         $this->load->view('template/footer');
     }
@@ -37,7 +40,7 @@ class Colores extends CI_Controller {
         $result = $this->Colores_model->agregar($datos, $nom_color);
 
         if ($result === 0) {
-            return $this->response(['status' => 'error', 'message' => 'Error al agregar el color'], 400);
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar el color, posible repeticion de color'], 400);
         }
 
         return $this->response(['status' => 'success', 'message' => 'Color agregado correctamente']);

@@ -1,4 +1,5 @@
 base_url = base_url + "catalogos/tipos/";
+elementos = ["tipo"];
 let tabla = $('#tabla_tipos');
 let tabla2 = $('#ver_uso');
 
@@ -86,6 +87,8 @@ function agregar() {
             } else {
                 notificar_swal('Éxito', 'Agregado correctamente', 'success');
                 tabla.bootstrapTable('refresh');
+                limpiar_modal(elementos);
+                cerrar_modal('modalForm');
             }
         },
         error: function(xhr, status, error) {
@@ -124,10 +127,6 @@ function eliminar(id) {
             });
         }
     });
-}
-
-function mostrar_modal() {
-    $('#modalForm').modal('show');
 }
 
 function queryParams(params) {

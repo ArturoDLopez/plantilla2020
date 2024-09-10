@@ -1,4 +1,5 @@
 base_url = base_url + 'catalogos/marcas/';
+elementos = ["marca"];
 let tabla = $('#tabla_marcas');
 let tabla2 = $('#ver_uso');
 let columns = [
@@ -92,8 +93,11 @@ function agregar() {
             if (data.status === 'success') {
                 notificar_swal('Registro exitoso', data.message, 'success');
                 tabla.bootstrapTable('refresh');
+                limpiar_modal(elementos);
+                cerrar_modal('modalForm');
             } else {
                 notificar_swal('Error', data.message, 'error');
+                
             }
         },
         error: function(xhr, status, error) {
@@ -139,11 +143,6 @@ function eliminar(id) {
         }
     });
 }
-
-function mostrar_modal() {
-    $('#modalForm').modal('show');
-}
-
 
 function notificar(texto, tipo) {
 

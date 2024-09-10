@@ -45,7 +45,7 @@
 <div class="container text-center">
     <h1>Tipos</h1>
     <div id="opciones">
-        <button class="btn btn-success" onclick="mostrar_modal()">Agregar tipo</button>
+        <button class="btn btn-success" onclick="mostrar_modal('modalForm')">Agregar tipo</button>
     </div>
 
     <table id="tabla_tipos" 
@@ -65,3 +65,4 @@
     </table>
 </div>
 <script src="../assets/js/catalogos/tipos.js"></script>
+<script src="../assets/js/funciones.js"></script>

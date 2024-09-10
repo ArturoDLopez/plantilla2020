@@ -8,7 +8,10 @@ class Tipos extends CI_Controller {
     }
 
     public function index() {
-        $this->load->view('template/header');
+        $data = new stdClass();
+		$login = true;
+		$data->login = $login;
+        $this->load->view('template/header', $data);
         $this->load->view('catalogos/re_tipos');
         $this->load->view('template/footer');
     }
@@ -37,8 +40,8 @@ class Tipos extends CI_Controller {
         $datos = ['nom_tipo' => $nom_tipo];
         $result = $this->Tipos_model->agregar($datos, $nom_tipo);
 
-        if ($result === false) {
-            return $this->response(['status' => 'error', 'message' => 'Error al agregar el tipo'], 400);
+        if ($result === 0) {
+            return $this->response(['status' => 'error', 'message' => 'Error al agregar el tipo, posible repeticion del tipo'], 400);
         }
 
         return $this->response(['status' => 'success', 'message' => 'Tipo agregado correctamente']);

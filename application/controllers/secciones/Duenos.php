@@ -7,7 +7,10 @@ class Duenos extends CI_Controller {
     }
 
     public function index() {
-        $this->load->view('template/header');
+        $data = new stdClass();
+		$login = true;
+		$data->login = $login;
+        $this->load->view('template/header', $data);
         $this->load->view('secciones/re_duenos');
         $this->load->view('template/footer');
     }

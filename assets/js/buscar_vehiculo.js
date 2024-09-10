@@ -42,13 +42,9 @@ function acciones(value, row, index){
     `
 }
 
-
-
 function ver_robos(){
     console.log("Hay que buscar robos");
 }
-
-//buscar();
 
 function buscar(){
     let value = document.getElementById('inp_placa').value;

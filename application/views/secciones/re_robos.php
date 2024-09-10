@@ -93,3 +93,4 @@
 
 <script src="../assets/js/modal.js"></script>
 <script src="../assets/js/robos.js"></script>
+<script src="../assets/js/funciones.js"></script>

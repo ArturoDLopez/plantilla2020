@@ -93,25 +93,3 @@ function cancelar_local(){
     $('#frm_duenos').parsley().reset();
     cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
 }
-
-function notificar(texto, tipo) {
-
-    texto = typeof texto !== 'undefined' ? texto : "--";
-    tipo = typeof tipo !== 'undefined' ? tipo : "success";
-
-    new Noty({
-        type: tipo,
-        theme: 'sunset',
-        text: texto,
-        timeout: 1500
-    }).show();
-}
-
-function notificar_swal(titulo, texto, icono){
-    Swal.fire({
-        title: titulo,
-        text: texto,
-        icon: icono,
-        confirmButtonText: 'Aceptar'
-    });
-}

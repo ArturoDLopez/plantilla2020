@@ -52,7 +52,7 @@
         Marcas
     </h1>
     <div id="opciones">
-        <button class='btn btn-success' onclick="mostrar_modal()">
+        <button class='btn btn-success' onclick="mostrar_modal('modalForm')">
             Agregar marca
         </button>
     </div>
@@ -61,3 +61,4 @@
     
 </div>
 <script src="../assets/js/catalogos/marcas.js"></script>
+<script src="../assets/js/funciones.js"></script>

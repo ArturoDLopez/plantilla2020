@@ -120,3 +120,4 @@
 </div>
 
 <script src="../assets/js/propietarios.js"></script>
+<script src="../assets/js/funciones.js"></script>

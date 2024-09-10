@@ -69,101 +69,108 @@
 		<div class="container">
 			<div class="elements">
 				<div class="b-social">
-					<a type="button" href="<?=base_url('seccion/logout')?>" class="btn btn-danger">
-						Salir
-					</a>
+					
 				</div>
 				<div class="b-title">
 					<p>Sistema de robos - Irapuato</p>
 				</div>
 				<div class="b-login">
-					<div class="igob-signin-c" sistema-id="<?= SISTEMA_TOKEN; ?>"></div>
+				<?php 
+					if($login['login']):?> 
+					<div class="igob-signin-c" sistema-id="<?= SISTEMA_TOKEN ?>"></div>
+				<?php else: ?>	
+					<a type="button" href="<?= base_url('seccion/logout')?>" class="btn btn-danger">Salir</a>
+				<?php endif ?>
 				</div>
 			</div> <!-- /.elements -->
 		</div> <!-- /.container -->
 	</div> <!-- /.top-bar -->
 
-	<div class="main-header bg-header wow fadeInDown" id="fixed-nav">
-		<div class="container">
-			<div class="b-sistema-logotipo">
-				<a href="<?= base_url(); ?>seccion/buscar_vehiculo">
-					<?= img('assets/img/digital.png', FALSE, array('width' => 'auto', 'height' => '60px', 'title' => SISTEMA_TEXTO)); ?>
-				</a>
-			</div>
-			<div class="right-header-btn">
-				<div id="mobile-navigation">
-					<button id="nav-toggle" class="collapsed">
-						<span></span>
-					</button>
-				</div>
-			</div>
-			<ul class="header-nav">
-				<li data-toggle="tooltip" data-placement="bottom" title="Consulatr vehiculo">
-					<a href="<?= base_url(); ?>seccion/buscar_vehiculo">
-						<span>Consultar vehiculo</span>
-					</a>
-				</li>
-				<li>
-					<a href="#">
-						<span>Registrar <i class="glyph-icon icon-angle-down"></i></span>
-					</a>
-					<ul class="submenu">
-						<li>
-							<a href="<?= base_url(); ?>catalogos/marcas"><span>Marcas</span></a>
-							<a href="<?= base_url(); ?>catalogos/colores"><span>Colores</span></a>
-							<a href="<?= base_url(); ?>catalogos/tipos"><span>Tipos</span></a>
+	<?php
+		if(base_url().'seccion/validate'){
+			echo '<div class="main-header bg-header wow fadeInDown" id="fixed-nav">
+				<div class="container">
+					<div class="b-sistema-logotipo">
+						<a href="'.base_url().'seccion/buscar_vehiculo">
+							'.img("assets/img/digital.png", FALSE, array("width" => "auto", "height" => "60px", "title" => SISTEMA_TEXTO)) .'
+						</a>
+					</div>
+					<div class="right-header-btn">
+						<div id="mobile-navigation">
+							<button id="nav-toggle" class="collapsed">
+								<span></span>
+							</button>
+						</div>
+					</div>
+					<ul class="header-nav">
+						<li data-toggle="tooltip" data-placement="bottom" title="Consulatr vehiculo">
+							<a href="'.base_url().'seccion/tabla_vehiculos">
+								<span>Consultar vehiculo</span>
+							</a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>secciones/vehiculos"><span>Autos</span></a>
+							<a href="#">
+								<span>Registrar <i class="glyph-icon icon-angle-down"></i></span>
+							</a>
+							<ul class="submenu">
+								<li>
+									<a href="'.base_url().'catalogos/marcas"><span>Marcas</span></a>
+									<a href="'.base_url().'catalogos/colores"><span>Colores</span></a>
+									<a href="'.base_url().'catalogos/tipos"><span>Tipos</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/vehiculos"><span>Autos</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/duenos"><span>Dueños</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/placas"><span>Placas</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/propietarios"><span>Propietarios</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/emplacado"><span>Emplacado</span></a>
+								</li>
+								<li>
+									<a href="'.base_url().'secciones/robos"><span>Robos</span></a>
+								</li>
+								<li>
+									<a href="#"><span>Usuarios</span></a>
+								</li>
+							</ul>
+						</li>
+						
+						
+					</ul> <!-- /.header-nav -->
+					<ul class="header-nav responsive">
+						<li>
+							<a href="'.base_url().'seccion/enlace1">
+								<span>Enlace 1</span>
+							</a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>secciones/duenos"><span>Dueños</span></a>
+							<a href="'.base_url().'seccion/enlace2">
+								<span>Enlace 2</span>
+							</a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>secciones/placas"><span>Placas</span></a>
+							<a href="'.base_url().'seccion/enlace3">
+								<span>Enlace 3</span>
+							</a>
 						</li>
 						<li>
-							<a href="<?= base_url(); ?>secciones/propietarios"><span>Propietarios</span></a>
+							<a href="'.base_url().'seccion/enlace4">
+								<span>Enlace 4</span>
+							</a>
 						</li>
-						<li>
-							<a href="<?= base_url(); ?>secciones/emplacado"><span>Emplacado</span></a>
-						</li>
-						<li>
-							<a href="<?= base_url(); ?>secciones/robos"><span>Robos</span></a>
-						</li>
-						<li>
-							<a href="#"><span>Usuarios</span></a>
-						</li>
-					</ul>
-				</li>
-				
-				
-			</ul> <!-- /.header-nav -->
-			<ul class="header-nav responsive">
-				<li>
-					<a href="<?= base_url(); ?>seccion/enlace1">
-						<span>Enlace 1</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?= base_url(); ?>seccion/enlace2">
-						<span>Enlace 2</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?= base_url(); ?>seccion/enlace3">
-						<span>Enlace 3</span>
-					</a>
-				</li>
-				<li>
-					<a href="<?= base_url(); ?>seccion/enlace4">
-						<span>Enlace 4</span>
-					</a>
-				</li>
-			</ul> <!-- /.header-nav.reponsive -->
-		</div> <!-- .container -->
-	</div> <!-- /.main-header -->
-
+					</ul> <!-- /.header-nav.reponsive -->
+				</div> <!-- .container -->
+			</div> <!-- /.main-header -->';
+		}
+	
+	?>
 	<div class="clearfix"></div>
 
 	<script>

@@ -56,7 +56,8 @@ function llamar() {
     $('#actual').attr('disabled', false);
     cargarOpciones('cargar_placas_sin_asignar', 'placa');
     cargarOpciones('cargar_numero_serie', 'num_serie');
-    llamar_modal(modal_id, arreglo_campos);
+    llamar_modal(modal_id);
+    limpiar_modal(elementos)
 }
 
 function cargarOpciones(url, elementoId) {
@@ -134,7 +135,8 @@ function rellenar(id){
                 }
             });
 
-            llamar_modal(modal_id, arreglo_campos);
+            llamar_modal(modal_id);
+            limpiar(elementos)
             document.getElementById('modalFormLabel').innerHTML = 'Actualizar Emplacado';
             document.getElementById('btn_duenos').innerHTML = 'Actualizar';
             document.getElementById('num_serie').value = datos.vehiculos_id;
@@ -218,15 +220,6 @@ function notificar(texto, tipo) {
         text: texto,
         timeout: 1500
     }).show();
-}
-
-function notificar_swal(titulo, texto, icono) {
-    Swal.fire({
-        title: titulo,
-        text: texto,
-        icon: icono,
-        confirmButtonText: 'Aceptar'
-    });
 }
 
 function registrar(url_primaria, url_secundaria, data, element, columnas, elementos, tabla) {

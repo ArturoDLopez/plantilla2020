@@ -1,4 +1,5 @@
 base_url = base_url + "catalogos/colores/";
+elementos = ["marca"];
 let tabla = $('#tabla_colores');
 let tabla2 = $('#ver_uso');
 columnsColor = [
@@ -102,6 +103,8 @@ function agregar(){
                 if(data.status === 'success'){
                     notificar(data.message, 'success');
                     tabla.bootstrapTable('refresh');
+                    limpiar_modal(elementos);
+                    cerrar_modal('modalForm');
                 } else {
                     notificar(data.message, 'error');
                 }
@@ -148,10 +151,6 @@ function eliminar(id){
             });
         }
     });
-}
-
-function mostrar_modal(){
-    $('#modalForm').modal('show');
 }
 
 function notificar(texto, tipo) {
