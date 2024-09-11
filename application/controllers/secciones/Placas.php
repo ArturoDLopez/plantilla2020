@@ -7,17 +7,6 @@ class Placas extends CI_Controller {
     }
 
     public function index() {
-        if ($this->auth->is_signed()) {
-			
-            redirect(base_url()."secciones/placas/cargar_vistas");
-        } else {
-			
-            redirect(base_url()."seccion/vista_denegada");
-        }
-
-    }
-
-    public function cargar_vistas(){
         $data = new stdClass();
 		$login = true;
 		$data->login = $login;
@@ -25,6 +14,7 @@ class Placas extends CI_Controller {
         $this->load->view('secciones/re_placas');
         $this->load->view('template/footer');
     }
+
     public function cargar_placas() {
         $limit = (int)$this->input->get('limit', TRUE);
         $offset = (int)$this->input->get('offset', TRUE);

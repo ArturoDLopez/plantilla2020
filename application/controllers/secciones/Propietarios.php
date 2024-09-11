@@ -7,17 +7,6 @@ class Propietarios extends CI_Controller {
     }
 
     public function index() {
-        if ($this->auth->is_signed()) {
-			
-            redirect(base_url()."secciones/propietarios/cargar_vistas");
-        } else {
-			
-            redirect(base_url()."seccion/vista_denegada");
-        }
-
-    }
-
-    public function cargar_vistas(){
         $data = new stdClass();
 		$login = true;
 		$data->login = $login;
