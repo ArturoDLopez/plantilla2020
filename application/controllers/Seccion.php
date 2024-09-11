@@ -47,7 +47,7 @@ class Seccion extends CI_Controller {
 	public function buscar_vehiculo_ajax(){
 		$placa = $this->input->post('placa');
 		$data = $this->Vehiculos_model->buscar_vehiculo($placa);
-		$response['msj'] = "No se encontraron datos";
+		$response['msj'] = "No se encontraron vehiculos con esas placas o numero de serie";
 		if(!$data){
 			return $this->output
 				->set_status_header(404)

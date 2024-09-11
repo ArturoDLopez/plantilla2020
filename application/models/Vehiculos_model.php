@@ -16,10 +16,10 @@ class Vehiculos_model extends CI_Model{
         $this->db->join('propietario pro', 've.id = pro.vehiculos_id', 'inner');
         $this->db->join('duenos du', 'pro.duenos_id = du.id', 'inner');
         $this->db->join('(SELECT * FROM robos GROUP BY vehiculos_id ORDER BY fecha_registro ASC) AS ro', 've.id = ro.vehiculos_id', 'left');
-        $this->db->where('pl.placa LIKE "%'.$placa.'%" OR ve.num_serie LIKE "%'.$placa.'%"');
+        $this->db->where('pl.placa = "'.$placa.'" OR ve.num_serie = "'.$placa.'"');
         
         $busqueda = $this->db->get();
-      
+        
         return  $busqueda->result();
 
         /* $query = 'SELECT ve.num_serie, ma.nom_marca, ve.modelo, ti.nom_tipo, co.nom_color, pl.placa, du.nombre, du.apellido_p, ro.descripcion, ro.fecha_registro, ro.id AS ro_id

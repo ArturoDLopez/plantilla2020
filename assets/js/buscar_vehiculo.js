@@ -61,9 +61,13 @@ function buscar(){
             let json = JSON.parse(data);
             llamar_tabla(json, value);
         },
-        error: function (res){
-            console.log("Error: ");
-            console.log(res);
+        error: function (xhr){
+            Swal.fire({
+                title: 'Error',
+                text: xhr.responseJSON ? xhr.responseJSON.msj : 'Ocurrió un error inesperado',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     })
 }
