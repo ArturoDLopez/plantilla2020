@@ -64,5 +64,5 @@
         </thead>
     </table>
 </div>
-<script src="../assets/js/catalogos/tipos.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/catalogos/tipos.js"></script>
+<script src="../../assets/js/funciones.js"></script>

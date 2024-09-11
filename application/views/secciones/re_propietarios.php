@@ -119,6 +119,6 @@
 <div class="container text-center" id="ve_container">
 </div>
 
-<script src="../assets/js/modal.js"></script>
-<script src="../assets/js/propietarios.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/modal.js"></script>
+<script src="../../assets/js/propietarios.js"></script>
+<script src="../../assets/js/funciones.js"></script>

@@ -76,7 +76,7 @@
 				</div>
 				<div class="b-login">
 				<?php 
-					if($login['login']):?> 
+					if(!$login):?> 
 					<div class="igob-signin-c" sistema-id="<?= SISTEMA_TOKEN ?>"></div>
 				<?php else: ?>	
 					<a type="button" href="<?= base_url('seccion/logout')?>" class="btn btn-danger">Salir</a>
@@ -87,12 +87,12 @@
 	</div> <!-- /.top-bar -->
 
 	<?php
-		if(base_url().'seccion/validate'){
-			echo '<div class="main-header bg-header wow fadeInDown" id="fixed-nav">
+		if($login):?> 
+			<div class="main-header bg-header wow fadeInDown" id="fixed-nav">
 				<div class="container">
 					<div class="b-sistema-logotipo">
-						<a href="'.base_url().'seccion/buscar_vehiculo">
-							'.img("assets/img/digital.png", FALSE, array("width" => "auto", "height" => "60px", "title" => SISTEMA_TEXTO)) .'
+						<a href="<?= base_url()?>seccion/buscar_vehiculo">
+							<?= img("assets/img/digital.png", FALSE, array("width" => "auto", "height" => "60px", "title" => SISTEMA_TEXTO)) ?>
 						</a>
 					</div>
 					<div class="right-header-btn">
@@ -104,7 +104,7 @@
 					</div>
 					<ul class="header-nav">
 						<li data-toggle="tooltip" data-placement="bottom" title="Consulatr vehiculo">
-							<a href="'.base_url().'seccion/tabla_vehiculos">
+							<a href="<?= base_url()?>seccion/tabla_vehiculos">
 								<span>Consultar vehiculo</span>
 							</a>
 						</li>
@@ -114,27 +114,27 @@
 							</a>
 							<ul class="submenu">
 								<li>
-									<a href="'.base_url().'catalogos/marcas"><span>Marcas</span></a>
-									<a href="'.base_url().'catalogos/colores"><span>Colores</span></a>
-									<a href="'.base_url().'catalogos/tipos"><span>Tipos</span></a>
+									<a href="<?= base_url()?>catalogos/marcas"><span>Marcas</span></a>
+									<a href="<?= base_url()?>catalogos/colores"><span>Colores</span></a>
+									<a href="<?= base_url()?>catalogos/tipos"><span>Tipos</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/vehiculos"><span>Autos</span></a>
+									<a href="<?= base_url()?>secciones/vehiculos"><span>Autos</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/duenos"><span>Dueños</span></a>
+									<a href="<?= base_url()?>secciones/duenos"><span>Dueños</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/placas"><span>Placas</span></a>
+									<a href="<?= base_url()?>secciones/placas"><span>Placas</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/propietarios"><span>Propietarios</span></a>
+									<a href="<?= base_url()?>secciones/propietarios"><span>Propietarios</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/emplacado"><span>Emplacado</span></a>
+									<a href="<?= base_url()?>secciones/emplacado"><span>Emplacado</span></a>
 								</li>
 								<li>
-									<a href="'.base_url().'secciones/robos"><span>Robos</span></a>
+									<a href="<?= base_url()?>secciones/robos"><span>Robos</span></a>
 								</li>
 								<li>
 									<a href="#"><span>Usuarios</span></a>
@@ -146,31 +146,29 @@
 					</ul> <!-- /.header-nav -->
 					<ul class="header-nav responsive">
 						<li>
-							<a href="'.base_url().'seccion/enlace1">
+							<a href="<?= base_url()?>seccion/enlace1">
 								<span>Enlace 1</span>
 							</a>
 						</li>
 						<li>
-							<a href="'.base_url().'seccion/enlace2">
+							<a href="<?= base_url()?>seccion/enlace2">
 								<span>Enlace 2</span>
 							</a>
 						</li>
 						<li>
-							<a href="'.base_url().'seccion/enlace3">
+							<a href="<?= base_url()?>seccion/enlace3">
 								<span>Enlace 3</span>
 							</a>
 						</li>
 						<li>
-							<a href="'.base_url().'seccion/enlace4">
+							<a href="<?= base_url()?>seccion/enlace4">
 								<span>Enlace 4</span>
 							</a>
 						</li>
 					</ul> <!-- /.header-nav.reponsive -->
 				</div> <!-- .container -->
-			</div> <!-- /.main-header -->';
-		}
-	
-	?>
+			</div> <!-- /.main-header -->
+		<?php endif ?>
 	<div class="clearfix"></div>
 
 	<script>

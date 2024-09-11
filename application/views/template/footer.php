@@ -60,7 +60,7 @@
 
 	<script type="text/javascript" src="<?= base_url()."assets/parsley/parsley.js"; ?>"></script>
 
-	<script src="https://webservice.irapuato.gob.mx/auth/js/auth.js" async defer></script>
+	<script src="https://webservicedev.irapuato.gob.mx/auth_dev/js/auth.js" async defer></script>
 
 	<!-- Noty -->
 	<script type="text/javascript" src="<?php echo base_url();?>assets/noty/noty.js"></script>

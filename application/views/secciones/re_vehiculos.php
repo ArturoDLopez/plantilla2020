@@ -88,6 +88,6 @@
   </div>
 </div>
 
-<script src="../assets/js/modal.js"></script>
-<script src="../assets/js/re_vehiculos.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/modal.js"></script>
+<script src="../../assets/js/re_vehiculos.js"></script>
+<script src="../../assets/js/funciones.js"></script>

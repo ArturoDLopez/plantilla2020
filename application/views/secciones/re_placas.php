@@ -20,5 +20,5 @@
     </table>
 </div>
 
-<script src="../assets/js/placas.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/placas.js"></script>
+<script src="../../assets/js/funciones.js"></script>

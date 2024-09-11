@@ -11,9 +11,10 @@ class Seccion extends CI_Controller {
 
 	public function index()
     {
+		
         if ($this->auth->is_signed()) {
 			
-            redirect(base_url()."tabla_vehiculos");
+            redirect(base_url()."seccion/tabla_vehiculos");
         } else {
 			
             redirect(base_url()."seccion/vista_denegada");

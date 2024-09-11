@@ -10,10 +10,10 @@ defined('SISTEMA_ABB') OR define('SISTEMA_TEXTO', 'Sistema de robos de vehiculos
 /**
  * SUU - 4
  */
-defined('URL_WEBSERVICE') OR define('URL_WEBSERVICE', 'https://webservice.irapuato.gob.mx/auth4/');
+defined('URL_WEBSERVICE') OR define('URL_WEBSERVICE', 'https://webservicedev.irapuato.gob.mx/auth_dev/');
 defined('COOKIE_TOKEN') OR define('COOKIE_TOKEN', '_SUU_TOKEN_');
-defined('SISTEMA_TOKEN') OR define('SISTEMA_TOKEN', '1f0e3dad99908345f7439f8ffabdffc4');
-defined('BASE_URL_FAKE') OR define('BASE_URL_FAKE', NULL);
+defined('SISTEMA_TOKEN') OR define('SISTEMA_TOKEN', md5(163));
+defined('BASE_URL_FAKE') OR define('BASE_URL_FAKE', 'https://serverdesarrollo.irapuato.gob.mx/plantilla2020_/');
 
 /*
 |--------------------------------------------------------------------------

@@ -60,5 +60,5 @@
     <table id="tabla_marcas" data-url="<?php echo base_url()."catalogos/marcas/cargar_marcas"?>"></table>
     
 </div>
-<script src="../assets/js/catalogos/marcas.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/catalogos/marcas.js"></script>
+<script src="../../assets/js/funciones.js"></script>

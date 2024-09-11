@@ -84,6 +84,6 @@
   </div>
 </div>
 
-<script src="../assets/js/modal.js"></script>
-<script src="../assets/js/duenos.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/modal.js"></script>
+<script src="../../assets/js/duenos.js"></script>
+<script src="../../assets/js/funciones.js"></script>

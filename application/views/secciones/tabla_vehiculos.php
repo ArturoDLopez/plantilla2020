@@ -53,4 +53,4 @@
 
 
 
-<script src="../assets/js/buscar_vehiculo.js"></script>
+<script src="../../assets/js/buscar_vehiculo.js"></script>

@@ -95,6 +95,6 @@
 
 </div>
 
-<script src="../assets/js/modal.js"></script>
-<script src="../assets/js/emplacado.js"></script>
-<script src="../assets/js/funciones.js"></script>
+<script src="../../assets/js/modal.js"></script>
+<script src="../../assets/js/emplacado.js"></script>
+<script src="../../assets/js/funciones.js"></script>

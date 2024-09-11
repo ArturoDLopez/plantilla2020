@@ -8,6 +8,17 @@ class Tipos extends CI_Controller {
     }
 
     public function index() {
+        if ($this->auth->is_signed()) {
+			
+            redirect(base_url()."catalogos/tipos/cargar_vistas");
+        } else {
+			
+            redirect(base_url()."seccion/vista_denegada");
+        }
+
+    }
+
+    public function cargar_vistas(){
         $data = new stdClass();
 		$login = true;
 		$data->login = $login;
@@ -15,7 +26,6 @@ class Tipos extends CI_Controller {
         $this->load->view('catalogos/re_tipos');
         $this->load->view('template/footer');
     }
-
     public function cargar_tipos() {
         $limit = (int)$this->input->get('limit', TRUE);
         $offset = (int)$this->input->get('offset', TRUE);
