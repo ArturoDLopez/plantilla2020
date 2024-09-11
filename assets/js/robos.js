@@ -104,6 +104,7 @@ function rellenar(id) {
                             })
                             document.getElementById('num_serie').innerHTML = opciones;
                             document.getElementById('num_serie').value = datos.vehiculos_id;
+                            buscar_datos(document.getElementById('num_serie').options[document.getElementById('num_serie').selectedIndex].text);
                         }
             
                     },
@@ -120,7 +121,7 @@ function rellenar(id) {
                 document.getElementById('descripcion').placeholder = datos.descripcion;
                 document.getElementById('fecha_r').value = fecha;
                 variable = id;
-                buscar_datos();
+                
             }
             
         },
@@ -131,12 +132,21 @@ function rellenar(id) {
     })
 }
 
-function buscar_datos() {
+function buscar_datos(dato = false) {
     var combo = document.getElementById("num_serie");
-    var sel = combo.options[combo.selectedIndex].text;
-    let json = {
-        'serie': sel
+    var json = {};
+    var sel;
+    if(!dato){
+        sel = combo.options[combo.selectedIndex].text;
+        json = {
+            'serie': sel
+        }
+    } else{
+        json = {
+            'serie': dato
+        }
     }
+    
     $.ajax({
         url: base_url + 'buscar_datos',
         type: 'POST',
@@ -197,8 +207,7 @@ function registrar_local() {
             'fecha_r': fecha
         }
     }
-    registrar(base_url + 'agregar_robo', base_url + 'editar_robo', datos, elemento, columns, arreglo_campos, tabla);
-    $('#modalForm').modal('hide')
+    registrar(base_url + 'agregar_robo', base_url + 'editar_robo', datos, elemento, arreglo_campos, tabla, modal_id);
 }
 
 function cancelar_local() {

@@ -59,18 +59,19 @@ function acciones(value, row, index){
     `;
 }
 
-function llamar(){
+function llamar(m = false, c=false, t=false){
     $.ajax({
         url: base_url + '/cargar_marcas',
         method: 'POST',
         success: function(data){
             let json = data;
             if(json.status === "success" && json.data.length > 0){
-                let opciones = '<option disabled="" selected="" hidden="">Seleccione una marca...</option>';
+                let opciones = '<option disabled="" value="0" selected="" hidden="">Seleccione una marca...</option>';
                 json.data.forEach(element => {
                     opciones += `<option value="${element.id}">${element.nom_marca}</option>`;
                 });
                 document.getElementById('marca').innerHTML = opciones;
+                document.getElementById('marca').value = !m? 0 : m;
             }
         }
     });
@@ -85,6 +86,7 @@ function llamar(){
                     opciones += `<option value="${element.id}">${element.nom_color}</option>`;
                 });
                 document.getElementById('color').innerHTML = opciones;
+                document.getElementById('color').value = !c? 0 : c;
             }
         }
     });
@@ -100,6 +102,7 @@ function llamar(){
                     opciones += `<option value="${element.id}">${element.nom_tipo}</option>`;
                 });
                 document.getElementById('tipo').innerHTML = opciones;
+                document.getElementById('tipo').value = !t? 0 : t;
             }
         }
     });
@@ -115,7 +118,7 @@ function rellenar(id){
         success: function(response){
             if(response.status === "success"){
                 datos = response.data;
-                llamar();
+                llamar(datos.marcas_id, datos.colores_id, datos.tipo_id);
                 document.getElementById('modalFormLabel').innerHTML = 'Actualizar vehículos';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 document.getElementById('num_serie').value = datos.num_serie;
