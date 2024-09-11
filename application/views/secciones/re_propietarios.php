@@ -82,11 +82,11 @@
                         </div>
 
                         <div class="form-group col-md-4">
-                                    <label for="actual"><span class="text-danger">*</span>Actualmente es el dueño</label>
-                                    <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()" required>
-                                        <option value="0">No</option>    
-                                        <option value="1">Si</option>
-                                    </select>
+                            <label for="actual"><span class="text-danger">*</span>Actualmente es el dueño</label>
+                            <select name="actual" id="actual" class="form-control" onchange="habilitar_fecha()" required>
+                                <option value="0">No</option>    
+                                <option value="1">Si</option>
+                            </select>
                         </div>
                         
                     </div>
@@ -110,7 +110,7 @@
 			</div>
 			<div class="modal-footer">
                 
-				<button id="btn_cancel" data-dismiss="modal" class="btn btn-danger" onclick ="cancelar()"><i class=" glyph-icon icon-times"></i> Cancelar</button>
+				<button id="btn_cancel" data-dismiss="modal" class="btn btn-danger" onclick ="cancelar_local()"><i class=" glyph-icon icon-times"></i> Cancelar</button>
 			</div>
 		</div>
 	</div>
@@ -119,5 +119,6 @@
 <div class="container text-center" id="ve_container">
 </div>
 
+<script src="../assets/js/modal.js"></script>
 <script src="../assets/js/propietarios.js"></script>
 <script src="../assets/js/funciones.js"></script>

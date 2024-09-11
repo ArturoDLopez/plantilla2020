@@ -60,8 +60,10 @@ class Duenos extends CI_Controller {
         }
 
         $insert_id = $this->Duenos_model->agregar($datos, $datos['curp']);
-        if (!$insert_id) {
+        if ($insert_id == 0) {
             return $this->response(['status' => 'error', 'message' => 'Error al agregar dueño'], 500);
+        } elseif($insert_id == 3){
+            return $this->response(['status' => 'error', 'message' => 'La CURP ya ha sido registrada'], 406);
         }
 
         return $this->response(['status' => 'success', 'message' => 'Dueño agregado exitosamente', 'id' => $insert_id], 201);

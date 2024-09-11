@@ -86,7 +86,7 @@ function registrar_local(){
     else{
         datos.id = variable;
     }
-    registrar(base_url + 'agregar_dueno', base_url + 'editar_dueno', datos, elemento, columns, arreglo_campos, tabla);
+    registrar(base_url + 'agregar_dueno', base_url + 'editar_dueno', datos, elemento, arreglo_campos, tabla, modal_id);
 }
 
 function cancelar_local(){

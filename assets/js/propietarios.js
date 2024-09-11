@@ -1,5 +1,7 @@
 base_url += "secciones/propietarios/";
+let arreglo_campos = ['num_serie', 'dueno', 'actual', 'fecha_i', 'fecha_t']
 let tabla = $("#tableV");
+let modal_id = "modalForm";
 let variable;
 let datosTabla = 0;
 
@@ -38,7 +40,7 @@ function acciones(value, row, index){
     <button class="btn btn-round btn-azure" title="Editar" type="button" onclick="rellenar('${row.id}')">
                 <i class="glyph-icon icon-edit"></i>
     </button>
-    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar('${row.id}')">
+    <button class="btn btn-round btn-danger" title="Eliminar" type="button" onclick="eliminar_local('${row.id}')">
                 <i class="glyph-icon icon-trash"></i>
     </button>
     `
@@ -108,7 +110,7 @@ $('#frm_container').on('submit', function(e){
         e.preventDefault();
         
         if($('#frm_container').parsley().isValid()){
-            registrar();
+            registrar_local();
             $('#frm_container').parsley().reset();
         }
         
@@ -158,16 +160,10 @@ function traer_catalogos(vehiculos_id = null, duenos_id = null){
             }
         },
         error: function(xhr, status, error){
-            console.error('Error: ', error);
-            Swal.fire({
-                title: 'Error',
-                text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            });
+            notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
     })
-    llamar_modal();
+    llamar_modal(modal_id, arreglo_campos);
 }
 
 function rellenar(id){
@@ -211,13 +207,11 @@ function rellenar(id){
     })
 }
 
-function cancelar(){
-    document.getElementById('btn_cancel').innerHTML = `Cancelar`;
-    document.getElementById('btn_duenos').innerHTML = 'Registrar';
-    limpiar();
+function cancelar_local(){
+    cancelar('btn_duenos', 'btn_cancel', arreglo_campos);
 }
 
-function registrar(){
+function registrar_local(){
     url = base_url + 'agregar_propietario';
     data = {'num_serie':document.getElementById('num_serie').value, 'dueno':document.getElementById('dueno').value, 'actual':document.getElementById('actual').value, 'fecha_i':document.getElementById('fecha_i').value, 'fecha_t':document.getElementById('fecha_t').value}
     if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
@@ -241,7 +235,8 @@ function registrar(){
             if(document.getElementById('btn_duenos').innerHTML == 'Actualizar'){
                 document.getElementById('btn_duenos').innerHTML = 'Registrar';
             }
-            limpiar();
+            limpiar_modal(arreglo_campos);
+            cerrar_modal(modal_id);
         },
         error: function(xhr, status, error){
             notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
@@ -249,7 +244,7 @@ function registrar(){
     })
 }
 
-function eliminar(row){
+function eliminar_local(row){
     console.log('Row', row);
     Swal.fire({
         title: 'Eliminar',
@@ -266,12 +261,7 @@ function eliminar(row){
                 data: {'id': row},
                 success: function(data){
                     if(data.status == 'error'){
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No se puede eliminar el propietario',
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        })
+                        notificar(response.message, 'error');
                     }
                     else{
                         notificar(data.message, 'success');
@@ -279,33 +269,9 @@ function eliminar(row){
                     }
                 },
                 error: function(xhr, status, error){
-                    console.error('Error: ', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    })
+                    notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
                 }
             })
         }
     })
-}
-
-function limpiar(){
-    document.getElementById('num_serie').value = "";
-    document.getElementById('dueno').value = "";
-    document.getElementById('actual').value = ""; 
-    document.getElementById('fecha_i').value ="";
-    document.getElementById('fecha_t').value = "";
-}
-
-function editar_titulo(){
-    document.getElementById('modalFormLabel').innerHTML = 'Registrar vehiculos';
-    llamar_modal();
-}
-
-function llamar_modal(){
-    limpiar();
-    $("#modalForm").modal('show');  
 }

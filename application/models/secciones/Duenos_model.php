@@ -29,7 +29,7 @@ class Duenos_model extends CI_Model{
             return 0;
         }
         else{
-            return 0;
+            return 3;
         }
     }
 

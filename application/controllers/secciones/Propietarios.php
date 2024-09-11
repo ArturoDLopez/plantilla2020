@@ -117,7 +117,6 @@ class Propietarios extends CI_Controller {
     public function eliminar_propietario() {
         $id = $this->input->post('id', TRUE);
         $id = desencriptar($id);
-
         if (!$this->validar_id($id)) {
             return $this->response(['status' => 'error', 'message' => 'ID inválido'], 400);
         }

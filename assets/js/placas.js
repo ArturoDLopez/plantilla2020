@@ -62,12 +62,7 @@ function eliminar(row){
                 data: {'id': row},
                 success: function(data){
                     if(data.status == 'error'){
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'No se puede eliminar la placa',
-                            icon: 'error',
-                            confirmButtonText: 'Aceptar'
-                        })
+                        notificar(response.message, 'error');
                     }
                     else{
                         notificar('Placa eliminada correctamente', 'success');
@@ -75,19 +70,14 @@ function eliminar(row){
                     }
                 },
                 error: function(xhr, status, error){
-                    console.error('Error: ', error);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'No se puede eliminar la placa',
-                        icon: 'error',
-                        confirmButtonText: 'Aceptar'
-                    })
+                    notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
                 }
 
             })
         }
     })
 }
+
 function registrar(){
     $('#frm_placas').parsley().reset();
     $.ajax({
@@ -96,12 +86,7 @@ function registrar(){
         data: {'placa':document.getElementById('placa').value},
         success: function(data){        
             if(data.status == 'error'){
-                Swal.fire({
-                        title: 'Error',
-                        text: 'El dato que intentas ingresar ya existe',
-                        icon: 'warning',
-                        confirmButtonText: 'Aceptar'
-                    })
+                notificar(response.message, 'error');
             }
             else{
                 tabla.bootstrapTable('refresh');
@@ -111,13 +96,7 @@ function registrar(){
             }
         },
         error: function(xhr, status, error){
-            console.error('Error: ', error);
-            Swal.fire({
-                title: 'Error',
-                text: 'No se puede registrar la placa',
-                icon: 'error',
-                confirmButtonText: 'Aceptar'
-            })
+            notificar(xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');
         }
     })
 }

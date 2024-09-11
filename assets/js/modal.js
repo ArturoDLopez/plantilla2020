@@ -23,14 +23,12 @@ function traer_datos(url, columnas, tabla){
 }
 
 function cancelar(btn1, btn2, elementos){
-    console.log("Cancelar real: ", btn1);
     document.getElementById(btn1).innerHTML = 'Registrar';
     document.getElementById(btn2).innerHTML = 'Cancelar';
     limpiar(elementos);
 }
 
-function registrar(url_primaria, url_secundaria, data, element, columnas, elementos, tabla){
-    console.log(url_primaria, url_secundaria, data, element, columnas, elementos, tabla);
+function registrar(url_primaria, url_secundaria, data, element, elementos, tabla, modal_id){
     url = url_primaria;
     if(element.innerHTML == 'Actualizar'){
         url = url_secundaria;
@@ -44,13 +42,15 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
             if(element.innerHTML == 'Actualizar'){
                 element.innerHTML = 'Registrar';
             }
-            limpiar(elementos);
+            
             if(data.status == 'error'){
                 notificar(data.message, 'error');
             }
             if(data.status == 'success'){
-                notificar('Registro exitoso', 'success');
+                notificar(data.message, 'success');
                 tabla.bootstrapTable('refresh');
+                limpiar(elementos);
+                cerrar_modal(modal_id);
             }
         },
         error: function(xhr, status, error){
@@ -94,11 +94,6 @@ function limpiar(elementos){
     elementos.forEach(e => {
         document.getElementById(e).value = "";    
     });
-}
-
-function editar_titulo(id, label){
-    document.getElementById(id).innerHTML = label;
-    llamar_modal(id);
 }
 
 function llamar_modal(id, e){

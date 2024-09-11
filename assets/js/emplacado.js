@@ -56,8 +56,8 @@ function llamar() {
     $('#actual').attr('disabled', false);
     cargarOpciones('cargar_placas_sin_asignar', 'placa');
     cargarOpciones('cargar_numero_serie', 'num_serie');
-    llamar_modal(modal_id);
-    limpiar_modal(elementos)
+    llamar_modal(modal_id, arreglo_campos);
+    
 }
 
 function cargarOpciones(url, elementoId) {
@@ -135,8 +135,7 @@ function rellenar(id){
                 }
             });
 
-            llamar_modal(modal_id);
-            limpiar(elementos)
+            llamar_modal(modal_id, arreglo_campos);
             document.getElementById('modalFormLabel').innerHTML = 'Actualizar Emplacado';
             document.getElementById('btn_duenos').innerHTML = 'Actualizar';
             document.getElementById('num_serie').value = datos.vehiculos_id;
@@ -165,7 +164,7 @@ function registrar_local() {
         datos.id = variable;
         datos.anterior_id = anterior_id;
     }
-    registrar(url, base_url + 'editar_emplacado', datos, elemento, columns, arreglo_campos, tabla);
+    registrar(url, base_url + 'editar_emplacado', datos, elemento, arreglo_campos, tabla);
 }
 
 function eliminar(row) {
@@ -222,7 +221,7 @@ function notificar(texto, tipo) {
     }).show();
 }
 
-function registrar(url_primaria, url_secundaria, data, element, columnas, elementos, tabla) {
+function registrar(url_primaria, url_secundaria, data, element, elementos, tabla) {
     url = element.innerHTML === 'Actualizar' ? url_secundaria : url_primaria;
     $.ajax({
         url: url,
@@ -230,10 +229,11 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
         data: data,
         success: function(data) {
             element.innerHTML = 'Registrar';
-            limpiar(elementos);
             if (data.status === 'success') {
                 notificar('Registro exitoso', 'success');
                 tabla.bootstrapTable('refresh');
+                cerrar_modal(modal_id);
+                limpiar_modal(elementos);
             } else {
                 notificar(data.message, 'error');
             }
@@ -244,19 +244,8 @@ function registrar(url_primaria, url_secundaria, data, element, columnas, elemen
     });
 }
 
-function limpiar(elementos) {
-    elementos.forEach(e => {
-        document.getElementById(e).value = "";
-    });
-}
-
 function cancelar(btn1, btn2, elementos) {
     document.getElementById(btn1).innerHTML = 'Registrar';
     document.getElementById(btn2).innerHTML = 'Cancelar';
-    limpiar(elementos);
-}
-
-function llamar_modal(id, e) {
-    limpiar(e);
-    $("#" + id).modal('show');
+    limpiar_modal(elementos);
 }
