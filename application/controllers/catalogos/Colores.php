@@ -37,6 +37,7 @@ class Colores extends CI_Controller {
         }
 
         $datos = ['nom_color' => $nom_color];
+        $datos['suu_id'] = $this->auth->getId();
         $result = $this->Colores_model->agregar($datos, $nom_color);
 
         if ($result === 0) {

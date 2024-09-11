@@ -1,5 +1,5 @@
 base_url = base_url + "catalogos/colores/";
-elementos = ["marca"];
+let elementos = ["color"];
 let tabla = $('#tabla_colores');
 let tabla2 = $('#ver_uso');
 columnsColor = [

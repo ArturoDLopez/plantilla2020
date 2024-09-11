@@ -58,7 +58,7 @@ class Duenos extends CI_Controller {
         if (empty($datos['curp']) || empty($datos['nombre']) || empty($datos['apellido_p']) || empty($datos['apellido_m'])) {
             return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
         }
-
+        $datos['suu_id'] = $this->auth->getId();
         $insert_id = $this->Duenos_model->agregar($datos, $datos['curp']);
         if ($insert_id == 0) {
             return $this->response(['status' => 'error', 'message' => 'Error al agregar dueño'], 500);

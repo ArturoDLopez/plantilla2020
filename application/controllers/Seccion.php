@@ -17,7 +17,12 @@ class Seccion extends CI_Controller {
             redirect(base_url()."seccion/tabla_vehiculos");
         } else {
 			
-            redirect(base_url()."seccion/vista_denegada");
+			$data = new stdClass();
+			$login = false;
+			$data->login = $login;
+			$this->load->view('template/header', $data);
+			$this->load->view('secciones/ver');
+			$this->load->view('template/footer');
         }
     }
 
@@ -28,15 +33,6 @@ class Seccion extends CI_Controller {
 	public function logout(){
 		$this->auth->logout();
 		redirect(base_url());
-	}
-
-	public function vista_denegada(){
-		$data = new stdClass();
-		$login = false;
-		$data->login = $login;
-		$this->load->view('template/header', $data);
-        $this->load->view('secciones/ver');
-		$this->load->view('template/footer');
 	}
 
 	public function tabla_vehiculos(){

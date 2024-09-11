@@ -38,6 +38,7 @@ class Tipos extends CI_Controller {
         }
 
         $datos = ['nom_tipo' => $nom_tipo];
+        $datos['suu_id'] = $this->auth->getId();
         $result = $this->Tipos_model->agregar($datos, $nom_tipo);
 
         if ($result === 0) {

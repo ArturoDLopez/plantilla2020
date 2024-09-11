@@ -51,6 +51,7 @@ class Placas extends CI_Controller {
         }
 
         $datos = ['placa' => $placa];
+        $datos['suu_id'] = $this->auth->getId();
         $result = $this->Placas_model->agregar($datos, $placa);
 
         if ($result === false) {

@@ -79,7 +79,7 @@ class Propietarios extends CI_Controller {
         if (empty($datos['vehiculos_id']) || empty($datos['duenos_id']) || empty($datos['fecha_inicio'])) {
             return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
         }
-
+        $datos['suu_id'] = $this->auth->getId();
         $propietario_id = $this->Propietarios_model->agregar($datos);
 
         if (!$propietario_id) {

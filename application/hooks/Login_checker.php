@@ -10,7 +10,7 @@ class Login_checker
     #region "Métodos"
     function check()
     {
-        $this->url_view_invalida = base_url('seccion/vista_denegada');
+        $this->url_view_invalida = base_url();
 
         if (!$this->CI->auth->is_signed()) {
             $this->CI->load->helper('url');

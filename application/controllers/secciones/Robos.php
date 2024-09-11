@@ -73,7 +73,7 @@ class Robos extends CI_Controller {
         if (empty($datos['vehiculos_id']) || empty($datos['placas_id']) || empty($datos['descripcion']) || empty($datos['fecha'])) {
             return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
         }
-
+        $datos['suu_id'] = $this->auth->getId();
         $robo_id = $this->Robos_model->agregar($datos);
 
         if (!$robo_id) {

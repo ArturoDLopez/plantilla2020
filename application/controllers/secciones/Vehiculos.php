@@ -61,7 +61,7 @@ class Vehiculos extends CI_Controller {
         if (empty($datos['num_serie']) || empty($datos['marcas_id']) || empty($datos['modelo'])) {
             return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
         }
-
+        $datos['suu_id'] = $this->auth->getId();
         $resultado = $this->Vehiculos_model->agregar($datos, $datos['num_serie']);
 
         if (!$resultado) {

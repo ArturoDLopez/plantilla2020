@@ -88,7 +88,8 @@ class Emplacado extends CI_Controller {
         if (empty($datos['vehiculos_id']) || empty($datos['placas_id']) || empty($datos['fecha_inicio'])) {
             return $this->response(['status' => 'error', 'message' => 'Todos los campos son requeridos'], 400);
         }
-
+        
+        $datos['suu_id'] = $this->auth->getId();
         $emplacado_id = $this->Emplacado_model->agregar($datos);
         if (!$emplacado_id) {
             return $this->response(['status' => 'error', 'message' => 'Error al agregar emplacado'], 500);

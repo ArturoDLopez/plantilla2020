@@ -36,6 +36,7 @@ class Marcas extends CI_Controller {
         }
 
         $datos = ['nom_marca' => $nom_marca];
+        $datos['suu_id'] = $this->auth->getId();
         $result = $this->Marcas_model->agregar($datos, $nom_marca);
 
         if ($result === 0) {
