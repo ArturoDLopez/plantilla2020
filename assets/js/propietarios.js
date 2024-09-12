@@ -26,7 +26,27 @@ $(document).ready(function(){
                 return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
             },
             messages: {
-              es: 'La fecha de inicio no puede ser posterior a hoy.'
+              es: 'La fecha no puede ser posterior a hoy.'
+            }
+        });
+
+        window.Parsley.addValidator('menorAInicio', {
+            validateString: function(value) {
+                var fecha_de_inicio = $('#fecha_i').value;
+                if($('#actual').value = 1){
+                    var dia = ('0' + fecha_de_inicio.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                } else {
+                    var dia = ('0' + (fecha_de_inicio.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                }
+                
+                var mes = ('0' + (fecha_de_inicio.getMonth() + 1)).slice(-2);
+                var anio = fecha_de_inicio.getFullYear(); // Devuelve el año actual
+                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+            },
+            messages: {
+              es: 'La fecha de termino no puede ser posterior a la fecha de inicio.'
             }
         });
     } 
@@ -116,6 +136,10 @@ $('#frm_container').on('submit', function(e){
         
         
 });
+
+$("#fecha_i").on('change', function(){
+
+})
 
 function traer_catalogos(vehiculos_id = null, duenos_id = null){
     $.ajax({
