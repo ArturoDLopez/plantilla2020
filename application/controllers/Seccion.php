@@ -54,7 +54,112 @@ class Seccion extends CI_Controller {
 				->set_content_type("application/json")
             	->set_output(json_encode($response));
 		}
+		foreach($data as $d){
+			$d->ve_id = encriptar($d->ve_id);
+		}
 		echo json_encode($data);
+	}
+
+	public function traer_robos(){
+		$ve_id = $this->input->post('ve_id');
+		if(empty($ve_id)){
+			$response = array('msj' => 'No se encuentran robos registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+		$id_desencriptado = (int)desencriptar($ve_id);
+		if(!($id_desencriptado > 0)){
+			$response = array('msj' => 'Mal  id');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		$response = $this->Vehiculos_model->buscar_robo($id_desencriptado);
+		if(empty($response)){
+			$response = array('msj' => 'No se encuentran robos registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		return $this->output
+			->set_status_header(200)
+			->set_content_type("application/json")
+			->set_output(json_encode($response));
+
+	}
+
+	public function traer_duenos(){
+		$ve_id = $this->input->post('ve_id');
+		if(empty($ve_id)){
+			$response = array('msj' => 'No se encuentran dueños registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+		$id_desencriptado = (int)desencriptar($ve_id);
+		if(!($id_desencriptado > 0)){
+			$response = array('msj' => 'Mal  id');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		$response = $this->Vehiculos_model->buscar_duenos($id_desencriptado);
+		if(empty($response)){
+			$response = array('msj' => 'No se encuentran dueños registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		return $this->output
+			->set_status_header(200)
+			->set_content_type("application/json")
+			->set_output(json_encode($response));
+
+	}
+
+	public function traer_placas(){
+		$ve_id = $this->input->post('ve_id');
+		if(empty($ve_id)){
+			$response = array('msj' => 'No se encuentran placas registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+		$id_desencriptado = (int)desencriptar($ve_id);
+		if(!($id_desencriptado > 0)){
+			$response = array('msj' => 'Mal  id');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		$response = $this->Vehiculos_model->buscar_placas($id_desencriptado);
+		if(empty($response)){
+			$response = array('msj' => 'No se encuentran placas registrados para este vehiculo');
+			return $this->output
+				->set_status_header(400)
+				->set_content_type("application/json")
+				->set_output(json_encode($response));
+		}
+
+		return $this->output
+			->set_status_header(200)
+			->set_content_type("application/json")
+			->set_output(json_encode($response));
+
 	}
 
 }
