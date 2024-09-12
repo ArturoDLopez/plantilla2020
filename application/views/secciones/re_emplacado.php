@@ -73,11 +73,11 @@
             <div class="row">
                 <div class="form-group col-md-6">
                     <label for="fecha_i">Fecha de inicio</label>
-                    <input type="date" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-hoy required>
+                    <input type="datetime-local" name="fecha_i" id="fecha_i" class="form-control" data-parsley-max-hoy required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_t">Fecha de termino</label>
-                    <input type="date" name="fecha_t" id="fecha_t" class="form-control" data-parsley-max-hoy>
+                    <input type="datetime-local" name="fecha_t" id="fecha_t" class="form-control" data-parsley-max-hoy>
                 </div>
             </div>
 

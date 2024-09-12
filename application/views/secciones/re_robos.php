@@ -67,7 +67,7 @@
                 </div>
                 <div class="form-group col-md-6">
                     <label for="fecha_r">Fecha del robo</label>
-                    <input type="date" name="fecha_r" id="fecha_r" class="form-control" required>
+                    <input type="datetime-local" name="fecha_r" id="fecha_r" class="form-control" required>
                 </div>
 
             </div>
