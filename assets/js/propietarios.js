@@ -237,6 +237,7 @@ function registrar_local(){
             }
             limpiar_modal(arreglo_campos);
             cerrar_modal(modal_id);
+            $('#frm_container').parsley().reset();
         },
         error: function(xhr, status, error){
             notificar_swal('Error', xhr.responseJSON ? xhr.responseJSON.message : 'Ocurrió un error inesperado', 'error');

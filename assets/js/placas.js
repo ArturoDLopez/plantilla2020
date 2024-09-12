@@ -93,6 +93,7 @@ function registrar(){
                 $('#frm_placas').parsley().reset();
                 $('#placa').val("");
                 notificar('Placa registrada correctamente', 'success');
+                $('#frm_container').parsley().reset();
             }
         },
         error: function(xhr, status, error){

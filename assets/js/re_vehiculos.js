@@ -167,6 +167,7 @@ function registrar_local(){
                 });
                 tabla.bootstrapTable('refresh');
                 cerrar_modal(modal_id);
+                $('#frm_container').parsley().reset();
             } else {
                 Swal.fire({
                     title: 'Error',

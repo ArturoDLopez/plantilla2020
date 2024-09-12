@@ -40,6 +40,7 @@ function registrar(url_primaria, url_secundaria, data, element, elementos, tabla
                 tabla.bootstrapTable('refresh');
                 limpiar(elementos);
                 cerrar_modal(modal_id);
+                $('#frm_container').parsley().reset();
             }
         },
         error: function(xhr, status, error){

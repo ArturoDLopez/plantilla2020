@@ -105,6 +105,7 @@ function agregar(){
                     tabla.bootstrapTable('refresh');
                     limpiar_modal(elementos);
                     cerrar_modal('modalForm');
+                    $('#frm_container').parsley().reset();
                 } else {
                     notificar(data.message, 'error');
                 }
