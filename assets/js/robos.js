@@ -41,6 +41,26 @@ $(document).ready(function () {
             }
         }
     });
+
+    window.Parsley.addValidator('maxHoy', {
+        validateString: function(value) {
+            var hoy = new Date();
+            if($('#actual').value = 1){
+                var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+            } else {
+                var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+            }
+            
+            var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+            var anio = hoy.getFullYear(); // Devuelve el año actual
+            var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+            return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+        },
+        messages: {
+          es: 'La fecha no puede ser posterior a hoy.'
+        }
+    });
 });
 
 function acciones(value, row, index) {
@@ -164,6 +184,7 @@ function buscar_datos(dato = false) {
             let dueno = json.nombre + ' ' + json.apellido_p;
             document.getElementById('inp_placa').value = placa;
             document.getElementById('inp_dueno').value = dueno;
+            validador_fecha(json.fecha_inicio);
 
         },
         error: function (xhr, status, error) {
@@ -177,6 +198,28 @@ function buscar_datos(dato = false) {
         }
 
     })
+}
+
+function validador_fecha(fecha){
+    window.Parsley.addValidator('menorAInicio', {
+        validateString: function(value) {
+
+            var fecha_de_inicio = fecha;
+            console.log("Fecha de inicios: ", fecha_de_inicio);
+            if(fecha_de_inicio != "" || fecha_de_inicio != null){
+                fecha_de_inicio = new Date(fecha);
+                var dia = ('0' + fecha_de_inicio.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                var mes = ('0' + (fecha_de_inicio.getMonth() + 1)).slice(-2);
+                var anio = fecha_de_inicio.getFullYear(); // Devuelve el año actual
+                var fechaI = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+                console.log('Dia: ' + dia + '.......    Mes: ' + mes + '....   anio: ' + anio + '....   Fecha I ' + fechaI + ' Valor: ' + value);
+                return value >= fechaI;
+            }
+        },
+        messages: {
+          es: 'La fecha de termino no puede ser posterior a la fecha de inicio.'
+        }
+    });
 }
 
 function registrar_local() {

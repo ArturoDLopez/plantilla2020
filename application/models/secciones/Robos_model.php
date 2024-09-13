@@ -76,7 +76,7 @@ class Robos_model extends CI_Model{
     }
 
     public function serie_placa($serie){
-        $this->db->select('pl.placa, du.nombre, du.apellido_p, du.apellido_m, pl.id as placa_id, du.id as dueno_id');
+        $this->db->select('pl.placa, du.nombre, du.apellido_p, du.apellido_m, pl.id as placa_id, du.id as dueno_id, pro.fecha_inicio');
         $this->db->from('vehiculos ve');
         $this->db->join('propietario pro', 've.id = pro.vehiculos_id AND pro.actual = 1', 'inner');
         $this->db->join('duenos du', 'du.id = pro.duenos_id', 'inner');
