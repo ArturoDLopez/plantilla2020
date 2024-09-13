@@ -32,18 +32,18 @@ $(document).ready(function(){
 
         window.Parsley.addValidator('menorAInicio', {
             validateString: function(value) {
-                var fecha_de_inicio = $('#fecha_i').value;
-                if($('#actual').value = 1){
-                    var dia = ('0' + fecha_de_inicio.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                } else {
-                    var dia = ('0' + (fecha_de_inicio.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
-                }
-                
-                var mes = ('0' + (fecha_de_inicio.getMonth() + 1)).slice(-2);
-                var anio = fecha_de_inicio.getFullYear(); // Devuelve el año actual
-                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
 
-                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+                var fecha_de_inicio = document.getElementById('fecha_i').value;
+                console.log("Fecha de inicios: ", fecha_de_inicio);
+                if(fecha_de_inicio != "" || fecha_de_inicio != null){
+                    fecha_de_inicio = new Date(document.getElementById('fecha_i').value);
+                    var dia = ('0' + fecha_de_inicio.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    var mes = ('0' + (fecha_de_inicio.getMonth() + 1)).slice(-2);
+                    var anio = fecha_de_inicio.getFullYear(); // Devuelve el año actual
+                    var fechaI = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+                    console.log('Dia: ' + dia + '.......    Mes: ' + mes + '....   anio: ' + anio + '....   Fecha I ' + fechaI);
+                    return value >= fechaI;
+                }
             },
             messages: {
               es: 'La fecha de termino no puede ser posterior a la fecha de inicio.'
@@ -90,6 +90,7 @@ function datos_num_serie(){
                 $('#actual').val(1);
                 $('#actual').attr('disabled', false);
                 $('#fecha_t').attr('disabled', true);
+                $('#fecha_t').val("");
             }
         },
         error: function(xhr, status, error){
@@ -116,6 +117,7 @@ function habilitar_fecha() {
         fechaTermino.required = false;
         fechaLabelTermino.innerHTML = "Fecha de termino";
         $('#fecha_i').parsley().validate();
+        $('#fecha_t').val("");
     } else {
         fechaInicio.disabled = false;
         fechaTermino.disabled = false;

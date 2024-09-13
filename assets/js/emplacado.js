@@ -24,6 +24,50 @@ $(document).ready(function(){
         paginationSize: 10,
         queryParams: queryParams
     });
+    if (window.Parsley) {
+        window.Parsley.addValidator('maxHoy', {
+            validateString: function(value) {
+                var hoy = new Date();
+                if($('#actual').value = 1){
+                    var dia = ('0' + hoy.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                } else {
+                    var dia = ('0' + (hoy.getDate() - 1)).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                }
+                
+                var mes = ('0' + (hoy.getMonth() + 1)).slice(-2);
+                var anio = hoy.getFullYear(); // Devuelve el año actual
+                var fechaHoy = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+
+                return value <= fechaHoy; // Si la fecha es menor o igual a la fecha de hoy, es válida
+            },
+            messages: {
+              es: 'La fecha no puede ser posterior a hoy.'
+            }
+        });
+
+        window.Parsley.addValidator('menorAInicio', {
+            validateString: function(value) {
+
+                var fecha_de_inicio = document.getElementById('fecha_i').value;
+                console.log("Fecha de inicios: ", fecha_de_inicio);
+                if(fecha_de_inicio != "" || fecha_de_inicio != null){
+                    fecha_de_inicio = new Date(document.getElementById('fecha_i').value);
+                    var dia = ('0' + fecha_de_inicio.getDate()).slice(-2); // Siempre devuelve dos dígitos, por ejemplo 07 en lugar de 7
+                    var mes = ('0' + (fecha_de_inicio.getMonth() + 1)).slice(-2);
+                    var anio = fecha_de_inicio.getFullYear(); // Devuelve el año actual
+                    var fechaI = anio + '-' + mes + '-' + dia; // Formato de fecha: AAAA-MM-DD
+                    console.log('Dia: ' + dia + '.......    Mes: ' + mes + '....   anio: ' + anio + '....   Fecha I ' + fechaI);
+                    return value >= fechaI;
+                }
+            },
+            messages: {
+              es: 'La fecha de termino no puede ser posterior a la fecha de inicio.'
+            }
+        });
+    } 
+    else {
+        console.log("Parsley.js no está cargado.");
+    }
 });
 
 $('#frm_container').on('submit', function(e){
@@ -82,16 +126,51 @@ function datos_num_serie() {
         method: 'POST',
         data: { 'vehiculos_id': sel },
         success: function(data) {
+            
             let json = data.data;
+            console.log(json);
             if (json.length > 0) {
-                $('#actual').val(0).attr('disabled', true);
-                $('#fecha_t').attr('disabled', true);
+                let actual;
+                json.forEach(element => {
+                    if(element.actual == 1){
+                        actual = true;
+                    }
+                });
+                if(actual){
+                    $('#actual').val(0).attr('disabled', true);
+                    $('#fecha_t').attr('disabled', false);
+                }
+                
             } else {
                 $('#actual').val(1).attr('disabled', false);
-                $('#fecha_t').attr('disabled', false);
+                $('#fecha_t').attr('disabled', true);
+                $('#fecha_t').val("");
             }
         }
     });
+}
+
+function habilitar_fecha() {
+    var actual = document.getElementById("actual").value;
+    var fechaInicio = document.getElementById("fecha_i");
+    var fechaTermino = document.getElementById("fecha_t");
+    var fechaLabelTermino = document.getElementById("fecha_t_l");
+
+    if (actual == "1") {
+        fechaInicio.disabled = false;
+        fechaTermino.disabled = true;
+        fechaTermino.required = false;
+        fechaLabelTermino.innerHTML = "Fecha de termino";
+        $('#fecha_i').parsley().validate();
+        $('#fecha_t').val("");
+    } else {
+        fechaInicio.disabled = false;
+        fechaTermino.disabled = false;
+        fechaTermino.required = true;
+        fechaLabelTermino.innerHTML = "<span class='text-danger'>*</span>Fecha de termino";
+        // Desactivar la validación si no es dueño actual
+        $('#fecha_i').parsley().reset();
+    }
 }
 
 
@@ -152,6 +231,7 @@ function rellenar(id){
 
 
 function registrar_local() {
+    $('#frm_container').parsley().reset();
     let datos = {
         'num_serie': $('#num_serie').val(),
         'placa': $('#placa').val(),
