@@ -37,11 +37,11 @@
                         <div class="form-group">
                             <label for="" >
                                 <h1 class="">
-                                    Buscar vehiculo por placa
+                                    Buscar vehiculo por placa o numero de serie 
                                 </h1>
                             </label>
                             <div class=''>
-                                <input name="placa" type="text" class="form-control centrado" id="inp_placa" placeholder="Escriba su placa...">
+                                <input name="placa" type="text" class="form-control centrado" id="inp_placa" placeholder="Escriba su placa o numero de serie...">
                             </div>
                         </div>
                         <div class="">
