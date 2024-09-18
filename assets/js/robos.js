@@ -133,6 +133,7 @@ function rellenar(id) {
                     }
                 })
                 fecha = fecha == "" ? "" : fecha.toISOString().split('T')[0];
+                console.log(fecha);
                 document.getElementById('modalFormLabel').innerHTML = 'Actualizar robo';
                 document.getElementById('btn_duenos').innerHTML = 'Actualizar';
                 

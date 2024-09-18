@@ -7,6 +7,7 @@ class Seccion extends CI_Controller {
     {
         parent::__construct();
 		$this->load->model('Vehiculos_model');
+		$this->load->library('excel');
     }
 
 	public function index()
@@ -161,5 +162,233 @@ class Seccion extends CI_Controller {
 			->set_output(json_encode($response));
 
 	}
+
+	function exportar_excel(){
+		$num_serie = $this->input->post('num_serie');
+		$vehiculo_id = $this->input->post('vehiculo_id');
+		$id_desencriptado = (int)desencriptar($vehiculo_id);
+
+		$placas = $this->Vehiculos_model->buscar_placas($id_desencriptado);
+		$duenos = $this->Vehiculos_model->buscar_duenos($id_desencriptado);
+		$robos = $this->Vehiculos_model->buscar_robo($id_desencriptado);
+		$data = ($this->Vehiculos_model->buscar_vehiculo($num_serie));
+
+		$object = new PHPExcel();
+
+		$object->setActiveSheetIndex(0);
+		$object->getActiveSheet()->mergeCells('A1:H1');
+		$object->getActiveSheet()->setCellValue('A1', 'Vehiculo encontrado');
+		$object->setActiveSheetIndex(0)->getStyle('A1:H1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle('A1:H1')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle("A1:h1")->getFont()->setSize(24);
+
+		$object->setActiveSheetIndex(0)->getStyle("A1:h1")->getFill()->applyFromArray(array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array(
+					 'rgb' => '602929'
+				)
+			));
+
+		$object->setActiveSheetIndex(0)->getStyle('A1:H1')->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+
+		$object->getActiveSheet()->setCellValue('A2', 'Numero de serie');
+		$object->getActiveSheet()->setCellValue('B2', 'Marca');
+		$object->getActiveSheet()->setCellValue('C2', 'Modelo');
+		$object->getActiveSheet()->setCellValue('D2', 'Tipo');
+		$object->getActiveSheet()->setCellValue('E2', 'Color');
+		$object->getActiveSheet()->setCellValue('F2', 'Placas Actuales');
+		$object->getActiveSheet()->setCellValue('G2', 'Propietario Actual');
+		$object->getActiveSheet()->setCellValue('H2', 'Fecha de registro');
+
+		$object->getActiveSheet()->setCellValueExplicit('A3', $data[0]->num_serie, PHPExcel_Cell_DataType::TYPE_STRING);
+		$object->getActiveSheet()->setCellValue('B3', $data[0]->nom_marca);
+		$object->getActiveSheet()->setCellValue('C3', $data[0]->modelo);
+		$object->getActiveSheet()->setCellValue('D3', $data[0]->nom_tipo);
+		$object->getActiveSheet()->setCellValue('E3', $data[0]->nom_color);
+		$object->getActiveSheet()->setCellValue('F3', 'No tiene asiganada ninguna placa actualmente');
+		if($data[0]->placa){
+			$object->getActiveSheet()->setCellValue('F3', $data[0]->placa);	
+		}
+		$object->getActiveSheet()->setCellValue('G3', $data[0]->nombre);
+		if(!$data[0]->nombre){
+			$object->getActiveSheet()->setCellValue('G3', 'No tiene un propietario actual');
+		}
+		$object->getActiveSheet()->setCellValue('H3', $data[0]->fecha_registro);
+
+		$object->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('I')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('J')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('K')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('L')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('M')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('N')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('O')->setAutoSize(true);
+		$object->getActiveSheet()->getColumnDimension('P')->setAutoSize(true);
+
+		//Propietarios
+
+		$object->getActiveSheet()->mergeCells('A10:E10');
+		$object->getActiveSheet()->setCellValue('A10', 'Duenos');
+		$object->setActiveSheetIndex(0)->getStyle('A10:E10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle('A10:E10')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle("A10:E10")->getFont()->setSize(24);
+
+		$object->setActiveSheetIndex(0)->getStyle("A10:E10")->getFill()->applyFromArray(array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array(
+					 'rgb' => '602929'
+				)
+			));
+
+		$object->setActiveSheetIndex(0)->getStyle('A10:E10')->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+
+		$object->getActiveSheet()->setCellValue('A11', 'Nombre');
+		$object->getActiveSheet()->setCellValue('B11', 'Actual');
+		$object->getActiveSheet()->setCellValue('C11', 'Fecha de inicio');
+		$object->getActiveSheet()->setCellValue('D11', 'Fecha de termino');
+		$object->getActiveSheet()->setCellValue('E11', 'Fecha de registro');
+
+		$fila = 12;
+		foreach($duenos as $du){
+			$object->getActiveSheet()->setCellValue('A'.$fila, $du->nombre);
+			if($du->actual == 0){
+				$object->getActiveSheet()->setCellValue('B'.$fila, 'NO');
+			}
+			$object->getActiveSheet()->setCellValue('B'.$fila, 'SI');
+			$object->getActiveSheet()->setCellValue('C'.$fila, $du->fecha_inicio);
+			$object->getActiveSheet()->setCellValue('D'.$fila, $du->fecha_termino);
+			$object->getActiveSheet()->setCellValue('E'.$fila, $du->fecha_registro);
+
+			$fila ++;
+		}
+
+		
+
+		//Placas
+
+
+		$object->getActiveSheet()->mergeCells('G10:K10');
+		$object->getActiveSheet()->setCellValue('G10', 'Placas');
+		$object->setActiveSheetIndex(0)->getStyle('G10:K10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle('G10:K10')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle("G10:K10")->getFont()->setSize(24);
+
+		$object->setActiveSheetIndex(0)->getStyle("G10:K10")->getFill()->applyFromArray(array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array(
+					 'rgb' => '602929'
+				)
+			));
+
+		$object->setActiveSheetIndex(0)->getStyle('G10:K10')->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+
+		$object->getActiveSheet()->setCellValue('G11', 'Placa');
+		$object->getActiveSheet()->setCellValue('H11', 'Actual');
+		$object->getActiveSheet()->setCellValue('I11', 'Fecha de inicio');
+		$object->getActiveSheet()->setCellValue('J11', 'Fecha de termino');
+		$object->getActiveSheet()->setCellValue('K11', 'Fecha de registro');
+
+		$fila = 12;
+		foreach($placas as $du){
+			$object->getActiveSheet()->setCellValue('G'.$fila, $du->placa);
+			if($du->actual == 0){
+				$object->getActiveSheet()->setCellValue('H'.$fila, 'NO');
+			}
+			$object->getActiveSheet()->setCellValue('H'.$fila, 'SI');
+			$object->getActiveSheet()->setCellValue('I'.$fila, $du->fecha_inicio);
+			$object->getActiveSheet()->setCellValue('J'.$fila, $du->fecha_termino);
+			$object->getActiveSheet()->setCellValue('K'.$fila, $du->fecha_registro);
+
+			$fila ++;
+		}
+
+		//Robos
+
+		$object->getActiveSheet()->mergeCells('M10:P10');
+		$object->getActiveSheet()->setCellValue('M10', 'Robos');
+		$object->setActiveSheetIndex(0)->getStyle('M10:P10')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle('M10:P10')->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+		$object->setActiveSheetIndex(0)->getStyle("M10:P10")->getFont()->setSize(24);
+
+		$object->setActiveSheetIndex(0)->getStyle("M10:P10")->getFill()->applyFromArray(array(
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array(
+					 'rgb' => '602929'
+				)
+			));
+
+		$object->setActiveSheetIndex(0)->getStyle('M10:P10')->getFont()->getColor()->setARGB(PHPExcel_Style_Color::COLOR_WHITE);
+
+		$object->getActiveSheet()->setCellValue('M11', 'Placas');
+		$object->getActiveSheet()->setCellValue('N11', 'Descripcion');
+		$object->getActiveSheet()->setCellValue('O11', 'Fecha de Robo');
+		$object->getActiveSheet()->setCellValue('P11', 'Fecha de registro');
+
+		$fila = 12;
+		foreach($robos as $du){
+			$object->getActiveSheet()->setCellValue('M'.$fila, $du->placa);
+			$object->getActiveSheet()->setCellValue('N'.$fila, $du->descripcion);
+			$object->getActiveSheet()->setCellValue('O'.$fila, $du->fecha);
+			$object->getActiveSheet()->setCellValue('P'.$fila, $du->fecha_registro);
+
+			$fila ++;
+		}
+
+		$styleArray = array(
+			'font' => array(
+				'bold' => true,
+			),
+			'alignment' => array(
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+			),
+			'borders' => array(
+				'top' => array(
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+				),
+				'bottom' => array(
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+				),
+			),
+			'fill' => array(
+				'type' => PHPExcel_Style_Fill::FILL_GRADIENT_LINEAR,
+				'rotation' => 90,
+				'startcolor' => array(
+					'argb' => 'FFA0A0A0',
+				),
+				'endcolor' => array(
+					'argb' => 'FFFFFFFF',
+				),
+			),
+		);
+		
+		$object->getActiveSheet()->getStyle('A2:H2')->applyFromArray($styleArray);
+		$object->getActiveSheet()->getStyle('A11:E11')->applyFromArray($styleArray);
+		$object->getActiveSheet()->getStyle('G11:K11')->applyFromArray($styleArray);
+		
+		$object_writer = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+		header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="Reporte_control_patrimonial_licencias' . date('d') . '_' . date('m') . '_' . date('Y') . '.xlsx"');
+        header('Cache-Control: max-age=0');
+        header("Expires: 0");
+        $objWriter = PHPExcel_IOFactory::createWriter($object, 'Excel2007');
+        ob_end_clean();
+		//header('Content-Type: application/vnd.ms-excel');
+		//header('Content-Disposition: attachment;filename="Employee Data.xls"');
+		$object_writer->save('php://output');
+
+		//$objPHPExcel->getActiveSheet()->mergeCells('A1:H1'); unir celdas
+		//$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		//$object->getActiveSheet()->setCellValueByColumnAndRow(0, 2, 'Sample Text');
+
+	}
+	
 
 }

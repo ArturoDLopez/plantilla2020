@@ -11,7 +11,8 @@ let columns = [
     {field: 'placa',title: 'Placas actual', formatter: placas}, 
     {field: 'nombre',title: 'Propietario actual', formatter: propietarios},
     {field: 'ro_id', title: 'Reporte de robos', formatter: acciones, align: 'center'}, 
-    {field: 'fecha_registro', title: 'Fecha de registro'}
+    {field: 'fecha_registro', title: 'Fecha de registro'},
+    {field: 'excel', title: 'Exportar a excel', formatter: btn_descargar, align: 'center' }
 ];
 
 let columns2 = [
@@ -74,6 +75,62 @@ function placas(value, row, index){
 
     return 'No tiene placas asignados';
 }
+
+function btn_descargar(value, row, index){
+    return `
+    <button class="btn btn-round btn-blue-alt" title="Descargar informacion del vehiculo" onclick="descargar('${row.num_serie}', '${row.ve_id}')">
+        <i class="glyph-icon icon-arrow-down"></i>
+    </button>
+`;
+}
+
+var descargar = async (num_serie, vehiculo_id) => {
+    var formData = new FormData();
+    formData.append('num_serie', num_serie);
+    formData.append('vehiculo_id', vehiculo_id);
+
+    console.log(formData);
+
+    let response = await fetch('exportar_excel', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData,
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (response.status === 200) {
+        let data = await response;
+        console.log(data);
+ 
+        let blob = await data.blob();
+        let objectUrl = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+ 
+        a.href = objectUrl;
+        a.download = 'Reporte_control_patrimonial_licencias.xlsx';
+        a.click();
+        swal.close();
+    }
+}
+
+/* function descargar(){
+    console.log('Descargar');
+    $.ajax({
+        method: 'POST',
+        url: 'exportar_excel',
+        success: function(data){
+            console.log(data)
+            let blob = data.blob();
+            let objectUrl = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+    
+            a.href = objectUrl;
+            a.download = 'Reporte_control_patrimonial_licencias.xlsx';
+            a.click();
+        }
+        
+    });
+    
+} */
 
 function acciones(value, row, index){
     if(row.ro_id != null){
