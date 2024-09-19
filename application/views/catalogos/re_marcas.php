@@ -51,10 +51,14 @@
     <h1 class>
         Marcas
     </h1>
-    <div id="opciones">
+    <div id="opciones" class="d-flex justify-content-between">
         <button class='btn btn-success' onclick="mostrar_modal('modalForm')">
             Agregar marca
         </button>
+        <button class='btn btn-info' onclick="printPDF()">
+            Descargar pdf
+        </button>
+
     </div>
 
     <table id="tabla_marcas" data-url="<?php echo base_url()."catalogos/marcas/cargar_marcas"?>"></table>

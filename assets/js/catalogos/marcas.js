@@ -56,6 +56,28 @@ function accion(value, row, index) {
     return boton;
 }
 
+var printPDF = async () => {
+
+    let response = await fetch('marcas/print_pdf', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (response.status === 200) {
+        let data = await response;
+        console.log(data);
+ 
+        let blob = await data.blob();
+        let objectUrl = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+ 
+        a.href = objectUrl;
+        a.download = 'Reporte de marcas.pdf';
+        a.click();
+        swal.close();
+    }
+}
+
 function ver(id) {
     let url = base_url + 'ver_vehiculos_marcas';
     $.ajax({
