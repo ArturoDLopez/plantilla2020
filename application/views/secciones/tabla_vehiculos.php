@@ -29,6 +29,10 @@
   </div>
 </div>
 
+<div class="modal" data-backdrop="static" id="modalForm" tabindex="-1" role="dialog" aria-labelledby="modalFormLabel" aria-hidden="true">
+        <table id="tablaPdf" data-url="" class="table "></table>
+</div>
+
 <section id="bienvenida">
 			<div class="wrapper">
 				<div class="outer-content"></div>

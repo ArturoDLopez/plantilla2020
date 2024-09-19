@@ -2,6 +2,7 @@
 let tabla = $('#tablaB');
 let tablaRobos = $("#tablaR");
 let modalRobos = $('#modalForm');
+let tablaPdf = $('#tablaPdf');
 let columns = [
     { field: 'num_serie', title: 'Numero de serie'}, 
     {field: 'nom_marca',title: 'Marca'}, 
@@ -12,10 +13,21 @@ let columns = [
     {field: 'nombre',title: 'Propietario actual', formatter: propietarios},
     {field: 'ro_id', title: 'Reporte de robos', formatter: acciones, align: 'center'}, 
     {field: 'fecha_registro', title: 'Fecha de registro'},
-    {field: 'excel', title: 'Exportar a excel', formatter: btn_descargar, align: 'center' }
+    {field: 'excel', title: 'Acciones', formatter: btn_descargar, align: 'center' }
 ];
 
-let columns2 = [
+var columnspdf = [
+    { field: 'num_serie', title: 'Numero de serie'}, 
+    {field: 'nom_marca',title: 'Marca'}, 
+    {field: 'modelo',title: 'Modelo'}, 
+    {field: 'nom_tipo',title: 'Tipo'}, 
+    {field: 'nom_color',title: 'Color'}, 
+    {field: 'placa',title: 'Placas actual', formatter: placas}, 
+    {field: 'nombre',title: 'Propietario actual', formatter: propietarios}, 
+    {field: 'fecha_registro', title: 'Fecha de registro'},
+];
+
+let columnsRobos = [
     {field: 'placa', title: 'Placas'}, 
     {field: 'descripcion',title: 'Descripcion'}, 
     {field: 'fecha',title: 'Fecha de robo'},
@@ -78,8 +90,11 @@ function placas(value, row, index){
 
 function btn_descargar(value, row, index){
     return `
-    <button class="btn btn-round btn-blue-alt" title="Descargar informacion del vehiculo" onclick="descargar('${row.num_serie}', '${row.ve_id}')">
-        <i class="glyph-icon icon-arrow-down"></i>
+    <button class="btn btn-round btn-blue-alt" title="Descargar informacion del vehiculo en exel" onclick="descargar('${row.num_serie}', '${row.ve_id}')">
+        <i class="glyph-icon icon-file-excel-o"></i>
+    </button>
+    <button class="btn btn-round btn-blue-alt" title="Descargar informacion del vehiculo en pdf" onclick="printPDF('${row.num_serie}', '${row.ve_id}')">
+        <i class="glyph-icon icon-file-pdf-o"></i>
     </button>
 `;
 }
@@ -112,6 +127,37 @@ var descargar = async (num_serie, vehiculo_id) => {
     }
 }
 
+
+var printPDF = async (num_serie, vehiculo_id) => {
+
+    var datosTabla = tablaPdf.html();
+    var formData = new FormData();
+    formData.append('num_serie', num_serie);
+    formData.append('vehiculo_id', vehiculo_id);
+    formData.append('tablaVehiculo', datosTabla);
+
+    console.log(formData);
+
+    let response = await fetch('printPDF', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: formData,
+        headers: { 'Content-Type': 'application/json' }
+    });
+    if (response.status === 200) {
+        let data = await response;
+        console.log(data);
+ 
+        let blob = await data.blob();
+        let objectUrl = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+ 
+        a.href = objectUrl;
+        a.download = 'Reporte del vehiculo '+num_serie+'.pdf';
+        a.click();
+        swal.close();
+    }
+}
 /* function descargar(){
     console.log('Descargar');
     $.ajax({
@@ -156,7 +202,7 @@ function ver_robos(id){
                 $('#modalForm').modal('show');
                 tablaRobos.bootstrapTable('destroy');
                 tablaRobos.bootstrapTable({
-                    columns: columns2,
+                    columns: columnsRobos,
                     data: data
                 });
             }
@@ -247,6 +293,10 @@ function buscar(){
         data: json,
         success: function(data){
             let json = JSON.parse(data);
+            tablaPdf.bootstrapTable({
+                columns: columnspdf,
+                data: json
+            })
             llamar_tabla(json, value);
         },
         error: function (xhr){

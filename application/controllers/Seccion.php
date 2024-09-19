@@ -1,5 +1,7 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
+require FCPATH.'vendor/autoload.php';
 
 class Seccion extends CI_Controller {
 
@@ -9,6 +11,58 @@ class Seccion extends CI_Controller {
 		$this->load->model('Vehiculos_model');
 		$this->load->library('excel');
     }
+
+	public function printPDF(){
+		//llamar las plantillas
+		$encabezado = $this->load->view('template/encabezado', '', true);
+		$final = $this->load->view('template/final', '', true);
+		
+		//Recibir datos desde el fetch
+		$tablaVehiculo = $this->input->post('tablaVehiculo');
+		$num_serie = $this->input->post('num_serie');
+		$vehiculo_id = $this->input->post('vehiculo_id');
+
+		//desencriptar el id del vehiculo
+		$id_desencriptado = (int)desencriptar($vehiculo_id);
+
+		//Crrear un objketo para pasarle datos a la vista
+		$data = new stdClass();
+
+		//llamar a los modelos que regresan los datos mas especificos del vehiculo
+		$robos = $this->Vehiculos_model->buscar_robo($id_desencriptado);
+		$duenos = $this->Vehiculos_model->buscar_duenos($id_desencriptado);
+		$placas = $this->Vehiculos_model->buscar_placas($id_desencriptado);
+
+		//Pasar los valores traidos desde las consulatas al objeto
+		$data->robos = ($robos);
+		$data->duenos = $duenos;
+		$data->placas = $placas;
+
+		//Traer las vistas de las tablas 
+		$tablaRobos = $this->load->view('template/tablaRobos', $data, true);
+		$tablaDuenos = $this->load->view('template/tablaDuenos', $data, true);
+		$tablaPlacas = $this->load->view('template/tablaPlacas', $data, true);
+		
+		//Armado del html final para crear el pdf
+		$tabla = $encabezado.
+				'<h2>Datos del vehiculo '.$num_serie.'</h2>
+				<br><br>
+				<table class="table ">'.$tablaVehiculo.'</table>
+				<br><br>
+				'.$tablaDuenos.'
+				<br><br>
+				<br><br>
+				'.$tablaPlacas.'
+				<br><br>
+				<br><br>
+				'.$tablaRobos.'
+				<br><br>'
+				.$final;
+
+		$mpdf = new \Mpdf\Mpdf();
+		$mpdf->WriteHTML($tabla);
+		$mpdf->Output();
+	}
 
 	public function index()
     {
@@ -298,10 +352,11 @@ class Seccion extends CI_Controller {
 		$fila = 12;
 		foreach($placas as $du){
 			$object->getActiveSheet()->setCellValue('G'.$fila, $du->placa);
+			$object->getActiveSheet()->setCellValue('H'.$fila, 'SI');
 			if($du->actual == 0){
 				$object->getActiveSheet()->setCellValue('H'.$fila, 'NO');
 			}
-			$object->getActiveSheet()->setCellValue('H'.$fila, 'SI');
+
 			$object->getActiveSheet()->setCellValue('I'.$fila, $du->fecha_inicio);
 			$object->getActiveSheet()->setCellValue('J'.$fila, $du->fecha_termino);
 			$object->getActiveSheet()->setCellValue('K'.$fila, $du->fecha_registro);
