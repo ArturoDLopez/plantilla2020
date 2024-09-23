@@ -87,7 +87,30 @@ class Marcas extends CI_Controller {
             ->set_output(json_encode($data));
     }
 
-    public function print_pdf(){
+
+    public function print_pdf() {
+        ob_start();
+        // Crear el documento PDF
+$pdf = new TCPDF();
+$pdf->AddPage();
+$txt = <<<EOD
+TCPDF Example 002
+
+Default page header and footer are disabled using setPrintHeader() and setPrintFooter() methods.
+EOD;
+
+// print a block of text using Write()
+$pdf->Write(0, $txt, '', 0, 'C', true, 0, false, false, 0);
+
+ob_end_clean();
+
+// Generar el PDF y enviarlo
+$pdf->Output('Reporte_de_marcas.pdf', 'I');
+
+    }
+    
+
+    /* public function print_pdf(){
         // create new PDF document
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -101,8 +124,11 @@ class Marcas extends CI_Controller {
         // print a block of text using Write()
         $pdf->writeHTML($html);
 
+        header('Content-Type: application/pdf');
+        header('Access-Control-Allow-Origin: *');
+
         //Close and output PDF document
         $pdf->Output('example_002.pdf', 'I');
-    }
+    } */
 }
 ?>

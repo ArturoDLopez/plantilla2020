@@ -58,10 +58,9 @@ function accion(value, row, index) {
 
 var printPDF = async () => {
 
-    let response = await fetch('marcas/print_pdf', {
+    let response = await fetch('../impresiones/impresiones/imprimir', {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/pdf' }
     });
     if (response.status === 200) {
         let data = await response;
