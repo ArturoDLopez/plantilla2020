@@ -9800,3 +9800,152 @@
     "fecha": "18/01/2024"
   }
 ]
+
+
+
+//crear un objeto mas legible, con los datos de $data, agrupando por  caja_ubicacion que contenga todas las cajas y estas a su ves por cada fecha tenga las operaciones
+		
+		$datos = [];
+		foreach ($data as $row) {
+			$ubicacion = $row->caja_ubicacion;
+			$caja = $row->caja_nombre;
+			$fecha = $row->fecha;
+			$numero_operaciones = $row->numero_operaciones;
+			$monto_total = $row->monto_total;
+
+			if (!array_key_exists($ubicacion, $datos)) {
+				$datos[$ubicacion] = [];
+			}
+			if (!array_key_exists($caja, $datos[$ubicacion])) {
+				$datos[$ubicacion][$caja] = [];
+			}
+
+			$datos[$ubicacion][$caja][$fecha] = [
+				'numero_operaciones' => $numero_operaciones,
+				'monto_total' => $monto_total
+			];
+		}
+
+	// Crear un archivo Excel
+// Crear un archivo Excel
+$objPHPExcel = new PHPExcel();
+$objPHPExcel->setActiveSheetIndex(0);
+$sheet = $objPHPExcel->getActiveSheet();
+
+// Definir estilos
+$styleArrayHeader = [
+    'font' => [
+        'bold' => true,
+        'size' => 12,
+    ],
+    'alignment' => [
+        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+    ],
+    'borders' => [
+        'allborders' => [
+            'style' => PHPExcel_Style_Border::BORDER_THIN,
+        ],
+    ],
+    'fill' => [
+        'type' => PHPExcel_Style_Fill::FILL_SOLID,
+        'color' => ['rgb' => 'D9EAD3'],
+    ],
+];
+
+$styleArrayData = [
+    'borders' => [
+        'allborders' => [
+            'style' => PHPExcel_Style_Border::BORDER_THIN,
+        ],
+    ],
+    'alignment' => [
+        'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+        'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+    ],
+];
+
+// Verifica si hay datos
+if (!empty($datos)) {
+    $row_cajas = ['Dia'];
+    $startCol = 'B';
+    $currentCol = 2;
+
+    // Recorrer el array de datos
+    foreach ($datos as $ubicacion => $cajas) {
+        $cajasCount = count($cajas);
+        $endCol = PHPExcel_Cell::stringFromColumnIndex($currentCol + $cajasCount - 1);
+
+        // Unir las celdas horizontalmente para la ubicación
+        $sheet->mergeCells(PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . "1:" . $endCol . "1");
+        $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . '1', $ubicacion);
+
+        // Aplicar estilo a la celda de la ubicación
+        $sheet->getStyle(PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . "1")->applyFromArray($styleArrayHeader);
+
+        foreach ($cajas as $caja => $fechas) {
+            $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . '2', $caja);
+            $currentCol++;
+        }
+
+        $sheet->setCellValue(PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . '2', '');
+        $currentCol++;
+    }
+
+    // Aplicar estilo a la fila de cajas
+    $sheet->getStyle('A2:' . PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . '2')->applyFromArray($styleArrayHeader);
+
+    // Obtener todas las fechas y añadirlas al array
+    $fechas = [];
+    foreach ($datos as $cajas) {
+        foreach ($cajas as $fechas_caja) {
+            foreach (array_keys($fechas_caja) as $fecha) {
+                if (!in_array($fecha, $fechas)) {
+                    $fechas[] = $fecha;
+                }
+            }
+        }
+    }
+
+    // Crear filas por cada fecha y sus respectivas operaciones
+    $fila = 3;
+    foreach ($fechas as $fecha) {
+        $row_fecha = [$fecha];
+        $currentCol = 2;
+
+        foreach ($datos as $cajas) {
+            foreach ($cajas as $fechas_caja) {
+                if (isset($fechas_caja[$fecha])) {
+                    $row_fecha[] = number_format($fechas_caja[$fecha]['numero_operaciones']);
+                } else {
+                    $row_fecha[] = 0;
+                }
+            }
+            $row_fecha[] = '';
+        }
+
+        // Escribir la fila en el Excel
+        $sheet->fromArray($row_fecha, null, 'A' . $fila);
+
+        // Aplicar estilo a la fila de datos
+        $sheet->getStyle('A' . $fila . ':' . PHPExcel_Cell::stringFromColumnIndex($currentCol - 1) . $fila)->applyFromArray($styleArrayData);
+        $fila++;
+    }
+
+    // Agregar una fila vacía adicional al final
+    $sheet->fromArray(['', '', '', '', ''], null, 'A' . $fila);
+}
+
+// Ajustar el ancho de las columnas automáticamente
+foreach (range('A', $sheet->getHighestColumn()) as $col) {
+    $sheet->getColumnDimension($col)->setAutoSize(true);
+}
+
+// Guardar el archivo
+header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header('Content-Disposition: attachment;filename="reporte_formateado.xlsx"');
+header('Cache-Control: max-age=0');
+
+$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+$objWriter->save('php://output');
+exit;
